@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
 import org.jetbrains.kotlin.js.resolve.JsPlatform;
-import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
@@ -395,16 +394,27 @@ public final class Namer {
 
     @NotNull
     public JsExpression isTypeOf(@NotNull JsExpression type) {
-        JsInvocation invocation = new JsInvocation(kotlin("isTypeOf"), type);
-        MetadataProperties.setTypeCheck(invocation, TypeCheck.TYPEOF);
-        MetadataProperties.setSideEffects(invocation, false);
-        return invocation;
+        return invokeFunctionAndSetTypeCheckMetadata("isTypeOf", type, TypeCheck.TYPEOF);
     }
 
     @NotNull
     public JsExpression isInstanceOf(@NotNull JsExpression type) {
-        JsInvocation invocation = new JsInvocation(kotlin("isInstanceOf"), type);
-        MetadataProperties.setTypeCheck(invocation, TypeCheck.INSTANCEOF);
+        return invokeFunctionAndSetTypeCheckMetadata("isInstanceOf", type, TypeCheck.INSTANCEOF);
+    }
+
+    @NotNull
+    public JsExpression orNull(@NotNull JsExpression callable) {
+        return invokeFunctionAndSetTypeCheckMetadata("orNull", callable, TypeCheck.OR_NULL);
+    }
+
+    @NotNull
+    private JsExpression invokeFunctionAndSetTypeCheckMetadata(
+            @NotNull String functionName,
+            @NotNull JsExpression argument,
+            @NotNull TypeCheck metadata
+    ) {
+        JsInvocation invocation = new JsInvocation(kotlin(functionName), argument);
+        MetadataProperties.setTypeCheck(invocation, metadata);
         MetadataProperties.setSideEffects(invocation, false);
         return invocation;
     }
