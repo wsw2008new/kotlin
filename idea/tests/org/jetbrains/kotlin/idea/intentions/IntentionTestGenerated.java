@@ -6757,6 +6757,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("flatMapWithContinue.kt")
+        public void testFlatMapWithContinue() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/flatMapWithContinue.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("flatMapWithWrongBreak.kt")
         public void testFlatMapWithWrongBreak() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/flatMapWithWrongBreak.kt");
@@ -6766,6 +6772,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("flatMap_notIterable.kt")
         public void testFlatMap_notIterable() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/flatMap_notIterable.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("flatMap_wrongContinue.kt")
+        public void testFlatMap_wrongContinue() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/flatMap_wrongContinue.kt");
             doTest(fileName);
         }
 
