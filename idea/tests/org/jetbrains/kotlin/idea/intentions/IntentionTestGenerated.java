@@ -6769,6 +6769,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("firstOrNull_letOrNotNull.kt")
+        public void testFirstOrNull_letOrNotNull() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/firstOrNull_letOrNotNull.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("firstOrNull_return.kt")
         public void testFirstOrNull_return() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/firstOrNull_return.kt");
@@ -6778,6 +6784,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("firstOrNull_returnExpression.kt")
         public void testFirstOrNull_returnExpression() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/firstOrNull_returnExpression.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("firstOrNull_returnExpressionOrNotNull.kt")
+        public void testFirstOrNull_returnExpressionOrNotNull() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/firstOrNull_returnExpressionOrNotNull.kt");
             doTest(fileName);
         }
 
