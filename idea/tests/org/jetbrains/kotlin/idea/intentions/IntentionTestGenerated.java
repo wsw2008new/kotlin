@@ -6619,6 +6619,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("any_ifAssign_noBreak.kt")
+        public void testAny_ifAssign_noBreak() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/any_ifAssign_noBreak.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("any_ifReturn.kt")
         public void testAny_ifReturn() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/any_ifReturn.kt");
@@ -6802,6 +6808,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("itAlreadyUsed.kt")
         public void testItAlreadyUsed() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/itAlreadyUsed.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("lastOrNull_ifAssign.kt")
+        public void testLastOrNull_ifAssign() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/lastOrNull_ifAssign.kt");
             doTest(fileName);
         }
 
