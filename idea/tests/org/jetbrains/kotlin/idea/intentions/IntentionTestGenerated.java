@@ -6625,6 +6625,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("any_ifAssign_nonBooleanResult.kt")
+        public void testAny_ifAssign_nonBooleanResult() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/any_ifAssign_nonBooleanResult.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("any_ifAssign_nonBooleanResult2.kt")
+        public void testAny_ifAssign_nonBooleanResult2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/any_ifAssign_nonBooleanResult2.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("any_ifReturn.kt")
         public void testAny_ifReturn() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/any_ifReturn.kt");
