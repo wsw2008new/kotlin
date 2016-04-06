@@ -6709,6 +6709,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("firstOrNull_cannotUseLet.kt")
+        public void testFirstOrNull_cannotUseLet() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/firstOrNull_cannotUseLet.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("firstOrNull_ifAssign.kt")
         public void testFirstOrNull_ifAssign() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/firstOrNull_ifAssign.kt");
@@ -6742,6 +6748,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("firstOrNull_ifReturn.kt")
         public void testFirstOrNull_ifReturn() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/firstOrNull_ifReturn.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("firstOrNull_let.kt")
+        public void testFirstOrNull_let() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/firstOrNull_let.kt");
             doTest(fileName);
         }
 
