@@ -6661,6 +6661,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("assignFilter.kt")
+        public void testAssignFilter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/assignFilter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("assignMap.kt")
+        public void testAssignMap() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/assignMap.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("filterIsInstance.kt")
         public void testFilterIsInstance() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/filterIsInstance.kt");
@@ -6937,6 +6949,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("resultCollectionUsedInsideLoop.kt")
+        public void testResultCollectionUsedInsideLoop() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/resultCollectionUsedInsideLoop.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("smartCastNotBroken.kt")
         public void testSmartCastNotBroken() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/smartCastNotBroken.kt");
@@ -6970,6 +6988,24 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("smartCastThisRequired.kt")
         public void testSmartCastThisRequired() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/smartCastThisRequired.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("toList.kt")
+        public void testToList() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/toList.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("toSet.kt")
+        public void testToSet() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/toSet.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("toSetWithMap.kt")
+        public void testToSetWithMap() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/toSetWithMap.kt");
             doTest(fileName);
         }
     }
