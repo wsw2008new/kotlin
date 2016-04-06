@@ -6609,6 +6609,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class LoopToCallChain extends AbstractIntentionTest {
+        @TestMetadata("addToCollection.kt")
+        public void testAddToCollection() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/addToCollection.kt");
+            doTest(fileName);
+        }
+
         public void testAllFilesPresentInLoopToCallChain() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/loopToCallChain"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
@@ -6682,6 +6688,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("filterNot_ifContinue.kt")
         public void testFilterNot_ifContinue() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/filterNot_ifContinue.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("filterTo.kt")
+        public void testFilterTo() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/filterTo.kt");
             doTest(fileName);
         }
 
@@ -6886,6 +6898,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("map.kt")
         public void testMap() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/map.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("mapTo.kt")
+        public void testMapTo() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/mapTo.kt");
             doTest(fileName);
         }
 
