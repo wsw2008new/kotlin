@@ -6787,6 +6787,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("firstOrNull_returnNotNullIfNone2.kt")
+        public void testFirstOrNull_returnNotNullIfNone2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/firstOrNull_returnNotNullIfNone2.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("firstOrNull_return_comment.kt")
         public void testFirstOrNull_return_comment() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/firstOrNull_return_comment.kt");
