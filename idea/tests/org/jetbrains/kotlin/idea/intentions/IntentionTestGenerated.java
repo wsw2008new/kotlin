@@ -6643,6 +6643,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("any_ifReturn_nonBooleanResult.kt")
+        public void testAny_ifReturn_nonBooleanResult() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/any_ifReturn_nonBooleanResult.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("any_return.kt")
         public void testAny_return() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/any_return.kt");
