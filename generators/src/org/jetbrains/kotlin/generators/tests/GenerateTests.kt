@@ -19,7 +19,10 @@ package org.jetbrains.kotlin.generators.tests
 import junit.framework.TestCase
 import org.jetbrains.kotlin.AbstractDataFlowValueRenderingTest
 import org.jetbrains.kotlin.addImport.AbstractAddImportTest
-import org.jetbrains.kotlin.android.*
+import org.jetbrains.kotlin.android.AbstractAndroidCompletionTest
+import org.jetbrains.kotlin.android.AbstractAndroidFindUsagesTest
+import org.jetbrains.kotlin.android.AbstractAndroidGotoTest
+import org.jetbrains.kotlin.android.AbstractAndroidRenameTest
 import org.jetbrains.kotlin.android.configure.AbstractConfigureProjectTest
 import org.jetbrains.kotlin.annotation.AbstractAnnotationProcessorBoxTest
 import org.jetbrains.kotlin.asJava.AbstractCompilerLightClassTest
@@ -1062,11 +1065,11 @@ fun main(args: Array<String>) {
             model("reified/cases")
         }
 
-        testClass(javaClass<AbstractRttiTest>()) {
+        testClass<AbstractRttiTest>() {
             model("rtti/cases")
         }
 
-        testClass(javaClass<AbstractCastTest>()) {
+        testClass<AbstractCastTest>() {
             model("expression/cast/cases")
         }
     }
