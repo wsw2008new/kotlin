@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,13 +17,11 @@
 package org.jetbrains.kotlin.js.patterns.typePredicates
 
 import com.google.common.base.Predicate
-import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KotlinType
 
-public interface TypePredicate : Predicate<JetType> {
-    override fun apply(type: JetType?): Boolean
+public interface TypePredicate : Predicate<KotlinType> {
+    override fun apply(type: KotlinType?): Boolean
 }
 
 private val KOTLIN = TypePredicateImpl("kotlin")
@@ -39,15 +37,15 @@ public val COMPARABLE: TypePredicate = KOTLIN.inner("Comparable")
 private class TypePredicateImpl
     private constructor (private val nameParts: List<String>)
 : TypePredicate {
-    public constructor(name: String) : this(listOf(name))
+    constructor(name: String) : this(listOf(name))
 
-    override fun apply(type: JetType?): Boolean {
-        var descriptor: DeclarationDescriptor? = type?.getConstructor()?.getDeclarationDescriptor() ?: return false
+    override fun apply(type: KotlinType?): Boolean {
+        var descriptor: DeclarationDescriptor? = type?.constructor?.declarationDescriptor ?: return false
 
         for (i in nameParts.lastIndex downTo 0) {
-            if (nameParts[i] != descriptor?.getName()?.asString()) return false
+            if (nameParts[i] != descriptor?.name?.asString()) return false
 
-            descriptor = descriptor?.getContainingDeclaration()
+            descriptor = descriptor?.containingDeclaration
         }
 
         return true
