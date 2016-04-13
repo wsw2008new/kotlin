@@ -23,7 +23,7 @@ import org.jetbrains.uast.psi.PsiElementBacked
 class JavaUAssertExpression(
         override val psi: PsiAssertStatement,
         override val parent: UElement
-) : JavaAbstractUElement(), UCallExpression, PsiElementBacked {
+) : JavaAbstractUExpression(), UCallExpression, PsiElementBacked {
     val condition: UExpression by lz { JavaConverter.convertOrEmpty(psi.assertCondition, this) }
     val message: UExpression? by lz { JavaConverter.convertOrNull(psi.assertDescription, this) }
 

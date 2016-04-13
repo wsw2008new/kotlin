@@ -114,7 +114,7 @@ public class WrongCallDetector extends Detector implements UastScanner {
         UFunction resolved = node.resolve(context);
         if (resolved != null && resolved.getKind() != UastFunctionKind.CONSTRUCTOR) {
             UClass containingClass = UastUtils.getContainingClass(resolved);
-            if (containingClass == null || !containingClass.isSubclassOf(CLASS_VIEW)) {
+            if (containingClass == null || !containingClass.isSubclassOf(CLASS_VIEW, true)) {
                 return;
             }
         }

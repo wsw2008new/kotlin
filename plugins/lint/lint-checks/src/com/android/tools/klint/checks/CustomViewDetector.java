@@ -129,7 +129,7 @@ public class CustomViewDetector extends Detector implements UastScanner {
             }
 
             String className = resolvedClass.getName();
-            if (resolvedClass.isSubclassOf(CLASS_VIEW)) {
+            if (resolvedClass.isSubclassOf(CLASS_VIEW, true)) {
                 if (!styleableName.equals(className)) {
                     String message = String.format(
                       "By convention, the custom view (`%1$s`) and the declare-styleable (`%2$s`) "
@@ -138,7 +138,7 @@ public class CustomViewDetector extends Detector implements UastScanner {
                       className, styleableName);
                     context.report(ISSUE, node, context.getLocation(expression), message);
                 }
-            } else if (resolvedClass.isSubclassOf(CLASS_VIEWGROUP + DOT_LAYOUT_PARAMS)) {
+            } else if (resolvedClass.isSubclassOf(CLASS_VIEWGROUP + DOT_LAYOUT_PARAMS, true)) {
                 UClass outer = UastUtils.getContainingClass(resolvedClass);
                 if (outer == null) {
                     return;

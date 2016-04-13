@@ -2008,7 +2008,7 @@ public class IconDetector extends ResourceXmlDetector implements UastScanner {
                 return;
             }
 
-            List<String> parts = UastUtils.asQualifiedIdentifiers(UastUtils.getQualifiedCallElement(node));
+            List<String> parts = UastUtils.asQualifiedPath(UastUtils.getQualifiedCallElement(node));
 
             String typeName = reference.getIdentifier();
             if (NOTIFICATION_CLASS.equals(typeName)) {

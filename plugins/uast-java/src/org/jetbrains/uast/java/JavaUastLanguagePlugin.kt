@@ -22,8 +22,7 @@ import org.jetbrains.uast.java.expressions.JavaUSynchronizedExpression
 
 object JavaUastLanguagePlugin : UastLanguagePlugin {
     override val converter: UastConverter = JavaConverter
-    override val visitorExtensions: List<UastVisitorExtension>
-        get() = emptyList()
+    override val visitorExtensions = emptyList<UastVisitorExtension>()
 }
 
 internal object JavaConverter : UastConverter {
@@ -105,18 +104,16 @@ internal object JavaConverter : UastConverter {
             JavaUQualifiedExpression(expression, parent)
         } else {
             val name = expression.referenceName ?: "<error name>"
-            val element = expression.referenceNameElement ?: expression
-            JavaUSimpleReferenceExpression(element, name, parent)
+            JavaUSimpleReferenceExpression(expression, name, parent)
         }
     }
 
     internal fun convert(expression: PsiQualifiedReferenceElement, parent: UElement): UExpression {
         val referenceName = expression.referenceName ?: "<error name>"
-        val referenceNameElement = expression.element ?: expression
 
         return JavaUCompositeQualifiedExpression(parent).apply {
             receiver = expression.qualifier?.let { convert(it, this) } as? UExpression ?: EmptyUExpression(parent)
-            selector = JavaUSimpleReferenceExpression(referenceNameElement, referenceName, this)
+            selector = JavaUSimpleReferenceExpression(expression, referenceName, this)
         }
     }
 

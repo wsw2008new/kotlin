@@ -193,7 +193,7 @@ public class ViewTypeDetector extends ResourceXmlDetector implements UastScanner
             // to handle variable references too
             if (first instanceof UQualifiedExpression) {
                 if (UastUtils.startsWithQualified(first, "R.id")) { //$NON-NLS-1$
-                    String id = ((UQualifiedExpression) first).getSelectorAsIdentifier();
+                    String id = ((UQualifiedExpression) first).getIdentifier();
 
                     if (id != null) {
                         if (client.supportsProjectResources()) {

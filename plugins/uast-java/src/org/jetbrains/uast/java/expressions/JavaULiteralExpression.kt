@@ -23,7 +23,7 @@ import org.jetbrains.uast.psi.PsiElementBacked
 class JavaULiteralExpression(
         override val psi: PsiLiteralExpression,
         override val parent: UElement
-) : JavaAbstractUElement(), ULiteralExpression, PsiElementBacked, JavaUElementWithType {
+) : JavaAbstractUExpression(), ULiteralExpression, PsiElementBacked {
     override fun evaluate() = psi.value
     override val value by lz { evaluate() }
 }

@@ -77,8 +77,8 @@ open class ApiDetector : Detector(), UastScanner {
             val nameElement = node.nameElement
 
             if (nameElement != null) {
-                for (type in node.superTypes) {
-                    checkVersion(context, nameElement, type.resolveClass(context))
+                for (clazz in node.getSuperClasses(context)) {
+                    checkVersion(context, nameElement, clazz)
                 }
             }
 
@@ -103,8 +103,7 @@ open class ApiDetector : Detector(), UastScanner {
                 val buildSdk = context.lintContext.getMainProject().getBuildSdk()
                 if (buildSdk == -1) return false
 
-                for (type in parentClass.superTypes) {
-                    val clazz = type.resolve(context) ?: continue
+                for (clazz in parentClass.getSuperClasses(context)) {
                     if (!isSdkClass(clazz)) continue
                     val internalName = clazz.internalName ?: continue
 
@@ -225,7 +224,7 @@ open class ApiDetector : Detector(), UastScanner {
                             val value = (valueNode as ULiteralExpression).value as String
                             return SdkVersionInfo.getApiByBuildCode(value, true)
                         } else if (valueNode is UQualifiedExpression) {
-                            val codename = valueNode.getSelectorAsIdentifier();
+                            val codename = valueNode.identifier ?: return -1
                             return SdkVersionInfo.getApiByBuildCode(codename, true)
                         } else if (valueNode is USimpleReferenceExpression) {
                             val codename = valueNode.identifier;

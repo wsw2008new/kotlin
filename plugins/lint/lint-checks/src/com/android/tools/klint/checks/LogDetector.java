@@ -304,7 +304,7 @@ public class LogDetector extends Detector implements UastScanner {
         }
         String levelString = isLoggableLevel.toString();
         if (isLoggableLevel instanceof UQualifiedExpression) {
-            String identifier = ((UQualifiedExpression)isLoggableLevel).getSelectorAsIdentifier();
+            String identifier = ((UQualifiedExpression)isLoggableLevel).getIdentifier();
             if (identifier != null) {
                 levelString = identifier;
             }

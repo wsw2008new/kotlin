@@ -108,7 +108,13 @@ fun List<UElement>.acceptList(visitor: UastVisitor) {
 }
 
 @Suppress("UNCHECKED_CAST")
-fun UClass.findFunctions(name: String) = declarations.filter { it is UFunction && it.matchesName(name) } as List<UFunction>
+fun UClass.findFunctions(name: String): List<UFunction> {
+    return declarations.filter { it is UFunction && it.matchesName(name) } as List<UFunction>
+}
+
+fun UClass.findVariable(name: String): UVariable? {
+    return declarations.firstOrNull { it is UVariable && it.matchesName(name) } as? UVariable
+}
 
 fun UCallExpression.getReceiver(): UExpression? = (this.parent as? UQualifiedExpression)?.receiver
 
@@ -135,8 +141,8 @@ fun UAnnotated.findAnnotation(fqName: String) = annotations.firstOrNull { it.fqN
  */
 fun UClass.getAllDeclarations(context: UastContext): List<UDeclaration> = mutableListOf<UDeclaration>().apply {
     this += declarations
-    for (superType in superTypes) {
-        superType.resolveClass(context)?.declarations?.let { this += it }
+    for (superClass in getSuperClasses(context)) {
+        this += superClass.declarations
     }
 }
 
@@ -160,10 +166,11 @@ fun UCallExpression.getQualifiedCallElement(): UExpression {
     return findParent(parent as? UExpression) ?: this
 }
 
-inline fun <reified T: UElement> UElement.getParentOfType(): T? = getParentOfType(T::class.java)
+inline fun <reified T: UElement> UElement.getParentOfType(strict: Boolean = true): T? = getParentOfType(T::class.java, strict)
 
-@JvmOverloads
-fun <T: UElement> UElement.getParentOfType(clazz: Class<T>, strict: Boolean = true): T? {
+fun <T: UElement> UElement.getParentOfType(clazz: Class<T>): T? = getParentOfType(clazz, strict = true)
+
+fun <T: UElement> UElement.getParentOfType(clazz: Class<T>, strict: Boolean): T? {
     tailrec fun findParent(element: UElement?): UElement? {
         return when {
             element == null -> null
@@ -173,7 +180,21 @@ fun <T: UElement> UElement.getParentOfType(clazz: Class<T>, strict: Boolean = tr
     }
 
     @Suppress("UNCHECKED_CAST")
-    return findParent(if (!strict) this else parent) as? T
+    return findParent(if (strict) parent else this) as T
+}
+
+fun <T: UElement> UElement.getParentOfType(clazz: Class<T>, strict: Boolean, vararg stopAt: Class<out UElement>): T? {
+    tailrec fun findParent(element: UElement?): UElement? {
+        return when {
+            element == null -> null
+            clazz.isInstance(element) -> element
+            stopAt.any { it.isInstance(element) } -> null
+            else -> findParent(element.parent)
+        }
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    return findParent(if (strict) parent else this) as T
 }
 
 fun <T> UClass.findStaticMemberOfType(name: String, type: Class<out T>): T? {
@@ -192,7 +213,7 @@ fun <T> UClass.findStaticMemberOfType(name: String, type: Class<out T>): T? {
     } as T
 }
 
-fun UExpression.asQualifiedIdentifiers(): List<String>? {
+fun UExpression.asQualifiedPath(): List<String>? {
     var error = false
     val list = mutableListOf<String>()
     fun addIdentifiers(expr: UQualifiedExpression) {
@@ -213,18 +234,18 @@ fun UExpression.asQualifiedIdentifiers(): List<String>? {
         is USimpleReferenceExpression -> listOf(identifier)
         else -> return null
     }
-    return if (error) null else list
+    return if (error || list.isEmpty()) null else list
 }
 
 fun UExpression.matchesQualified(fqName: String): Boolean {
-    val identifiers = this.asQualifiedIdentifiers() ?: return false
-    val passedIdentifiers = fqName.split('.')
+    val identifiers = this.asQualifiedPath() ?: return false
+    val passedIdentifiers = fqName.trim('.').split('.')
     return identifiers == passedIdentifiers
 }
 
 fun UExpression.startsWithQualified(fqName: String): Boolean {
-    val identifiers = this.asQualifiedIdentifiers() ?: return false
-    val passedIdentifiers = fqName.split('.')
+    val identifiers = this.asQualifiedPath() ?: return false
+    val passedIdentifiers = fqName.trim('.').split('.')
     identifiers.forEachIndexed { i, identifier ->
         if (identifier != passedIdentifiers[i]) return false
     }
@@ -232,8 +253,8 @@ fun UExpression.startsWithQualified(fqName: String): Boolean {
 }
 
 fun UExpression.endsWithQualified(fqName: String): Boolean {
-    val identifiers = this.asQualifiedIdentifiers() ?: return false
-    val passedIdentifiers = fqName.split('.')
+    val identifiers = this.asQualifiedPath() ?: return false
+    val passedIdentifiers = fqName.trim('.').split('.')
     identifiers.forEachIndexed { i, identifier ->
         if (identifier != passedIdentifiers[i]) return false
     }

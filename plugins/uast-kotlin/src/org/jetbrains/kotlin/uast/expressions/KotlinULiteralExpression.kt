@@ -18,10 +18,12 @@ package org.jetbrains.kotlin.uast
 
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isNullExpression
 import org.jetbrains.kotlin.psi.KtConstantExpression
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.ULiteralExpression
+import org.jetbrains.uast.UType
 import org.jetbrains.uast.psi.PsiElementBacked
 
 class KotlinULiteralExpression(

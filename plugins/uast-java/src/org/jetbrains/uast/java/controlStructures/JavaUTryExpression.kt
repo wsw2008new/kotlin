@@ -23,7 +23,7 @@ import org.jetbrains.uast.psi.PsiElementBacked
 class JavaUTryExpression(
         override val psi: PsiTryStatement,
         override val parent: UElement
-) : JavaAbstractUElement(), UTryExpression, PsiElementBacked {
+) : JavaAbstractUExpression(), UTryExpression, PsiElementBacked {
     override val tryClause by lz { JavaConverter.convertOrEmpty(psi.tryBlock, this) }
     override val catchClauses by lz { psi.catchSections.map { JavaUCatchClause(it, this) } }
     override val finallyClause by lz { psi.finallyBlock?.let { JavaConverter.convert(it, this) } }

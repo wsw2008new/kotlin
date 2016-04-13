@@ -197,7 +197,7 @@ public class SharedPrefsDetector extends Detector implements UastScanner {
                 mSeenTarget = true;
             } else if (mAllowCommitBeforeTarget || mSeenTarget ||
                     (qualifiedElement instanceof UQualifiedExpression &&
-                    ((UQualifiedExpression)qualifiedElement).getReceiver() == mTarget)) {
+                     ((UQualifiedExpression)qualifiedElement).getReceiver() == mTarget)) {
                 String name = node.getFunctionName();
                 boolean isCommit = "commit".equals(name);
                 if (isCommit || "apply".equals(name)) { //$NON-NLS-1$ //$NON-NLS-2$
@@ -208,7 +208,7 @@ public class SharedPrefsDetector extends Detector implements UastScanner {
                     UFunction method = node.resolve(mContext);
                     if (method != null) {
                         UClass clz = UastUtils.getContainingClassOrEmpty(method);
-                        if (clz.isSubclassOf("android.content.SharedPreferences.Editor")
+                        if (clz.isSubclassOf("android.content.SharedPreferences.Editor", true)
                             && mContext.getLintContext().getProject().getMinSdkVersion().getApiLevel() >= 9) {
                             // See if the return value is read: can only replace commit with
                             // apply if the return value is not considered

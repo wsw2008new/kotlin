@@ -24,7 +24,7 @@ import org.jetbrains.uast.psi.PsiElementBacked
 class JavaUContinueExpression(
         override val psi: PsiContinueStatement,
         override val parent: UElement
-) : JavaAbstractUElement(), UContinueExpression, PsiElementBacked {
+) : JavaAbstractUExpression(), UContinueExpression, PsiElementBacked {
     override val label: String?
         get() = psi.labelIdentifier?.text
 }

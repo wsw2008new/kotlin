@@ -16,7 +16,10 @@
 
 package org.jetbrains.uast.java
 
+import com.intellij.psi.JavaPsiFacade
+import com.intellij.psi.PsiExpression
 import org.jetbrains.uast.UElement
+import org.jetbrains.uast.UExpression
 import org.jetbrains.uast.psi.PsiElementBacked
 
 abstract class JavaAbstractUElement : UElement {
@@ -26,5 +29,17 @@ abstract class JavaAbstractUElement : UElement {
         }
 
         return this.psi == other.psi
+    }
+}
+
+abstract class JavaAbstractUExpression : UExpression {
+    override fun evaluate(): Any? {
+        val psi = (this as? PsiElementBacked)?.psi ?: return null
+        return JavaPsiFacade.getInstance(psi.project).constantEvaluationHelper.computeConstantExpression(psi)
+    }
+
+    override fun getExpressionType(): JavaUType? {
+        val expression = (this as? PsiElementBacked)?.psi as? PsiExpression ?: return null
+        return expression.type?.let { JavaConverter.convert(it, this) }
     }
 }

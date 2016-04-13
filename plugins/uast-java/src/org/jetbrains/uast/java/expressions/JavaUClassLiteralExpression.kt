@@ -24,6 +24,6 @@ import org.jetbrains.uast.psi.PsiElementBacked
 class JavaUClassLiteralExpression(
         override val psi: PsiClassObjectAccessExpression,
         override val parent: UElement
-) : JavaAbstractUElement(), UClassLiteralExpression, PsiElementBacked, JavaUElementWithType {
+) : JavaAbstractUExpression(), UClassLiteralExpression, PsiElementBacked {
     override val type: UType by lz { JavaConverter.convert(psi.type, this) }
 }

@@ -72,4 +72,12 @@ interface UAnnotated : UElement {
      * Returns the list of annotations applied to the current element.
      */
     val annotations: List<UAnnotation>
+
+    /**
+     * Looks up for annotation element using the annotation qualified name.
+     *
+     * @param fqName the qualified name to search
+     * @return the first annotation element with the specified qualified name, or null if there is no annotation with such name.
+     */
+    fun findAnnotation(fqName: String): UAnnotation? = annotations.firstOrNull { it.fqName == fqName }
 }

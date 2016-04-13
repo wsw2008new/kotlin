@@ -134,7 +134,7 @@ public class PreferenceActivityDetector extends Detector
             return;
         }
         String className = node.getName();
-        if (node.isSubclassOf(PREFERENCE_ACTIVITY)
+        if (node.isSubclassOf(PREFERENCE_ACTIVITY, true)
             && mExportedActivities.containsKey(className)) {
 
             // Ignore the issue if we target an API greater than 19 and the class in

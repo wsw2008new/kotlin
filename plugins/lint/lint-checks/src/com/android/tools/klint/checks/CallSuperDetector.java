@@ -124,7 +124,7 @@ public class CallSuperDetector extends Detector implements UastScanner {
             // is still dangerous if supporting older versions so flag
             // this for now (should make annotation carry metadata like
             // compileSdkVersion >= N).
-            if (!UastUtils.getContainingClassOrEmpty(method).isSubclassOf(CLASS_VIEW)) {
+            if (!UastUtils.getContainingClassOrEmpty(method).isSubclassOf(CLASS_VIEW, true)) {
                 return null;
             }
             List<UFunction> superFunctions = method.getSuperFunctions(context);
@@ -135,7 +135,7 @@ public class CallSuperDetector extends Detector implements UastScanner {
             // is updated to supply it once @CallSuper is available in
             // the support library
             if (!UastUtils.getContainingClassOrEmpty(method).isSubclassOf(
-                    "android.support.wearable.watchface.WatchFaceService.Engine")) {
+                    "android.support.wearable.watchface.WatchFaceService.Engine", true)) {
                 return null;
             }
             List<UFunction> superFunctions = method.getSuperFunctions(context);

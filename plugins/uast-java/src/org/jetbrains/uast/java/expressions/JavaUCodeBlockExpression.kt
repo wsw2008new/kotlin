@@ -23,6 +23,6 @@ import org.jetbrains.uast.psi.PsiElementBacked
 class JavaUCodeBlockExpression(
         override val psi: PsiCodeBlock,
         override val parent: UElement
-) : JavaAbstractUElement(), UBlockExpression, PsiElementBacked, JavaUElementWithType {
+) : JavaAbstractUExpression(), UBlockExpression, PsiElementBacked {
     override val expressions by lz { psi.statements.map { JavaConverter.convert(it, this) } }
 }

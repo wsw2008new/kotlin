@@ -58,17 +58,18 @@ interface UCallExpression : UExpression, UResolvable {
     open fun matchesFunctionName(name: String) = functionName == name
 
     /**
-     * Checks if the function name is [name], and the function containing class qualified name is [containingClassFqName].
+     * Checks if the function name is [name], and the function declaration's containing class qualified name is [containingClassFqName].
      *
      * @param containingClassFqName the required containing class qualified name.
      * @param name the function name to check against.
+     * @param context the Uast context
      * @return true if the call is a function call, the function name is [name],
      *              and the qualified name of the function direct containing class is [containingClassFqName],
      *         false otherwise.
      */
-    open fun matchesFunctionNameWithContaining(containingClassFqName: String, name: String): Boolean {
+    open fun matchesFunctionNameWithContaining(containingClassFqName: String, name: String, context: UastContext): Boolean {
         if (!matchesFunctionName(name)) return false
-        val containingClass = parent as? UClass ?: return false
+        val containingClass = resolve(context)?.getContainingClass() ?: return false
         return containingClass.matchesFqName(containingClassFqName)
     }
 

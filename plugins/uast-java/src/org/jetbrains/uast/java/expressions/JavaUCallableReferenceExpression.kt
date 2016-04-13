@@ -25,7 +25,7 @@ import org.jetbrains.uast.psi.PsiElementBacked
 class JavaUCallableReferenceExpression(
         override val psi: PsiMethodReferenceExpression,
         override val parent: UElement
-) : JavaAbstractUElement(), UCallableReferenceExpression, PsiElementBacked, JavaUElementWithType {
+) : JavaAbstractUExpression(), UCallableReferenceExpression, PsiElementBacked {
     override val qualifierExpression by lz { JavaConverter.convertOrNull(psi.qualifierExpression, this) }
     override val qualifierType by lz { JavaConverter.convert(psi.qualifierType?.type, this) }
     override val callableName: String

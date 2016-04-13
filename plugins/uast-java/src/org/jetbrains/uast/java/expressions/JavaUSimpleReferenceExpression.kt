@@ -17,6 +17,7 @@ package org.jetbrains.uast.java
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiJavaReference
+import com.intellij.psi.PsiReference
 import org.jetbrains.uast.*
 import org.jetbrains.uast.psi.PsiElementBacked
 
@@ -24,15 +25,21 @@ class JavaUSimpleReferenceExpression(
         override val psi: PsiElement,
         override val identifier: String,
         override val parent: UElement
-) : JavaAbstractUElement(), USimpleReferenceExpression, PsiElementBacked, JavaUElementWithType {
-    override fun resolve(context: UastContext) = psi.reference?.resolve()?.let { context.convert(it) } as? UDeclaration
+) : JavaAbstractUExpression(), USimpleReferenceExpression, PsiElementBacked {
+    override fun resolve(context: UastContext): UDeclaration? {
+        val resolvedElement = when (psi) {
+            is PsiReference -> psi.resolve()
+            else -> psi.reference?.resolve()
+        }
+        return resolvedElement?.let { context.convert(it) } as? UDeclaration
+    }
 }
 
 class JavaClassUSimpleReferenceExpression(
         override val identifier: String,
         val ref: PsiJavaReference,
         override val parent: UElement
-) : JavaAbstractUElement(), USimpleReferenceExpression, PsiElementBacked {
+) : JavaAbstractUExpression(), USimpleReferenceExpression, PsiElementBacked {
     override val psi: PsiElement?
         get() = ref.element
 

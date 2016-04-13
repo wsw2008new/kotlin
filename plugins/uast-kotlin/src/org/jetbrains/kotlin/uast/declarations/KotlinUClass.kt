@@ -110,16 +110,24 @@ class KotlinUClass(
             declarations + anonymousInitializers
     }
 
-    override val superTypes by lz {
-        val superTypes = resolveToDescriptor()?.typeConstructor?.supertypes ?: return@lz emptyList<UType>()
-        superTypes.map { KotlinConverter.convert(it, psi.project, this) }
+    override fun getSuperClasses(context: UastContext): List<UClass> {
+        val superTypes = resolveToDescriptor()?.typeConstructor?.supertypes ?: return emptyList()
+        val superClasses = mutableListOf<UClass>()
+        for (superType in superTypes) {
+            val declarationDescriptor = superType.constructor.declarationDescriptor ?: continue
+            val source = declarationDescriptor.toSource() ?: continue
+            val element = context.convert(source) as? UClass ?: continue
+            superClasses += element
+        }
+        return superClasses
     }
 
     override val annotations by lz { psi.getUastAnnotations(this) }
 
     override val visibility by lz { psi.getVisibility() }
 
-    override fun isSubclassOf(fqName: String): Boolean {
+    override fun isSubclassOf(fqName: String, strict: Boolean): Boolean {
+        if (!strict && this.fqName == fqName) return true
         val descriptor = psi.resolveToDescriptorIfAny() as? ClassDescriptor ?: return false
         return descriptor.defaultType.supertypes().any {
             it.constructor.declarationDescriptor?.fqNameSafe?.asString() == fqName

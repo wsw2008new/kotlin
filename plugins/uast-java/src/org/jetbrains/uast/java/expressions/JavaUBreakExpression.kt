@@ -24,7 +24,7 @@ import org.jetbrains.uast.psi.PsiElementBacked
 class JavaUBreakExpression(
         override val psi: PsiBreakStatement,
         override val parent: UElement
-) : JavaAbstractUElement(), UBreakExpression, PsiElementBacked {
+) : JavaAbstractUExpression(), UBreakExpression, PsiElementBacked {
     override val label: String?
         get() = psi.labelIdentifier?.text
 }

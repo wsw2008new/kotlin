@@ -31,6 +31,9 @@ open class UastVisibility(val name: String) {
     }
 
     fun isPublic() = this == PUBLIC
+    fun isPrivate() = this == PRIVATE
+    fun isProtected() = this == PROTECTED
+    fun isLocal() = this == LOCAL
 
     override fun toString(): String {
         return "UastVisibility(name='$name')"

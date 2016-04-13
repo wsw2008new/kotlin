@@ -23,7 +23,7 @@ import org.jetbrains.uast.psi.PsiElementBacked
 class JavaUForEachExpression(
         override val psi: PsiForeachStatement,
         override val parent: UElement
-) : JavaAbstractUElement(), UForEachExpression, PsiElementBacked {
+) : JavaAbstractUExpression(), UForEachExpression, PsiElementBacked {
     override val variable by lz { JavaConverter.convert(psi.iterationParameter, this) }
 
     override val iteratedValue by lz { JavaConverter.convertOrEmpty(psi.iteratedValue, this) }

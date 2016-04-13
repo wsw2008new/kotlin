@@ -66,7 +66,7 @@ public class GetSignaturesDetector extends Detector implements UastScanner {
         UFunction resolved = node.resolve(context);
 
         if (resolved == null ||
-                !UastUtils.getContainingClassOrEmpty(resolved).isSubclassOf(PACKAGE_MANAGER_CLASS)) {
+                !UastUtils.getContainingClassOrEmpty(resolved).isSubclassOf(PACKAGE_MANAGER_CLASS, true)) {
             return;
         }
 

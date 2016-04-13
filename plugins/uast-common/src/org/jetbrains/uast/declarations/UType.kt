@@ -68,6 +68,16 @@ interface UType : UElement, UNamed, UFqNamed, UAnnotated, UResolvable {
      */
     val isByte: Boolean
 
+    /**
+     * Returns true if the type is [lava.lang.String], false otherwise.
+     */
+    val isString: Boolean
+
+    /**
+     * Returns true if the type is [java.lang.Object], false otherwise.
+     */
+    val isObject: Boolean
+
     override fun logString() = "UType ($name)"
     override fun renderString() = name
 
@@ -114,6 +124,8 @@ object UastErrorType : UType, NoAnnotations {
     override val isDouble = false
     override val isChar = false
     override val isByte = false
+    override val isString = false
+    override val isObject = false
     override val parent = null
     override val name = ERROR_NAME
     override val fqName = null

@@ -86,18 +86,15 @@ public class ParcelDetector extends Detector implements UastScanner {
                 return true;
             }
 
-            for (UType reference : node.getSuperTypes()) {
-                String name = reference.getName();
+            for (UClass clazz : node.getSuperClasses(mContext)) {
+                String name = clazz.getName();
                 if (name.equals("Parcelable")) {
                     UVariable field = UastUtils.findStaticMemberOfType(node, "CREATOR", UVariable.class);
                     if (field == null) {
                         // Make doubly sure that we're really implementing
                         // android.os.Parcelable
-                        UClass parcelable = reference.resolve(mContext);
-                        if (parcelable != null) {
-                            if (!parcelable.isSubclassOf("android.os.Parcelable")) {
-                                return true;
-                            }
+                        if (!clazz.isSubclassOf("android.os.Parcelable", true)) {
+                            return true;
                         }
                         Location location = mContext.getLocation(node.getNameElement());
                         mContext.report(ISSUE, node, location,

@@ -122,12 +122,12 @@ public class AppCompatCallDetector extends Detector implements UastScanner {
         UFunction resolved = node.resolve(context);
         if (resolved != null) {
             UClass containingClass = UastUtils.getContainingClass(resolved);
-            if (containingClass != null && containingClass.isSubclassOf(CLASS_ACTIVITY)) {
+            if (containingClass != null && containingClass.isSubclassOf(CLASS_ACTIVITY, true)) {
                 // Make sure that the calling context is a subclass of ActionBarActivity;
                 // we don't want to flag these calls if they are in non-appcompat activities
                 // such as PreferenceActivity (see b.android.com/58512)
                 return UastUtils.getContainingClassOrEmpty(node)
-                    .isSubclassOf("android.support.v7.app.ActionBarActivity");
+                    .isSubclassOf("android.support.v7.app.ActionBarActivity", true);
             }
         }
         return false;

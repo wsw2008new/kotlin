@@ -54,9 +54,9 @@ interface UClass : UDeclaration, UFqNamed, UModifierOwner, UVisibilityOwner, UAn
         get() = null
 
     /**
-     * Returns the all supertypes of this class.
+     * Returns the all superclasses of this class.
      */
-    val superTypes: List<UType>
+    fun getSuperClasses(context: UastContext): List<UClass>
 
     /**
      * Returns class declarations (nested classes, constructors, functions, variables, etc.).
@@ -96,7 +96,7 @@ interface UClass : UDeclaration, UFqNamed, UModifierOwner, UVisibilityOwner, UAn
      * @return true if the class is the *subclass* of the class with the specified [fqName],
      *         false if the class qualified name is [fqName] or if the class is not a subclass of the class with the specified [fqName]
      */
-    fun isSubclassOf(fqName: String) : Boolean
+    fun isSubclassOf(fqName: String, strict: Boolean = true) : Boolean
 
     /**
      * Get the direct superclass of this class.
@@ -134,9 +134,9 @@ object UClassNotResolved : UClass {
     override val isAnonymous = true
     override val kind = UastClassKind.CLASS
     override val visibility = UastVisibility.PRIVATE
-    override val superTypes = emptyList<UType>()
     override val declarations = emptyList<UDeclaration>()
-    override fun isSubclassOf(fqName: String) = false
+    override fun getSuperClasses(context: UastContext) = emptyList<UClass>()
+    override fun isSubclassOf(fqName: String, strict: Boolean) = false
     override val companions = emptyList<UClass>()
     override val defaultType = UastErrorType
     override val nameElement = null

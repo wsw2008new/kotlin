@@ -84,7 +84,7 @@ public class AddJavascriptInterfaceDetector extends Detector implements UastScan
         // Ignore if the method doesn't fit our description.
         UFunction resolvedFunction = node.resolveOrEmpty(context);
         UClass containingClass = UastUtils.getContainingClassOrEmpty(resolvedFunction);
-        if (!containingClass.isSubclassOf(WEB_VIEW)) {
+        if (!containingClass.isSubclassOf(WEB_VIEW, true)) {
             return;
         }
         List<UVariable> valueParameters = resolvedFunction.getValueParameters();

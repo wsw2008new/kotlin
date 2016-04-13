@@ -23,7 +23,7 @@ import org.jetbrains.uast.psi.PsiElementBacked
 class JavaUAssignmentExpression(
         override val psi: PsiAssignmentExpression,
         override val parent: UElement
-) : JavaAbstractUElement(), UBinaryExpression, PsiElementBacked, JavaUElementWithType, JavaEvaluatableUElement {
+) : JavaAbstractUExpression(), UBinaryExpression, PsiElementBacked {
     override val leftOperand by lz { JavaConverter.convert(psi.lExpression, this) }
     override val rightOperand by lz { JavaConverter.convertOrEmpty(psi.rExpression, this) }
     override val operator by lz { psi.operationTokenType.getOperatorType() }

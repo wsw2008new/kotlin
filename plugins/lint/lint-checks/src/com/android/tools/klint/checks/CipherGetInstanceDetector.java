@@ -73,7 +73,7 @@ public class CipherGetInstanceDetector extends Detector implements UastScanner {
     @Override
     public void visitCall(UastAndroidContext context, UCallExpression node) {
         UClass containingClass = UastUtils.getContainingClass(node);
-        if (containingClass == null || !containingClass.isSubclassOf(CIPHER)) {
+        if (containingClass == null || !containingClass.isSubclassOf(CIPHER, true)) {
             return;
         }
 

@@ -18,6 +18,7 @@ package org.jetbrains.uast.java
 import com.intellij.ide.util.JavaAnonymousClassesHelper
 import com.intellij.psi.*
 import com.intellij.psi.util.ClassUtil
+import com.intellij.psi.util.InheritanceUtil
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.PsiTypesUtil
 import org.jetbrains.uast.*
@@ -62,8 +63,12 @@ class JavaUClass(
 
     override val internalName by lz { getInternalName(psi) }
 
-    override val superTypes by lz {
-        psi.extendsListTypes.map { JavaConverter.convert(it, this) } + psi.implementsListTypes.map { JavaConverter.convert(it, this) }
+    override fun getSuperClasses(context: UastContext): List<UClass> {
+        val superClasses = mutableListOf<UClass>()
+        for (superClass in InheritanceUtil.getSuperClasses(psi)) {
+            (context.convert(superClass) as? UClass)?.let { superClasses += it }
+        }
+        return superClasses
     }
 
     override fun getSuperClass(context: UastContext) = context.convert(psi.superClass) as? UClass
@@ -88,8 +93,8 @@ class JavaUClass(
         declarations
     }
 
-    override fun isSubclassOf(fqName: String): Boolean {
-        return psi.supers.any { base -> psi.isInheritor(base, false) }
+    override fun isSubclassOf(fqName: String, strict: Boolean): Boolean {
+        return InheritanceUtil.isInheritor(psi, strict, fqName)
     }
 
     private companion object {

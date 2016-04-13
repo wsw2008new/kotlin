@@ -69,11 +69,27 @@ class KotlinUType(
     override val isByte: Boolean
         get() = checkType(KotlinBuiltIns.FQ_NAMES._byte)
 
+    override val isString: Boolean
+        get() = checkType(KotlinBuiltIns.FQ_NAMES.string)
+
+    override val isObject: Boolean
+        get() = checkType(KotlinBuiltIns.FQ_NAMES.any)
+
     private fun checkType(fqNameUnsafe: FqNameUnsafe): Boolean {
         val descriptor = type.constructor.declarationDescriptor
         return descriptor is ClassDescriptor
                && descriptor.getName() == fqNameUnsafe.shortName()
                && fqNameUnsafe == DescriptorUtils.getFqName(descriptor)
+    }
+
+    override fun matchesFqName(fqName: String): Boolean {
+        return when (fqName) {
+            "java.lang.CharSequence" -> super.matchesFqName(fqName) ||
+                                        super.matchesFqName(KotlinBuiltIns.FQ_NAMES.charSequence.asString())
+            "java.lang.String" -> super.matchesFqName(fqName) ||
+                                  super.matchesFqName(KotlinBuiltIns.FQ_NAMES.string.asString())
+            else -> super.matchesFqName(fqName)
+        }
     }
 
     //TODO support descriptor annotations

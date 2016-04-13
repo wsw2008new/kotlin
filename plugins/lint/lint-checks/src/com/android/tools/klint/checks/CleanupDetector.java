@@ -184,33 +184,33 @@ public class CleanupDetector extends Detector implements UastScanner {
         }
 
         if ((OBTAIN.equals(name) || OBTAIN_NO_HISTORY.equals(name)) &&
-                containingClass.isSubclassOf(MOTION_EVENT_CLS)) {
+                containingClass.isSubclassOf(MOTION_EVENT_CLS, true)) {
             checkRecycled(context, node, MOTION_EVENT_CLS, RECYCLE);
-        } else if (OBTAIN.equals(name) && containingClass.isSubclassOf(PARCEL_CLS)) {
+        } else if (OBTAIN.equals(name) && containingClass.isSubclassOf(PARCEL_CLS, true)) {
             checkRecycled(context, node, PARCEL_CLS, RECYCLE);
         } else if (OBTAIN.equals(name) &&
-                containingClass.isSubclassOf(VELOCITY_TRACKER_CLS)) {
+                containingClass.isSubclassOf(VELOCITY_TRACKER_CLS, true)) {
             checkRecycled(context, node, VELOCITY_TRACKER_CLS, RECYCLE);
         } else if ((OBTAIN_STYLED_ATTRIBUTES.equals(name)
                 || OBTAIN_ATTRIBUTES.equals(name)
                 || OBTAIN_TYPED_ARRAY.equals(name)) &&
-                (containingClass.isSubclassOf(CLASS_CONTEXT) ||
-                        containingClass.isSubclassOf(RESOURCES_CLS))) {
+                (containingClass.isSubclassOf(CLASS_CONTEXT, true) ||
+                        containingClass.isSubclassOf(RESOURCES_CLS, true))) {
             UType returnType = method.getReturnType();
             if (returnType != null && returnType.matchesFqName(TYPED_ARRAY_CLS)) {
                 checkRecycled(context, node, TYPED_ARRAY_CLS, RECYCLE);
             }
         } else if (ACQUIRE_CPC.equals(name) && containingClass.isSubclassOf(
-                CONTENT_RESOLVER_CLS)) {
+                CONTENT_RESOLVER_CLS, true)) {
             checkRecycled(context, node, CONTENT_PROVIDER_CLIENT_CLS, RELEASE);
         } else if ((QUERY.equals(name)
                 || RAW_QUERY.equals(name)
                 || QUERY_WITH_FACTORY.equals(name)
                 || RAW_QUERY_WITH_FACTORY.equals(name))
-                && (containingClass.isSubclassOf(SQLITE_DATABASE_CLS) ||
-                    containingClass.isSubclassOf(CONTENT_RESOLVER_CLS) ||
-                    containingClass.isSubclassOf(CONTENT_PROVIDER_CLS) ||
-                    containingClass.isSubclassOf(CONTENT_PROVIDER_CLIENT_CLS))) {
+                && (containingClass.isSubclassOf(SQLITE_DATABASE_CLS, true) ||
+                    containingClass.isSubclassOf(CONTENT_RESOLVER_CLS, true) ||
+                    containingClass.isSubclassOf(CONTENT_PROVIDER_CLS, true) ||
+                    containingClass.isSubclassOf(CONTENT_PROVIDER_CLIENT_CLS, true))) {
             // Other potential cursors-returning methods that should be tracked:
             //    android.app.DownloadManager#query
             //    android.content.ContentProviderClient#query
@@ -250,7 +250,7 @@ public class CleanupDetector extends Detector implements UastScanner {
                 UDeclaration resolved = call.resolve(mContext);
                 if (resolved != null) {
                     UClass containingClass = UastUtils.getContainingClassOrEmpty(resolved);
-                    if (containingClass.isSubclassOf(recycleType)) {
+                    if (containingClass.isSubclassOf(recycleType, true)) {
                         // Yes, called the right recycle() method; now make sure
                         // we're calling it on the right variable
                         UElement parent = call.getParent();
@@ -403,8 +403,8 @@ public class CleanupDetector extends Detector implements UastScanner {
         UFunction resolved = call.resolve(context);
         if (resolved != null) {
             UClass containingClass = UastUtils.getContainingClassOrEmpty(resolved);
-            return containingClass.isSubclassOf(fragmentClass) ||
-                    containingClass.isSubclassOf(v4FragmentClass);
+            return containingClass.isSubclassOf(fragmentClass, true) ||
+                    containingClass.isSubclassOf(v4FragmentClass, true);
         }
 
         return false;
@@ -439,8 +439,8 @@ public class CleanupDetector extends Detector implements UastScanner {
             UFunction method = node.resolve(context);
             if (method != null) {
                 UClass containingClass = UastUtils.getContainingClassOrEmpty(method);
-                if (containingClass.isSubclassOf(FRAGMENT_MANAGER_CLS)
-                        || containingClass.isSubclassOf(FRAGMENT_MANAGER_V4_CLS)) {
+                if (containingClass.isSubclassOf(FRAGMENT_MANAGER_CLS, true)
+                        || containingClass.isSubclassOf(FRAGMENT_MANAGER_V4_CLS, true)) {
                     return true;
                 }
             }

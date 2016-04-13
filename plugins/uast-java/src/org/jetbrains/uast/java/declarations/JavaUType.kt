@@ -62,6 +62,12 @@ class JavaUType(
     override val isByte: Boolean
         get() = check("byte", "java.lang.Byte")
 
+    override val isString: Boolean
+        get() = (psi as? PsiClassType)?.resolve()?.qualifiedName == "java.lang.String"
+
+    override val isObject: Boolean
+        get() = (psi as? PsiClassType)?.resolve()?.qualifiedName == "java.lang.Object"
+
     @Suppress("NOTHING_TO_INLINE")
     private inline fun check(unboxedType: String, boxedType: String): Boolean =
             name == unboxedType || (psi as? PsiClassType)?.resolve()?.qualifiedName == boxedType

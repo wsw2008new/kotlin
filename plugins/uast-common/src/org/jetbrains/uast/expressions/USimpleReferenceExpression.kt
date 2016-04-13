@@ -15,16 +15,17 @@
  */
 package org.jetbrains.uast
 
+import org.jetbrains.uast.expressions.UReferenceExpression
 import org.jetbrains.uast.visitor.UastVisitor
 
 /**
  * Represents a simple reference expression (a non-qualified identifier).
  */
-interface USimpleReferenceExpression : UExpression, UResolvable {
+interface USimpleReferenceExpression : UReferenceExpression {
     /**
      * Returns the identifier name.
      */
-    val identifier: String
+    override val identifier: String
 
     override fun accept(visitor: UastVisitor) {
         visitor.visitSimpleReferenceExpression(this)

@@ -140,7 +140,7 @@ public class JavaContext extends Context implements UastAndroidContext {
         UFunction resolved = node.resolve(this);
         UClass containingClass = UastUtils.getContainingClass(resolved);
         if (resolved != null && containingClass != null) {
-            if (containingClass.isSubclassOf(CLASS_CONTEXT)) {
+            if (containingClass.isSubclassOf(CLASS_CONTEXT, true)) {
                 return true;
             }
         }

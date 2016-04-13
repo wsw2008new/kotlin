@@ -1292,7 +1292,7 @@ public class StringFormatDetector extends ResourceXmlDetector implements UastSca
         UFunction resolvedMethod = call.resolve(context);
         if (resolvedMethod != null) {
             UClass containingClass = UastUtils.getContainingClassOrEmpty(resolvedMethod);
-            return containingClass.isSubclassOf(SharedPrefsDetector.ANDROID_CONTENT_SHARED_PREFERENCES);
+            return containingClass.isSubclassOf(SharedPrefsDetector.ANDROID_CONTENT_SHARED_PREFERENCES, true);
         }
 
         return false; // not certain
