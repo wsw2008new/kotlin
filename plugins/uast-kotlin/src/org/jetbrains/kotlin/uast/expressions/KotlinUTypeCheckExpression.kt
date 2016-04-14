@@ -26,6 +26,6 @@ class KotlinUTypeCheckExpression(
         override val parent: UElement
 ) : KotlinAbstractUElement(), UBinaryExpressionWithType, PsiElementBacked, KotlinUElementWithType, KotlinEvaluatableUElement {
     override val operand by lz { KotlinConverter.convert(psi.leftHandSide, this) }
-    override val type by lz { KotlinConverter.convert(psi.typeReference, this) }
+    override val type by lz { KotlinConverter.convertType(psi.typeReference, this) }
     override val operationKind = KotlinBinaryExpressionWithTypeKinds.NEGATED_INSTANCE_CHECK
 }

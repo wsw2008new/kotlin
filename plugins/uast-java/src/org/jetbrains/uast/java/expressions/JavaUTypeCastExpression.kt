@@ -26,7 +26,7 @@ class JavaUTypeCastExpression(
         override val parent: UElement
 ) : JavaAbstractUExpression(), UBinaryExpressionWithType, PsiElementBacked {
     override val operand by lz { JavaConverter.convertOrEmpty(psi.operand, this) }
-    override val type by lz { JavaConverter.convert(psi.castType?.type, this) }
+    override val type by lz { JavaConverter.convertType(psi.castType?.type, this) }
 
     override val operationKind: UastBinaryExpressionWithTypeKind.TypeCast
         get() = UastBinaryExpressionWithTypeKind.TYPE_CAST

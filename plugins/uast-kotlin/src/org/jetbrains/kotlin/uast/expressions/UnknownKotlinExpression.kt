@@ -26,4 +26,7 @@ class UnknownKotlinExpression(
         override val parent: UElement
 ) : KotlinAbstractUElement(), UExpression, PsiElementBacked {
     override fun logString() = "[!] UnknownKotlinExpression ($psi)"
+
+    override val isStatement: Boolean
+        get() = true
 }

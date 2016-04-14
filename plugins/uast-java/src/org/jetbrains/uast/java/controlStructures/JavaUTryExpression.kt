@@ -26,12 +26,15 @@ class JavaUTryExpression(
 ) : JavaAbstractUExpression(), UTryExpression, PsiElementBacked {
     override val tryClause by lz { JavaConverter.convertOrEmpty(psi.tryBlock, this) }
     override val catchClauses by lz { psi.catchSections.map { JavaUCatchClause(it, this) } }
-    override val finallyClause by lz { psi.finallyBlock?.let { JavaConverter.convert(it, this) } }
+    override val finallyClause by lz { psi.finallyBlock?.let { JavaConverter.convertBlock(it, this) } }
     override val resources by lz {
         val vars = psi.resourceList ?: return@lz null
         val resources = vars.map { JavaConverter.convert(it, this) ?: UDeclarationNotResolved }
         if (resources.isEmpty()) null else resources
     }
+
+    override val isStatement: Boolean
+        get() = true
 }
 
 class JavaUCatchClause(
@@ -39,6 +42,6 @@ class JavaUCatchClause(
         override val parent: UElement
 ) : JavaAbstractUElement(), UCatchClause, PsiElementBacked {
     override val body by lz { JavaConverter.convertOrEmpty(psi.catchBlock, this) }
-    override val parameters by lz { psi.parameter?.let { listOf(JavaConverter.convert(it, this)) } ?: emptyList() }
-    override val types by lz { psi.preciseCatchTypes.map { JavaConverter.convert(it, this) } }
+    override val parameters by lz { psi.parameter?.let { listOf(JavaConverter.convertParameter(it, this)) } ?: emptyList() }
+    override val types by lz { psi.preciseCatchTypes.map { JavaConverter.convertType(it, this) } }
 }

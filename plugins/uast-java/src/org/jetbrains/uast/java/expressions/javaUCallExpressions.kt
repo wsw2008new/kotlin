@@ -40,7 +40,7 @@ class JavaUCallExpression(
     override val valueArguments by lz { psi.argumentList.expressions.map { JavaConverter.convert(it, this) } }
 
     override val typeArgumentCount by lz { psi.typeArguments.size }
-    override val typeArguments by lz { psi.typeArguments.map { JavaConverter.convert(it, this) } }
+    override val typeArguments by lz { psi.typeArguments.map { JavaConverter.convertType(it, this) } }
 
     override val functionName: String
         get() = psi.methodExpression.referenceName ?: "<error name>"
@@ -98,7 +98,7 @@ class JavaConstructorUCallExpression(
     }
 
     override val typeArgumentCount by lz { psi.typeArguments.size }
-    override val typeArguments by lz { psi.typeArguments.map { JavaConverter.convert(it, this) } }
+    override val typeArguments by lz { psi.typeArguments.map { JavaConverter.convertType(it, this) } }
 
     override val functionName: String?
         get() {

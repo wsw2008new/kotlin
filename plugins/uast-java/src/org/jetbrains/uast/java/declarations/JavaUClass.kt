@@ -53,7 +53,7 @@ class JavaUClass(
         }
     }
 
-    override val defaultType by lz { JavaConverter.convert(PsiTypesUtil.getClassType(psi), this) }
+    override val defaultType by lz { JavaConverter.convertType(PsiTypesUtil.getClassType(psi), this) }
 
     override val companions: List<UClass>
         get() = emptyList()
@@ -81,15 +81,15 @@ class JavaUClass(
 
     override val declarations by lz {
         val declarations = arrayListOf<UDeclaration>()
-        psi.fields.mapTo(declarations) { JavaConverter.convert(it, this) }
+        psi.fields.mapTo(declarations) { JavaConverter.convertField(it, this) }
 
         if (psi is PsiAnonymousClass && newExpression != null) {
             declarations += JavaUAnonymousClassConstructor(psi, newExpression, this)
         }
 
-        psi.methods.mapTo(declarations) { JavaConverter.convert(it, this) }
-        psi.innerClasses.mapTo(declarations) { JavaConverter.convert(it, this) }
-        psi.initializers.mapTo(declarations) { JavaConverter.convert(it, this) }
+        psi.methods.mapTo(declarations) { JavaConverter.convertMethod(it, this) }
+        psi.innerClasses.mapTo(declarations) { JavaConverter.convertClass(it, this) }
+        psi.initializers.mapTo(declarations) { JavaConverter.convertInitializer(it, this) }
         declarations
     }
 
@@ -166,7 +166,7 @@ private class JavaUAnonymousClassConstructor(
         val args = newExpression.argumentList ?: return@lz emptyList<UVariable>()
         args.expressions.mapIndexed { i, psiExpression -> JavaUAnonymousClassConstructorParameter(args, i, this) }
     }
-    override val typeParameters by lz { psi.typeParameters.map { JavaConverter.convert(it, this) } }
+    override val typeParameters by lz { psi.typeParameters.map { JavaConverter.convertTypeParameter(it, this) } }
 
     override val typeParameterCount: Int
         get() = psi.typeParameters.size
@@ -181,6 +181,9 @@ private class JavaUAnonymousClassConstructor(
         get() = UastVisibility.LOCAL
 
     override fun getSuperFunctions(context: UastContext) = emptyList<UFunction>()
+
+    override val throws: List<UType>
+        get() = emptyList()
 
     override val nameElement: UElement?
         get() = null
@@ -199,7 +202,7 @@ private class JavaUAnonymousClassConstructorParameter(
     override val kind: UastVariableKind
         get() = UastVariableKind.VALUE_PARAMETER
 
-    override val type by lz { JavaConverter.convert(psi.expressionTypes[index], this) }
+    override val type by lz { JavaConverter.convertType(psi.expressionTypes[index], this) }
 
     override val nameElement: UElement?
         get() = null

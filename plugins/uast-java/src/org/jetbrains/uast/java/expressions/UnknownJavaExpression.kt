@@ -24,4 +24,7 @@ class UnknownJavaExpression(
         override val parent: UElement
 ) : UExpression, PsiElementBacked {
     override fun logString() = "[!] UnknownJavaExpression ($psi)"
+
+    override val isStatement: Boolean
+        get() = true
 }

@@ -34,30 +34,28 @@ class JavaUFunction(
 
     override val nameElement by lz { JavaDumbUElement(psi.nameIdentifier, this) }
 
-    override val valueParameters by lz { psi.parameterList.parameters.map { JavaConverter.convert(it, this) } }
+    override val valueParameters by lz { psi.parameterList.parameters.map { JavaConverter.convertParameter(it, this) } }
 
     override val valueParameterCount: Int
         get() = psi.parameterList.parametersCount
 
-    override val typeParameters by lz { psi.typeParameters.map { JavaConverter.convert(it, this) } }
+    override val typeParameters by lz { psi.typeParameters.map { JavaConverter.convertTypeParameter(it, this) } }
 
     override val typeParameterCount: Int
         get() = psi.typeParameters.size
 
-    override val returnType by lz { psi.returnType?.let { JavaConverter.convert(it, this) } }
+    override val returnType by lz { psi.returnType?.let { JavaConverter.convertType(it, this) } }
 
     override fun hasModifier(modifier: UastModifier) = psi.hasModifier(modifier)
-
-    val thrownExceptions: List<UType> by lz {
-        psi.throwsList.referencedTypes.map { JavaConverter.convert(it, this) }
-    }
 
     override val annotations by lz { psi.modifierList.getAnnotations(this) }
 
     override val visibility: UastVisibility
         get() = psi.getVisibility()
     
-    override val body by lz { psi.body?.let { JavaConverter.convert(it, this) } }
+    override val body by lz { psi.body?.let { JavaConverter.convertBlock(it, this) } }
+
+    override val throws by lz { psi.throwsList.referencedTypes.map { JavaConverter.convertType(it, this) } }
 
     override val bytecodeDescriptor by lz { getDescriptor(psi) }
 

@@ -30,4 +30,7 @@ class JavaUIfExpression(
 
     override val isTernary: Boolean
         get() = false
+
+    override val isStatement: Boolean
+        get() = true
 }

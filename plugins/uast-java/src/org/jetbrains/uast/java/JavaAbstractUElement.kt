@@ -40,6 +40,6 @@ abstract class JavaAbstractUExpression : UExpression {
 
     override fun getExpressionType(): JavaUType? {
         val expression = (this as? PsiElementBacked)?.psi as? PsiExpression ?: return null
-        return expression.type?.let { JavaConverter.convert(it, this) }
+        return expression.type?.let { JavaConverter.convertType(it, this) }
     }
 }

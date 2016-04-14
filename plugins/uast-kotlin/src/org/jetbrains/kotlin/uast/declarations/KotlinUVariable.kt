@@ -39,7 +39,7 @@ open class KotlinUVariable(
     override val type by lz {
         val descriptor = psi.resolveToDescriptorIfAny() as? CallableDescriptor ?: return@lz UastErrorType
         val type = descriptor.returnType ?: return@lz UastErrorType
-        KotlinConverter.convert(type, psi.project, this)
+        KotlinConverter.convertType(type, psi.project, this)
     }
 
     override val accessors: List<UFunction>? by lz {
@@ -71,7 +71,7 @@ open class KotlinUVariable(
             else
                 UastFunctionKind.FUNCTION
 
-        override val valueParameters by lz { psi.valueParameters.map { KotlinConverter.convert(it, this) } }
+        override val valueParameters by lz { psi.valueParameters.map { KotlinConverter.convertParameter(it, this) } }
 
         override val valueParameterCount: Int
             get() = psi.valueParameters.size
@@ -119,7 +119,7 @@ class KotlinDestructuredUVariable(
         val bindingContext = entry.analyze(BodyResolveMode.PARTIAL)
         val resolvedCall = bindingContext[BindingContext.COMPONENT_RESOLVED_CALL, entry] ?: return@lz UastErrorType
         val returnType = resolvedCall.resultingDescriptor.returnType ?: return@lz UastErrorType
-        KotlinConverter.convert(returnType, entry.project, this)
+        KotlinConverter.convertType(returnType, entry.project, this)
     }
 
     override val visibility: UastVisibility
@@ -160,7 +160,7 @@ class KotlinParameterUVariable(
     override val type by lz {
         val bindingContext = psi.analyze(BodyResolveMode.PARTIAL)
         val param = bindingContext[BindingContext.VALUE_PARAMETER, psi] ?: return@lz UastErrorType
-        KotlinConverter.convert(param.type, psi.project, this)
+        KotlinConverter.convertType(param.type, psi.project, this)
     }
 
     override val visibility: UastVisibility

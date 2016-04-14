@@ -25,5 +25,5 @@ class JavaUClassLiteralExpression(
         override val psi: PsiClassObjectAccessExpression,
         override val parent: UElement
 ) : JavaAbstractUExpression(), UClassLiteralExpression, PsiElementBacked {
-    override val type: UType by lz { JavaConverter.convert(psi.type, this) }
+    override val type: UType by lz { JavaConverter.convertType(psi.type, this) }
 }

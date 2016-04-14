@@ -47,7 +47,7 @@ class JavaClassInitializerUFunction(
     override val returnType: UType?
         get() = null
 
-    override val body by lz { JavaConverter.convert(psi.body, this) }
+    override val body by lz { JavaConverter.convertBlock(psi.body, this) }
 
     override val visibility: UastVisibility
         get() = UastVisibility.LOCAL
@@ -57,6 +57,9 @@ class JavaClassInitializerUFunction(
 
     override val name: String
         get() = "<static>"
+
+    override val throws: List<UType>
+        get() = emptyList()
 
     override fun getSuperFunctions(context: UastContext) = emptyList<UFunction>()
     override fun hasModifier(modifier: UastModifier) = psi.hasModifier(modifier)

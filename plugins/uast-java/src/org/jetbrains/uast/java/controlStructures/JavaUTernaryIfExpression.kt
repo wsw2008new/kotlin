@@ -30,4 +30,7 @@ class JavaUTernaryIfExpression(
 
     override val isTernary: Boolean
         get() = true
+
+    override val isStatement: Boolean
+        get() = false
 }

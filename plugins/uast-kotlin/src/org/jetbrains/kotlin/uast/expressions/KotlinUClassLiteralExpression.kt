@@ -25,5 +25,5 @@ class KotlinUClassLiteralExpression(
         override val psi: KtClassLiteralExpression,
         override val parent: UElement
 ) : KotlinAbstractUElement(), UClassLiteralExpression, PsiElementBacked, KotlinUElementWithType {
-    override val type by lz { KotlinConverter.convert(psi.typeReference, this) }
+    override val type by lz { KotlinConverter.convertType(psi.typeReference, this) }
 }

@@ -45,7 +45,7 @@ internal fun PsiModifierListOwner.hasModifier(modifier: UastModifier): Boolean {
 
 internal fun PsiAnnotationOwner?.getAnnotations(owner: UElement): List<UAnnotation> {
     if (this == null) return emptyList()
-    return annotations.map { JavaConverter.convert(it, owner) }
+    return annotations.map { JavaConverter.convertAnnotation(it, owner) }
 }
 
 internal fun PsiModifierListOwner.getVisibility(): UastVisibility {

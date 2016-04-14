@@ -61,6 +61,11 @@ interface UFunction : UDeclaration, UModifierOwner, UVisibilityOwner, UAnnotated
     val body: UExpression?
 
     /**
+     * Returns the list of exceptions this function throws.
+     */
+    val throws: List<UType>
+
+    /**
      * Returns the function JVM descriptor (for example, "(ILjava/lang/String;)[I"), or null if the descriptor is unknown.
      */
     open val bytecodeDescriptor: String?
@@ -80,6 +85,7 @@ interface UFunction : UDeclaration, UModifierOwner, UVisibilityOwner, UAnnotated
         annotations.acceptList(visitor)
         typeParameters.acceptList(visitor)
         returnType?.accept(visitor)
+        throws.acceptList(visitor)
         visitor.afterVisitFunction(this)
     }
 
@@ -124,4 +130,5 @@ object UFunctionNotResolved : UFunction {
     override fun hasModifier(modifier: UastModifier) = false
     override fun getSuperFunctions(context: UastContext) = emptyList<UFunction>()
     override val annotations = emptyList<UAnnotation>()
+    override val throws = emptyList<UType>()
 }

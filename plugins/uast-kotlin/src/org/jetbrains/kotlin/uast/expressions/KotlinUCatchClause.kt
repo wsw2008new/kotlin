@@ -31,11 +31,11 @@ class KotlinUCatchClause(
         override val parent: UElement
 ) : KotlinAbstractUElement(), UCatchClause, PsiElementBacked {
     override val body by lz { KotlinConverter.convertOrEmpty(psi.catchBody, this) }
-    override val parameters by lz { psi.catchParameter?.let { listOf(KotlinConverter.convert(it, this)) } ?: emptyList<UVariable>() }
+    override val parameters by lz { psi.catchParameter?.let { listOf(KotlinConverter.convertParameter(it, this)) } ?: emptyList<UVariable>() }
     override val types by lz {
         val catchParameter = psi.catchParameter ?: return@lz emptyList<UType>()
         val bindingContext = psi.analyze(BodyResolveMode.PARTIAL)
         val parameter = bindingContext[BindingContext.VALUE_PARAMETER, catchParameter] ?: return@lz emptyList<UType>()
-        listOf(KotlinConverter.convert(parameter.type, psi.project, this))
+        listOf(KotlinConverter.convertType(parameter.type, psi.project, this))
     }
 }

@@ -26,13 +26,22 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.annotations.argumentValue
+import org.jetbrains.kotlin.resolve.constants.KClassValue
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.uast.*
 import org.jetbrains.uast.psi.PsiElementBacked
 
 abstract class KotlinAbstractUFunction : KotlinAbstractUElement(), UFunction, PsiElementBacked {
+    private val declarationDescriptor by lz {
+        val bindingContext = psi.analyze(BodyResolveMode.PARTIAL)
+        bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, psi] as? FunctionDescriptor
+    }
+
     override abstract val psi: KtFunction
 
     override val name by lz { psi.name.orAnonymous() }
@@ -40,20 +49,18 @@ abstract class KotlinAbstractUFunction : KotlinAbstractUElement(), UFunction, Ps
     override val valueParameterCount: Int
         get() = psi.valueParameters.size
 
-    override val valueParameters by lz { psi.valueParameters.map { KotlinConverter.convert(it, this) } }
+    override val valueParameters by lz { psi.valueParameters.map { KotlinConverter.convertParameter(it, this) } }
 
     override fun getSuperFunctions(context: UastContext): List<UFunction> {
         if (this.isTopLevel()) return emptyList()
-        val bindingContext = psi.analyze(BodyResolveMode.PARTIAL)
-        val clazz = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, psi] as? FunctionDescriptor ?: return emptyList()
-        return clazz.overriddenDescriptors.map {
+        val descriptor = declarationDescriptor ?: return emptyList()
+        return descriptor.overriddenDescriptors.map {
             context.convert(it.toSource()) as? UFunction
         }.filterNotNull()
     }
 
     override val bytecodeDescriptor by lz {
-        val bindingContext = psi.analyze(BodyResolveMode.PARTIAL)
-        val descriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, psi] as? FunctionDescriptor ?: return@lz null
+        val descriptor = declarationDescriptor ?: return@lz null
         val typeMapper = KotlinTypeMapper(BindingContext.EMPTY, ClassBuilderMode.LIGHT_CLASSES, NoResolveFileClassesProvider, null,
                                           IncompatibleClassTracker.DoNothing, JvmAbi.DEFAULT_MODULE_NAME)
         typeMapper.mapAsmMethod(descriptor).descriptor
@@ -64,6 +71,21 @@ abstract class KotlinAbstractUFunction : KotlinAbstractUElement(), UFunction, Ps
 
     override val body by lz { KotlinConverter.convertOrNull(psi.bodyExpression, this) }
     override val visibility by lz { psi.getVisibility() }
+
+    override val throws by lz {
+        val descriptor = declarationDescriptor ?: return@lz emptyList<UType>()
+        val throwsFqName = FqName.topLevel(Name.identifier("kotlin.jvm.Throws"))
+        val annotationDescriptor = descriptor.annotations.findAnnotation(throwsFqName) ?: return@lz emptyList<UType>()
+        val exceptionClasses = annotationDescriptor.argumentValue("exceptionClasses") as? List<*> ?: return@lz emptyList<UType>()
+
+        val throwsList = mutableListOf<UType>()
+        for (constantValue in exceptionClasses) {
+            if (constantValue !is KClassValue) continue
+            throwsList += KotlinConverter.convertType(constantValue.type, psi.project, this)
+        }
+
+        throwsList
+    }
 }
 
 class KotlinConstructorUFunction(
@@ -97,7 +119,7 @@ class KotlinUFunction(
     override val returnType by lz {
         val descriptor = psi.resolveToDescriptorIfAny() as? FunctionDescriptor ?: return@lz null
         val type = descriptor.returnType ?: return@lz null
-        KotlinConverter.convert(type, psi.project, this)
+        KotlinConverter.convertType(type, psi.project, this)
     }
 
     override val typeParameterCount: Int
@@ -141,6 +163,9 @@ class KotlinAnonymousInitializerUFunction(
 
     override fun hasModifier(modifier: UastModifier) = false
 
+    override val throws: List<UType>
+        get() = emptyList()
+
     override val annotations: List<UAnnotation>
         get() = emptyList()
 }
@@ -175,6 +200,9 @@ open class KotlinDefaultPrimaryConstructorUFunction(
     override val visibility: UastVisibility
         get() = parent.visibility
 
+    override val throws: List<UType>
+        get() = emptyList()
+
     override fun getSuperFunctions(context: UastContext) = emptyList<UFunction>()
 }
 
@@ -206,7 +234,7 @@ open class KotlinObjectLiteralConstructorUFunction(
                 override val kind: UastVariableKind
                     get() = UastVariableKind.VALUE_PARAMETER
                 override val type: UType
-                    get() = KotlinConverter.convert(param.type, psi.project, this)
+                    get() = KotlinConverter.convertType(param.type, psi.project, this)
                 override val nameElement: UElement?
                     get() = null
                 override val parent: UElement
@@ -244,6 +272,9 @@ open class KotlinObjectLiteralConstructorUFunction(
 
     override val visibility: UastVisibility
         get() = parent.visibility
+
+    override val throws: List<UType>
+        get() = emptyList()
 
     override fun getSuperFunctions(context: UastContext) = emptyList<UFunction>()
 }

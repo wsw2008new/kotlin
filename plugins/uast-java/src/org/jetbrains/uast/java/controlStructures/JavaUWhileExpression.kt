@@ -26,4 +26,7 @@ class JavaUWhileExpression(
 ) : JavaAbstractUExpression(), UWhileExpression, PsiElementBacked {
     override val condition by lz { JavaConverter.convertOrEmpty(psi.condition, this) }
     override val body by lz { JavaConverter.convertOrEmpty(psi.body, this) }
+
+    override val isStatement: Boolean
+        get() = true
 }

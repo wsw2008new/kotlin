@@ -27,12 +27,12 @@ class JavaULambdaExpression(
         override val psi: PsiLambdaExpression,
         override val parent: UElement
 ) : JavaAbstractUExpression(), ULambdaExpression, PsiElementBacked {
-    override val valueParameters by lz { psi.parameterList.parameters.map { JavaConverter.convert(it, this) } }
+    override val valueParameters by lz { psi.parameterList.parameters.map { JavaConverter.convertParameter(it, this) } }
 
     override val body by lz {
         val b = psi.body
         when (b) {
-            is PsiCodeBlock -> JavaConverter.convert(b, this)
+            is PsiCodeBlock -> JavaConverter.convertBlock(b, this)
             is PsiExpression -> JavaConverter.convert(b, this)
             else -> EmptyUExpression(this)
         }

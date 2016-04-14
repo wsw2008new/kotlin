@@ -26,6 +26,9 @@ class JavaUSwitchExpression(
 ) : JavaAbstractUExpression(), USwitchExpression, PsiElementBacked {
     override val expression by lz { JavaConverter.convertOrEmpty(psi.expression, this) }
     override val body by lz { JavaConverter.convertOrEmpty(psi.body, this) }
+
+    override val isStatement: Boolean
+        get() = true
 }
 
 class JavaUCaseSwitchClauseExpression(
@@ -36,6 +39,9 @@ class JavaUCaseSwitchClauseExpression(
         val value = psi.caseValue ?: return@lz null
         listOf(JavaConverter.convert(value, this))
     }
+
+    override val isStatement: Boolean
+        get() = true
 }
 
 class DefaultUSwitchClauseExpression(override val parent: UElement) : USwitchClauseExpression {
@@ -44,4 +50,7 @@ class DefaultUSwitchClauseExpression(override val parent: UElement) : USwitchCla
 
     override fun logString() = "DefaultUSwitchClauseExpression"
     override fun renderString() = "else -> "
+
+    override val isStatement: Boolean
+        get() = true
 }

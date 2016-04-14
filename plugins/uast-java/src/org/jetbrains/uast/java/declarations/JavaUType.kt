@@ -24,7 +24,7 @@ import org.jetbrains.uast.UastContext
 
 class JavaUType(
         val psi: PsiType?,
-        override val parent: UElement
+        override val parent: UElement?
 ) : JavaAbstractUElement(), UType {
     override val name: String
         get() = when (psi) {

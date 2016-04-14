@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.uast.kinds.KotlinSpecialExpressionKinds
 import org.jetbrains.uast.*
 import org.jetbrains.uast.psi.PsiElementBacked
-import org.jetbrains.uast.visitor.UastVisitor
 
 class KotlinUSwitchExpression(
         override val psi: KtWhenExpression,
@@ -64,7 +63,7 @@ class KotlinUSwitchEntry(
                     it.isNegated -> KotlinBinaryExpressionWithTypeKinds.NEGATED_INSTANCE_CHECK
                     else -> UastBinaryExpressionWithTypeKind.INSTANCE_CHECK
                 }
-                type = KotlinConverter.convert(it.typeReference, this)
+                type = KotlinConverter.convertType(it.typeReference, this)
             }
             is KtWhenConditionWithExpression -> KotlinConverter.convertOrEmpty(it.expression, this)
             else -> EmptyUExpression(this)

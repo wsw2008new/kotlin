@@ -21,4 +21,5 @@ class StructureTest : AbstractStructureTest() {
     fun testNestedClasses() = test("NestedClasses")
     fun testSpecialExpressions() = test("SpecialExpressions")
     fun testLambda() = test("Lambda")
+    fun testEnum() = test("Enum")
 }

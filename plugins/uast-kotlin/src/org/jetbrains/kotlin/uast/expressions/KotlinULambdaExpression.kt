@@ -25,7 +25,7 @@ class KotlinULambdaExpression(
         override val parent: UElement
 ) : KotlinAbstractUElement(), ULambdaExpression, PsiElementBacked, KotlinUElementWithType {
     override val body by lz { KotlinConverter.convertOrEmpty(psi.bodyExpression, this) }
-    override val valueParameters by lz { psi.valueParameters.map { KotlinConverter.convert(it, this) } }
+    override val valueParameters by lz { psi.valueParameters.map { KotlinConverter.convertParameter(it, this) } }
     override fun renderString(): String {
         val renderedValueParameters = if (valueParameters.isEmpty())
             ""

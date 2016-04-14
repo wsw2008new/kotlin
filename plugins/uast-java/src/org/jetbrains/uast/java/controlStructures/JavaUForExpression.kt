@@ -28,4 +28,7 @@ class JavaUForExpression(
     override val condition by lz { psi.condition?.let { JavaConverter.convert(it, this) } }
     override val update by lz { psi.update?.let { JavaConverter.convert(it, this) } }
     override val body by lz { JavaConverter.convertOrEmpty(psi.body, this) }
+
+    override val isStatement: Boolean
+        get() = true
 }

@@ -24,8 +24,11 @@ class JavaUForEachExpression(
         override val psi: PsiForeachStatement,
         override val parent: UElement
 ) : JavaAbstractUExpression(), UForEachExpression, PsiElementBacked {
-    override val variable by lz { JavaConverter.convert(psi.iterationParameter, this) }
+    override val variable by lz { JavaConverter.convertParameter(psi.iterationParameter, this) }
 
     override val iteratedValue by lz { JavaConverter.convertOrEmpty(psi.iteratedValue, this) }
     override val body by lz { JavaConverter.convertOrEmpty(psi.body, this) }
+
+    override val isStatement: Boolean
+        get() = true
 }

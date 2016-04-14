@@ -20,11 +20,13 @@ import org.jetbrains.uast.UAnnotation
 import org.jetbrains.uast.UClass
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UastContext
+import org.jetbrains.uast.baseElements.UConstantValue
+import org.jetbrains.uast.java.internal.getUastValue
 import org.jetbrains.uast.psi.PsiElementBacked
 
 class JavaUAnnotation(
         override val psi: PsiAnnotation,
-        override val parent: UElement
+        override val parent: UElement?
 ) : JavaAbstractUElement(), UAnnotation, PsiElementBacked {
     override val name: String
         get() = psi.nameReferenceElement?.referenceName.orAnonymous()
@@ -34,8 +36,20 @@ class JavaUAnnotation(
 
     override val valueArguments by lz {
         psi.parameterList.attributes.map {
-            JavaConverter.convert(it, this)
+            JavaConverter.convertNameValue(it, this)
         }
+    }
+
+    override fun getValue(name: String): UConstantValue<*>? {
+        return psi.parameterList.attributes.firstOrNull { it.name == name }?.value?.getUastValue(psi.project)
+    }
+
+    override fun getValues(): Map<String, UConstantValue<*>> {
+        val values = mutableMapOf<String, UConstantValue<*>>()
+        psi.parameterList.attributes.forEachIndexed { i, pair ->
+            values.put(pair.name ?: "p$i", pair.value.getUastValue(psi.project))
+        }
+        return values
     }
 
     override fun resolve(context: UastContext) = context.convert(psi.reference?.resolve()) as? UClass

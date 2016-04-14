@@ -55,13 +55,13 @@ internal object KotlinConverter : UastConverter {
 
     private fun convertKtElement(element: KtElement?, parent: UElement): UElement? = when (element) {
         is KtFile -> KotlinUFile(element)
-        is KtAnnotationEntry -> KotlinUAnnotation(element, parent)
+        is KtAnnotationEntry -> convertAnnotation(element, parent)
         is KtAnnotation -> KotlinUAnnotationList(element, parent).apply {
             annotations = element.entries.map { KotlinUAnnotation(it, this) }
         }
         is KtDeclaration -> convert(element, parent)
         is KtParameterList -> KotlinUDeclarationsExpression(parent).apply {
-            declarations = element.parameters.map { convert(it, this) }
+            declarations = element.parameters.map { convertParameter(it, this) }
         }
         is KtClassBody -> KotlinUSpecialExpressionList(element, KotlinSpecialExpressionKinds.CLASS_BODY, parent).apply {
             expressions = emptyList()
@@ -79,12 +79,12 @@ internal object KotlinConverter : UastConverter {
     }
 
     internal fun convert(element: KtDeclaration, parent: UElement): UDeclaration? = when (element) {
-        is KtClassOrObject -> convert(element, parent)
+        is KtClassOrObject -> convertClass(element, parent)
         is KtAnonymousInitializer -> KotlinAnonymousInitializerUFunction(element, parent)
         is KtConstructor<*> -> KotlinConstructorUFunction(element, parent)
         is KtFunction -> KotlinUFunction(element, parent)
         is KtVariableDeclaration -> KotlinUVariable(element, parent)
-        is KtParameter -> convert(element, parent)
+        is KtParameter -> convertParameter(element, parent)
         else -> null
     }
 
@@ -170,19 +170,23 @@ internal object KotlinConverter : UastConverter {
         else -> UnknownKotlinExpression(expression, parent)
     }
 
-    internal fun convert(element: KtParameter, parent: UElement) : UVariable {
+    internal fun convertAnnotation(element: KtAnnotationEntry, parent: UElement?) : UAnnotation {
+        return KotlinUAnnotation(element, parent)
+    }
+
+    internal fun convertParameter(element: KtParameter, parent: UElement) : UVariable {
         return KotlinParameterUVariable(element, parent)
     }
 
-    internal fun convert(element: KtClassOrObject, parent: UElement) : UClass {
+    internal fun convertClass(element: KtClassOrObject, parent: UElement) : UClass {
         return KotlinUClass(element, parent)
     }
 
-    internal fun convert(element: KotlinType, project: Project, parent: UElement?): UType {
+    internal fun convertType(element: KotlinType, project: Project, parent: UElement?): UType {
         return KotlinUType(element, project, parent)
     }
 
-    internal fun convert(typeReference: KtTypeReference?, parent: UElement): UType {
+    internal fun convertType(typeReference: KtTypeReference?, parent: UElement): UType {
         if (typeReference == null) return UastErrorType
         val bindingContext = typeReference.analyze(BodyResolveMode.PARTIAL)
         val type = bindingContext[BindingContext.TYPE, typeReference] ?: return UastErrorType

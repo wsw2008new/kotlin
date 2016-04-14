@@ -53,7 +53,7 @@ class KotlinUFunctionCallExpression(
     override val typeArgumentCount: Int
         get() = psi.typeArguments.size
 
-    override val typeArguments by lz { psi.typeArguments.map { KotlinConverter.convert(it.typeReference, this) } }
+    override val typeArguments by lz { psi.typeArguments.map { KotlinConverter.convertType(it.typeReference, this) } }
 
     override val kind by lz {
         when (resolveCall()?.resultingDescriptor) {

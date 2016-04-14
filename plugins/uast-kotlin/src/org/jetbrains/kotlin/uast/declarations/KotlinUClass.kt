@@ -66,11 +66,11 @@ class KotlinUClass(
 
     override val defaultType by lz {
         val type = resolveToDescriptor()?.defaultType ?: return@lz UastErrorType
-        KotlinConverter.convert(type, psi.project, this)
+        KotlinConverter.convertType(type, psi.project, this)
     }
 
     override val companions by lz {
-        (psi as? KtClass)?.getCompanionObjects()?.map { KotlinConverter.convert(it, this) } ?: emptyList()
+        (psi as? KtClass)?.getCompanionObjects()?.map { KotlinConverter.convertClass(it, this) } ?: emptyList()
     }
 
     override val internalName by lz {

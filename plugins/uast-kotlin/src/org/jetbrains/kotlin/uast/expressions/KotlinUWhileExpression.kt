@@ -27,4 +27,7 @@ class KotlinUWhileExpression(
 ) : KotlinAbstractUElement(), UWhileExpression, PsiElementBacked {
     override val condition by lz { KotlinConverter.convertOrEmpty(psi.condition, this) }
     override val body by lz { KotlinConverter.convertOrEmpty(psi.body, this) }
+
+    override val isStatement: Boolean
+        get() = true
 }

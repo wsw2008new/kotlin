@@ -25,7 +25,7 @@ class JavaUFile(override val psi: PsiJavaFile): JavaAbstractUElement(), UFile, P
 
     override val importStatements: List<UImportStatement> by lz {
         val importList = psi.importList ?: return@lz emptyList<UImportStatement>()
-        importList.importStatements.map { JavaConverter.convert(it, this) }.filterNotNull()
+        importList.importStatements.map { JavaConverter.convertImportStatement(it, this) }.filterNotNull()
     }
 
     override val declarations by lz { psi.classes.map { JavaUClass(it, this) } }

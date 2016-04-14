@@ -27,7 +27,7 @@ class KotlinUBinaryExpressionWithType(
         override val parent: UElement
 ) : KotlinAbstractUElement(), UBinaryExpressionWithType, PsiElementBacked, KotlinUElementWithType, KotlinEvaluatableUElement {
     override val operand by lz { KotlinConverter.convert(psi.left, this) }
-    override val type by lz { KotlinConverter.convert(psi.right, this) }
+    override val type by lz { KotlinConverter.convertType(psi.right, this) }
     override val operationKind = when (psi.operationReference.getReferencedNameElementType()) {
         KtTokens.AS_KEYWORD -> UastBinaryExpressionWithTypeKind.TYPE_CAST
         KtTokens.AS_SAFE -> KotlinBinaryExpressionWithTypeKinds.SAFE_TYPE_CAST

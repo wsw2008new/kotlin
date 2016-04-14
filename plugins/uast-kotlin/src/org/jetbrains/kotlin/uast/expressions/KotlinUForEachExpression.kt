@@ -24,7 +24,10 @@ class KotlinUForEachExpression(
         override val psi: KtForExpression,
         override val parent: UElement
 ) : KotlinAbstractUElement(), UForEachExpression, PsiElementBacked {
-    override val variable by lz { psi.loopParameter?.let { KotlinConverter.convert(it, this) } ?: UVariableNotResolved }
+    override val variable by lz { psi.loopParameter?.let { KotlinConverter.convertParameter(it, this) } ?: UVariableNotResolved }
     override val iteratedValue by lz { KotlinConverter.convertOrEmpty(psi.loopRange, this) }
     override val body by lz { KotlinConverter.convertOrEmpty(psi.body, this) }
+
+    override val isStatement: Boolean
+        get() = true
 }

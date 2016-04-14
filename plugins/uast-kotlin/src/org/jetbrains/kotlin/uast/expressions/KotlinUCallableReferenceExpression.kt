@@ -25,7 +25,7 @@ class KotlinUCallableReferenceExpression(
         override val parent: UElement
 ) : KotlinAbstractUElement(), UCallableReferenceExpression, PsiElementBacked, KotlinUElementWithType {
     override val qualifierExpression = null
-    override val qualifierType by lz { KotlinConverter.convert(psi.typeReference, this) }
+    override val qualifierType by lz { KotlinConverter.convertType(psi.typeReference, this) }
     override val callableName: String
         get() = psi.callableReference.getReferencedName()
 

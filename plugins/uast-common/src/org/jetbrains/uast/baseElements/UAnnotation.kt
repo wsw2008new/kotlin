@@ -15,6 +15,7 @@
  */
 package org.jetbrains.uast
 
+import org.jetbrains.uast.baseElements.UConstantValue
 import org.jetbrains.uast.visitor.UastVisitor
 
 /**
@@ -39,14 +40,14 @@ interface UAnnotation : UElement, UNamed, UFqNamed {
      * @param name name of the annotation value parameter
      * @return the argument value
      */
-    fun getValue(name: String) = valueArguments.firstOrNull { it.name == name }?.expression?.evaluate()
+    fun getValue(name: String): UConstantValue<*>?
 
     /**
      * Returns the list of Pair(name, evaluatedValue) for all applied annotation arguments.
      *
      * @return the list of name-value pairs.
      */
-    fun getValues() = valueArguments.map { Pair(it.name, it.expression.evaluate()) }
+    fun getValues(): Map<String, UConstantValue<*>>
 
     override fun logString() = log("UAnnotation ($name)")
 

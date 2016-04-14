@@ -27,7 +27,7 @@ class JavaUCallableReferenceExpression(
         override val parent: UElement
 ) : JavaAbstractUExpression(), UCallableReferenceExpression, PsiElementBacked {
     override val qualifierExpression by lz { JavaConverter.convertOrNull(psi.qualifierExpression, this) }
-    override val qualifierType by lz { JavaConverter.convert(psi.qualifierType?.type, this) }
+    override val qualifierType by lz { JavaConverter.convertType(psi.qualifierType?.type, this) }
     override val callableName: String
         get() = psi.referenceName.orAnonymous()
 

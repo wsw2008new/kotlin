@@ -49,71 +49,64 @@ internal object JavaConverter : UastConverter {
     private fun convertPsiElement(element: PsiElement?, parent: UElement) = when (element) {
         is PsiJavaFile -> JavaUFile(element)
         is PsiClass -> JavaUClass(element, parent)
-        is PsiCodeBlock -> convert(element, parent)
-        is PsiMethod -> convert(element, parent)
-        is PsiField -> convert(element, parent)
-        is PsiVariable -> convert(element, parent)
-        is PsiClassInitializer -> convert(element, parent)
-        is PsiAnnotation -> convert(element, parent)
+        is PsiCodeBlock -> convertBlock(element, parent)
+        is PsiMethod -> convertMethod(element, parent)
+        is PsiField -> convertField(element, parent)
+        is PsiVariable -> convertVariable(element, parent)
+        is PsiClassInitializer -> convertInitializer(element, parent)
+        is PsiAnnotation -> convertAnnotation(element, parent)
         is PsiResourceExpression -> convert(element.expression, parent)
         is PsiExpression -> convert(element, parent)
         is PsiStatement -> convert(element, parent)
         is PsiIdentifier -> JavaUSimpleReferenceExpression(element, element.text, parent)
-        is PsiImportStatementBase -> convert(element, parent)
-        is PsiParameter -> convert(element, parent)
-        is PsiTypeParameter -> convert(element, parent)
-        is PsiNameValuePair -> convert(element, parent)
-        is PsiType -> convert(element, parent)
+        is PsiImportStatementBase -> convertImportStatement(element, parent)
+        is PsiParameter -> convertParameter(element, parent)
+        is PsiTypeParameter -> convertTypeParameter(element, parent)
+        is PsiNameValuePair -> convertNameValue(element, parent)
+        is PsiType -> convertType(element, parent)
         is PsiArrayInitializerMemberValue -> JavaAnnotationArrayInitializerUCallExpression(element, parent)
         else -> null
     }
 
-    internal fun convert(importStatement: PsiImportStatementBase, parent: UElement): UImportStatement? = when (importStatement) {
-        is PsiImportStatement -> JavaUImportStatement(importStatement, parent)
-        is PsiImportStaticStatement -> JavaUStaticImportStatement(importStatement, parent)
-        else -> null
+    internal fun convertImportStatement(importStatement: PsiImportStatementBase, parent: UElement): UImportStatement? {
+        return when (importStatement) {
+            is PsiImportStatement -> JavaUImportStatement(importStatement, parent)
+            is PsiImportStaticStatement -> JavaUStaticImportStatement(importStatement, parent)
+            else -> null
+        }
     }
 
-    internal fun convert(type: PsiType?, parent: UElement) = JavaUType(type, parent)
+    internal fun convertType(type: PsiType?, parent: UElement?) = JavaUType(type, parent)
 
-    internal fun convert(parameter: PsiParameter, parent: UElement) = JavaValueParameterUVariable(parameter, parent)
+    internal fun convertParameter(parameter: PsiParameter, parent: UElement) = JavaValueParameterUVariable(parameter, parent)
 
-    internal fun convert(block: PsiCodeBlock, parent: UElement) = JavaUCodeBlockExpression(block, parent)
+    internal fun convertBlock(block: PsiCodeBlock, parent: UElement) = JavaUCodeBlockExpression(block, parent)
 
-    internal fun convert(method: PsiMethod, parent: UElement) = JavaUFunction(method, parent)
+    internal fun convertMethod(method: PsiMethod, parent: UElement) = JavaUFunction(method, parent)
 
-    internal fun convert(field: PsiField, parent: UElement) = JavaUVariable(field, parent)
+    internal fun convertField(field: PsiField, parent: UElement) = JavaUVariable(field, parent)
 
-    internal fun convert(variable: PsiVariable, parent: UElement) = JavaUVariable(variable, parent)
+    internal fun convertVariable(variable: PsiVariable, parent: UElement) = JavaUVariable(variable, parent)
 
-    internal fun convert(annotation: PsiAnnotation, parent: UElement) = JavaUAnnotation(annotation, parent)
+    internal fun convertAnnotation(annotation: PsiAnnotation, parent: UElement?) = JavaUAnnotation(annotation, parent)
 
-    internal fun convert(clazz: PsiClass, parent: UElement) = JavaUClass(clazz, parent)
+    internal fun convertClass(clazz: PsiClass, parent: UElement) = JavaUClass(clazz, parent)
 
-    internal fun convert(initializer: PsiClassInitializer, parent: UElement) = JavaClassInitializerUFunction(initializer, parent)
+    internal fun convertInitializer(initializer: PsiClassInitializer, parent: UElement) = JavaClassInitializerUFunction(initializer, parent)
 
-    internal fun convert(parameter: PsiTypeParameter, parent: UElement) = JavaParameterUTypeReference(parameter, parent)
+    internal fun convertTypeParameter(parameter: PsiTypeParameter, parent: UElement) = JavaParameterUTypeReference(parameter, parent)
 
-    internal fun convert(pair: PsiNameValuePair, parent: UElement) = UNamedExpression(pair.name.orAnonymous(), parent).apply {
+    internal fun convertNameValue(pair: PsiNameValuePair, parent: UElement) = UNamedExpression(pair.name.orAnonymous(), parent).apply {
         val value = pair.value
         expression = convert(value, this) as? UExpression ?: UnknownJavaExpression(value ?: pair, this)
     }
 
-    internal fun convert(expression: PsiReferenceExpression, parent: UElement): UExpression {
+    internal fun convertReference(expression: PsiReferenceExpression, parent: UElement): UExpression {
         return if (expression.isQualified) {
             JavaUQualifiedExpression(expression, parent)
         } else {
             val name = expression.referenceName ?: "<error name>"
             JavaUSimpleReferenceExpression(expression, name, parent)
-        }
-    }
-
-    internal fun convert(expression: PsiQualifiedReferenceElement, parent: UElement): UExpression {
-        val referenceName = expression.referenceName ?: "<error name>"
-
-        return JavaUCompositeQualifiedExpression(parent).apply {
-            receiver = expression.qualifier?.let { convert(it, this) } as? UExpression ?: EmptyUExpression(parent)
-            selector = JavaUSimpleReferenceExpression(expression, referenceName, this)
         }
     }
 
@@ -159,7 +152,7 @@ internal object JavaConverter : UastConverter {
         is PsiPrefixExpression -> JavaUPrefixExpression(expression, parent)
         is PsiPostfixExpression -> JavaUPostfixExpression(expression, parent)
         is PsiLiteralExpression -> JavaULiteralExpression(expression, parent)
-        is PsiReferenceExpression -> convert(expression, parent)
+        is PsiReferenceExpression -> convertReference(expression, parent)
         is PsiThisExpression -> JavaUThisExpression(expression, parent)
         is PsiSuperExpression -> JavaUSuperExpression(expression, parent)
         is PsiInstanceOfExpression -> JavaUInstanceCheckExpression(expression, parent)
@@ -213,7 +206,7 @@ internal object JavaConverter : UastConverter {
     }
 
     internal fun convertOrEmpty(block: PsiCodeBlock?, parent: UElement): UExpression {
-        return if (block != null) convert(block, parent) else EmptyUExpression(parent)
+        return if (block != null) convertBlock(block, parent) else EmptyUExpression(parent)
     }
 
     private fun convertDeclarations(elements: Array<out PsiElement>, parent: UElement): SimpleUDeclarationsExpression {
