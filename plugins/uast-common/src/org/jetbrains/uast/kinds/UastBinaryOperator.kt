@@ -36,7 +36,7 @@ open class UastBinaryOperator(override val text: String): UastOperator {
         val MINUS = ArithmeticOperator("-")
 
         @JvmField
-        val MULT = ArithmeticOperator("*")
+        val MULTIPLY = ArithmeticOperator("*")
 
         @JvmField
         val DIV = ArithmeticOperator("/")

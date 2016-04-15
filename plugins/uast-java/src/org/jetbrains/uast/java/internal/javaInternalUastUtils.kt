@@ -60,7 +60,7 @@ internal fun IElementType.getOperatorType() = when (this) {
     JavaTokenType.EQ -> UastBinaryOperator.ASSIGN
     JavaTokenType.PLUS -> UastBinaryOperator.PLUS
     JavaTokenType.MINUS -> UastBinaryOperator.MINUS
-    JavaTokenType.ASTERISK -> UastBinaryOperator.MULT
+    JavaTokenType.ASTERISK -> UastBinaryOperator.MULTIPLY
     JavaTokenType.DIV -> UastBinaryOperator.DIV
     JavaTokenType.PERC -> UastBinaryOperator.MOD
     JavaTokenType.OR -> UastBinaryOperator.BITWISE_OR

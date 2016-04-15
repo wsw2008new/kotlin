@@ -66,6 +66,14 @@ interface UElement {
     fun renderString(): String = logString()
 
     /**
+     * Returns the string as written in the source file.
+     * //TODO write about usages
+     *
+     * @return the original text.
+     */
+    fun originalString(): String = renderString()
+
+    /**
      * Passes the element to the specified visitor.
      *
      * @param visitor the visitor to pass the element to.

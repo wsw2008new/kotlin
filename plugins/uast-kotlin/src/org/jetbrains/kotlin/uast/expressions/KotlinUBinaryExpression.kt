@@ -33,7 +33,7 @@ class KotlinUBinaryExpression(
         KtTokens.EQ -> UastBinaryOperator.ASSIGN
         KtTokens.PLUS -> UastBinaryOperator.PLUS
         KtTokens.MINUS -> UastBinaryOperator.MINUS
-        KtTokens.MUL -> UastBinaryOperator.MULT
+        KtTokens.MUL -> UastBinaryOperator.MULTIPLY
         KtTokens.DIV -> UastBinaryOperator.DIV
         KtTokens.PERC -> UastBinaryOperator.MOD
         KtTokens.OROR -> UastBinaryOperator.LOGICAL_OR

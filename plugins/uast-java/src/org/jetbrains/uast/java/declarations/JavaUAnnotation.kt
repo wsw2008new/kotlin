@@ -40,8 +40,10 @@ class JavaUAnnotation(
         }
     }
 
-    override fun getValue(name: String): UConstantValue<*>? {
-        return psi.parameterList.attributes.firstOrNull { it.name == name }?.value?.getUastValue(psi.project)
+    override fun getValue(name: String?): UConstantValue<*>? {
+        val attributes = psi.parameterList.attributes
+        val value = if (name == null) psi.findAttributeValue(" ") else attributes.firstOrNull { it.name == name }?.value
+        return value?.getUastValue(psi.project)
     }
 
     override fun getValues(): Map<String, UConstantValue<*>> {

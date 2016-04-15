@@ -40,7 +40,7 @@ interface UAnnotation : UElement, UNamed, UFqNamed {
      * @param name name of the annotation value parameter
      * @return the argument value
      */
-    fun getValue(name: String): UConstantValue<*>?
+    fun getValue(name: String?): UConstantValue<*>?
 
     /**
      * Returns the list of Pair(name, evaluatedValue) for all applied annotation arguments.

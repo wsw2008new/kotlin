@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtUserType
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.annotations.argumentValue
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -59,8 +60,11 @@ class KotlinUAnnotation(
         }
     }
 
-    override fun getValue(name: String): UConstantValue<*>? {
+    override fun getValue(name: String?): UConstantValue<*>? {
         val descriptor = annotationDescriptor ?: return null
+        if (name == null) {
+            return descriptor.allValueArguments.entries.firstOrNull()?.value?.getUastValue(psi.project)
+        }
         for ((key, value) in descriptor.allValueArguments) {
             if (key.name.asString() == name) {
                 return value.getUastValue(psi.project)
