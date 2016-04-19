@@ -6667,6 +6667,36 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("assignFilter2.kt")
+        public void testAssignFilter2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/assignFilter2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("assignFilter_ArrayListRequired.kt")
+        public void testAssignFilter_ArrayListRequired() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/assignFilter_ArrayListRequired.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("assignFilter_ArrayListRequired2.kt")
+        public void testAssignFilter_ArrayListRequired2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/assignFilter_ArrayListRequired2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("assignFilter_ArrayListRequired3.kt")
+        public void testAssignFilter_ArrayListRequired3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/assignFilter_ArrayListRequired3.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("assignFilter_MutableListRequired.kt")
+        public void testAssignFilter_MutableListRequired() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/assignFilter_MutableListRequired.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("assignMap.kt")
         public void testAssignMap() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/assignMap.kt");
@@ -6994,6 +7024,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("toList.kt")
         public void testToList() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/toList.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("toMutableSet.kt")
+        public void testToMutableSet() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/toMutableSet.kt");
             doTest(fileName);
         }
 
