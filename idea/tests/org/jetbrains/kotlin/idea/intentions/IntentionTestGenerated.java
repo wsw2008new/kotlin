@@ -6739,6 +6739,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("filterTo2.kt")
+        public void testFilterTo2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/filterTo2.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("filter_ifContinue.kt")
         public void testFilter_ifContinue() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/filter_ifContinue.kt");
@@ -6895,6 +6901,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("flatMapTo2.kt")
+        public void testFlatMapTo2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/flatMapTo2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("flatMapTo3.kt")
+        public void testFlatMapTo3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/flatMapTo3.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("flatMapWithBreak.kt")
         public void testFlatMapWithBreak() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/flatMapWithBreak.kt");
@@ -6958,6 +6976,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("mapTo2.kt")
         public void testMapTo2() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/mapTo2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("mapTo3.kt")
+        public void testMapTo3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/mapTo3.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("mapTo4.kt")
+        public void testMapTo4() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/mapTo4.kt");
             doTest(fileName);
         }
 
