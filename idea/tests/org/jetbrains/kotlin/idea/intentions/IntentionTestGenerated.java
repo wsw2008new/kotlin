@@ -6697,6 +6697,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("assignFilter_breakAndContinue.kt")
+        public void testAssignFilter_breakAndContinue() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/assignFilter_breakAndContinue.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("assignMap.kt")
         public void testAssignMap() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/assignMap.kt");
