@@ -281,7 +281,7 @@ class InlineChecker implements CallChecker {
     ) {
         if (!allowsNonLocalReturns(inlinableParameterDescriptor)) return;
 
-        if (!checkNonLocalReturnUsage(descriptor, parameterUsage, context.trace)) {
+        if (!checkNonLocalReturnUsage(descriptor, parameterUsage, context)) {
             context.trace.report(NON_LOCAL_RETURN_NOT_ALLOWED.on(parameterUsage, parameterUsage));
         }
     }

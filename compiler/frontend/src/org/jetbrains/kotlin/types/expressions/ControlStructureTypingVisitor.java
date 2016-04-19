@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.types.expressions;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
@@ -41,7 +40,10 @@ import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind;
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver;
-import org.jetbrains.kotlin.types.*;
+import org.jetbrains.kotlin.types.CommonSupertypes;
+import org.jetbrains.kotlin.types.ErrorUtils;
+import org.jetbrains.kotlin.types.KotlinType;
+import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 import org.jetbrains.kotlin.types.expressions.ControlStructureTypingUtils.ResolveConstruct;
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt;
@@ -554,7 +556,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
 
         KotlinType expectedType = NO_EXPECTED_TYPE;
         KotlinType resultType = components.builtIns.getNothingType();
-        KtDeclaration parentDeclaration = PsiTreeUtil.getParentOfType(expression, KtDeclaration.class);
+        KtDeclaration parentDeclaration = context.getContextParentOfType(expression, KtDeclaration.class);
 
         if (parentDeclaration instanceof KtParameter) {
             // In a default value for parameter
@@ -564,7 +566,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         if (expression.getTargetLabel() == null) {
             while (parentDeclaration instanceof KtDestructuringDeclaration) {
                 //TODO: It's hacking fix for KT-5100: Strange "Return is not allowed here" for multi-declaration initializer with elvis expression
-                parentDeclaration = PsiTreeUtil.getParentOfType(parentDeclaration, KtDeclaration.class);
+                parentDeclaration = context.getContextParentOfType(parentDeclaration, KtDeclaration.class);
             }
 
             // Parent declaration can be null in code fragments or in some bad error expressions
@@ -575,7 +577,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             FunctionDescriptor containingFunctionDescriptor = containingFunInfo.getFirst();
 
             if (containingFunctionDescriptor != null) {
-                if (!InlineUtil.checkNonLocalReturnUsage(containingFunctionDescriptor, expression, context.trace) ||
+                if (!InlineUtil.checkNonLocalReturnUsage(containingFunctionDescriptor, expression, context) ||
                     isClassInitializer(containingFunInfo)) {
                     // Unqualified, in a function literal
                     context.trace.report(RETURN_NOT_ALLOWED.on(expression));
@@ -594,7 +596,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             SimpleFunctionDescriptor functionDescriptor = context.trace.get(FUNCTION, labelTargetElement);
             if (functionDescriptor != null) {
                 expectedType = getFunctionExpectedReturnType(functionDescriptor, labelTargetElement, context);
-                if (!InlineUtil.checkNonLocalReturnUsage(functionDescriptor, expression, context.trace)) {
+                if (!InlineUtil.checkNonLocalReturnUsage(functionDescriptor, expression, context)) {
                     // Qualified, non-local
                     context.trace.report(RETURN_NOT_ALLOWED.on(expression));
                     resultType = ErrorUtils.createErrorType(RETURN_NOT_ALLOWED_MESSAGE);
