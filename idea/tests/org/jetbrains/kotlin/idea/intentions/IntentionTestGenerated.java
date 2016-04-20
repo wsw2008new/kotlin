@@ -6655,6 +6655,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("any_indexNeeded.kt")
+        public void testAny_indexNeeded() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/any_indexNeeded.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("any_return.kt")
         public void testAny_return() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/any_return.kt");
@@ -6748,6 +6754,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("count_variableUsedBefore.kt")
         public void testCount_variableUsedBefore() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/count_variableUsedBefore.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("filterIndexed.kt")
+        public void testFilterIndexed() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/filterIndexed.kt");
             doTest(fileName);
         }
 
@@ -6985,6 +6997,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("flatMap_indexUsed.kt")
+        public void testFlatMap_indexUsed() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/flatMap_indexUsed.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("flatMap_notIterable.kt")
         public void testFlatMap_notIterable() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/flatMap_notIterable.kt");
@@ -7021,6 +7039,24 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("mapAndFilterIndexed.kt")
+        public void testMapAndFilterIndexed() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/mapAndFilterIndexed.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("mapIndexed.kt")
+        public void testMapIndexed() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/mapIndexed.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("mapIndexed_twice.kt")
+        public void testMapIndexed_twice() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/mapIndexed_twice.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("mapTo.kt")
         public void testMapTo() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/mapTo.kt");
@@ -7045,9 +7081,21 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("mapTo_indexUsed.kt")
+        public void testMapTo_indexUsed() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/mapTo_indexUsed.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("mapTo_inputVarNotUsed.kt")
         public void testMapTo_inputVarNotUsed() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/mapTo_inputVarNotUsed.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("mapUsesOldIndexAfterFilter.kt")
+        public void testMapUsesOldIndexAfterFilter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/mapUsesOldIndexAfterFilter.kt");
             doTest(fileName);
         }
 
