@@ -6817,6 +6817,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("filter_inputVarNotUsed.kt")
+        public void testFilter_inputVarNotUsed() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/filter_inputVarNotUsed.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("filter_mergeMultiple.kt")
         public void testFilter_mergeMultiple() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/filter_mergeMultiple.kt");
@@ -7036,6 +7042,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("mapTo4.kt")
         public void testMapTo4() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/mapTo4.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("mapTo_inputVarNotUsed.kt")
+        public void testMapTo_inputVarNotUsed() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/mapTo_inputVarNotUsed.kt");
             doTest(fileName);
         }
 
