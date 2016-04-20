@@ -6709,6 +6709,48 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("count1.kt")
+        public void testCount1() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/count1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("count2.kt")
+        public void testCount2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/count2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("count_Long.kt")
+        public void testCount_Long() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/count_Long.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("count_nonConstantInitial.kt")
+        public void testCount_nonConstantInitial() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/count_nonConstantInitial.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("count_nonZeroInitial.kt")
+        public void testCount_nonZeroInitial() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/count_nonZeroInitial.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("count_prefix.kt")
+        public void testCount_prefix() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/count_prefix.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("count_variableUsedBefore.kt")
+        public void testCount_variableUsedBefore() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/count_variableUsedBefore.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("filterIsInstance.kt")
         public void testFilterIsInstance() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/filterIsInstance.kt");
