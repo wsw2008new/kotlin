@@ -6763,6 +6763,54 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("filterIndexed2.kt")
+        public void testFilterIndexed2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/filterIndexed2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("filterIndexedAndFlatMapWithContinue.kt")
+        public void testFilterIndexedAndFlatMapWithContinue() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/filterIndexedAndFlatMapWithContinue.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("filterIndexed_indexChangedTwice.kt")
+        public void testFilterIndexed_indexChangedTwice() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/filterIndexed_indexChangedTwice.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("filterIndexed_indexStartNotZero.kt")
+        public void testFilterIndexed_indexStartNotZero() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/filterIndexed_indexStartNotZero.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("filterIndexed_indexUsedAfter.kt")
+        public void testFilterIndexed_indexUsedAfter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/filterIndexed_indexUsedAfter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("filterIndexed_indexUsedEarlierInLoop.kt")
+        public void testFilterIndexed_indexUsedEarlierInLoop() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/filterIndexed_indexUsedEarlierInLoop.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("filterIndexed_twoIndices.kt")
+        public void testFilterIndexed_twoIndices() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/filterIndexed_twoIndices.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("filterIndexed_twoIndicesUsed.kt")
+        public void testFilterIndexed_twoIndicesUsed() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/filterIndexed_twoIndicesUsed.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("filterIsInstance.kt")
         public void testFilterIsInstance() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/filterIsInstance.kt");
@@ -7021,6 +7069,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("indexWithNestedLoop.kt")
+        public void testIndexWithNestedLoop() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/indexWithNestedLoop.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("itAlreadyUsed.kt")
         public void testItAlreadyUsed() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/itAlreadyUsed.kt");
@@ -7048,6 +7102,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("mapIndexed.kt")
         public void testMapIndexed() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/mapIndexed.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("mapIndexed_afterFilter.kt")
+        public void testMapIndexed_afterFilter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/mapIndexed_afterFilter.kt");
             doTest(fileName);
         }
 
