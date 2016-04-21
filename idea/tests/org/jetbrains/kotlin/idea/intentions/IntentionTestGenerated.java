@@ -6787,6 +6787,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("filterIndexedTo.kt")
+        public void testFilterIndexedTo() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/filterIndexedTo.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("filterIndexedTo2.kt")
+        public void testFilterIndexedTo2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/filterIndexedTo2.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("filterIndexed_indexChangedTwice.kt")
         public void testFilterIndexed_indexChangedTwice() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/filterIndexed_indexChangedTwice.kt");
