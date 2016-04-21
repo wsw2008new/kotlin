@@ -7273,6 +7273,24 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("takeWhile.kt")
+        public void testTakeWhile() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/takeWhile.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("takeWhile_nestedLoop.kt")
+        public void testTakeWhile_nestedLoop() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/takeWhile_nestedLoop.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("takeWhile_wrongBreak.kt")
+        public void testTakeWhile_wrongBreak() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/takeWhile_wrongBreak.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("toList.kt")
         public void testToList() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/toList.kt");
