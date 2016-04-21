@@ -6877,6 +6877,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("filterNotTo.kt")
+        public void testFilterNotTo() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/filterNotTo.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("filterNot_ifContinue.kt")
         public void testFilterNot_ifContinue() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/filterNot_ifContinue.kt");
