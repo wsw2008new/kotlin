@@ -6853,6 +6853,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("filterNotNullTo.kt")
+        public void testFilterNotNullTo() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/filterNotNullTo.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("filterNotNullTo2.kt")
+        public void testFilterNotNullTo2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/filterNotNullTo2.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("filterNotNull_ifContinue.kt")
         public void testFilterNotNull_ifContinue() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/filterNotNull_ifContinue.kt");
