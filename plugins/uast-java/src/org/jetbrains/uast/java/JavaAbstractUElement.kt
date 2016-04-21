@@ -20,6 +20,7 @@ import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.PsiExpression
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UExpression
+import org.jetbrains.uast.UType
 import org.jetbrains.uast.psi.PsiElementBacked
 
 abstract class JavaAbstractUElement : UElement {
@@ -28,17 +29,25 @@ abstract class JavaAbstractUElement : UElement {
             return this === other
         }
 
+        if (other.javaClass != this.javaClass) return false
         return this.psi == other.psi
+    }
+
+    override fun originalString(): String {
+        if (this is PsiElementBacked) {
+            return this.psi?.text ?: super.originalString()
+        }
+        return super.originalString()
     }
 }
 
-abstract class JavaAbstractUExpression : UExpression {
+abstract class JavaAbstractUExpression : JavaAbstractUElement(), UExpression {
     override fun evaluate(): Any? {
         val psi = (this as? PsiElementBacked)?.psi ?: return null
         return JavaPsiFacade.getInstance(psi.project).constantEvaluationHelper.computeConstantExpression(psi)
     }
 
-    override fun getExpressionType(): JavaUType? {
+    override fun getExpressionType(): UType? {
         val expression = (this as? PsiElementBacked)?.psi as? PsiExpression ?: return null
         return expression.type?.let { JavaConverter.convertType(it, this) }
     }

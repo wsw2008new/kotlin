@@ -105,7 +105,7 @@ public abstract class PermissionRequirement {
     public static PermissionRequirement create(
       @Nullable UastAndroidContext context,
       @NonNull UAnnotation annotation) {
-        String value = (String)annotation.getValue(ATTR_VALUE);
+        String value = annotation.getValue(ATTR_VALUE).getValue().toString();
         if (value != null && !value.isEmpty()) {
             for (int i = 0, n = value.length(); i < n; i++) {
                 char c = value.charAt(i);

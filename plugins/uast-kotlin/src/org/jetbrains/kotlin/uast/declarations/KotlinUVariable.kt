@@ -71,6 +71,9 @@ open class KotlinUVariable(
             else
                 UastFunctionKind.FUNCTION
 
+        override val throws: List<UType>
+            get() = emptyList()
+
         override val valueParameters by lz { psi.valueParameters.map { KotlinConverter.convertParameter(it, this) } }
 
         override val valueParameterCount: Int

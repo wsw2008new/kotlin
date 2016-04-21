@@ -78,6 +78,16 @@ interface UType : UElement, UNamed, UFqNamed, UAnnotated, UResolvable {
      */
     val isObject: Boolean
 
+    /**
+     * Returns true if the type is an array, false otherwise.
+     */
+    val isArray: Boolean
+
+    /**
+     * Returns the list of type parameters of this type.
+     */
+    val parameters: List<UTypeProjection>
+
     override fun logString() = "UType ($name)"
     override fun renderString() = name
 
@@ -126,7 +136,9 @@ object UastErrorType : UType, NoAnnotations {
     override val isByte = false
     override val isString = false
     override val isObject = false
+    override val isArray = false
     override val parent = null
+    override val parameters = emptyList<UTypeProjection>()
     override val name = ERROR_NAME
     override val fqName = null
     override val isBoolean = false

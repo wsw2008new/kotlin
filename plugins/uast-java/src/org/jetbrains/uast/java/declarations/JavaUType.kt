@@ -15,12 +15,12 @@
  */
 package org.jetbrains.uast.java
 
+import com.intellij.psi.PsiArrayType
 import com.intellij.psi.PsiClassType
 import com.intellij.psi.PsiType
-import org.jetbrains.uast.UClass
-import org.jetbrains.uast.UElement
-import org.jetbrains.uast.UType
-import org.jetbrains.uast.UastContext
+import com.intellij.psi.PsiWildcardType
+import org.jetbrains.uast.*
+import org.jetbrains.uast.kinds.UastVariance
 
 class JavaUType(
         val psi: PsiType?,
@@ -68,6 +68,32 @@ class JavaUType(
     override val isObject: Boolean
         get() = (psi as? PsiClassType)?.resolve()?.qualifiedName == "java.lang.Object"
 
+    override val isArray: Boolean
+        get() = false
+
+    override val parameters by lz {
+        val classType = psi as? PsiClassType ?: return@lz emptyList<UTypeProjection>()
+        if (!classType.hasParameters()) return@lz emptyList<UTypeProjection>()
+        classType.parameters.map {
+            val type = JavaConverter.convertType(it, null)
+            val variance = when (it) {
+                is PsiWildcardType -> {
+                    if (it.isSuper)
+                        UastVariance.CONTRAVARIANT
+                    else if (it.isExtends)
+                        UastVariance.CONTRAVARIANT
+                    else
+                        UastVariance.UNKNOWN
+                }
+                else -> UastVariance.INVARIANT
+            }
+            object : UTypeProjection {
+                override val type = type
+                override val variance = variance
+            }
+        }
+    }
+
     @Suppress("NOTHING_TO_INLINE")
     private inline fun check(unboxedType: String, boxedType: String): Boolean =
             name == unboxedType || (psi as? PsiClassType)?.resolve()?.qualifiedName == boxedType
@@ -78,4 +104,50 @@ class JavaUType(
         is PsiClassType -> psi.resolve()?.let { context.convert(it) as? UClass }
         else -> null
     }
+}
+
+class JavaUArrayType(val type: PsiArrayType, override val parent: UElement?) : UType {
+    override val name: String
+        get() = "Array"
+    override val fqName: String
+        get() = "Array"
+
+    override val isInt: Boolean
+        get() = false
+    override val isShort: Boolean
+        get() = false
+    override val isLong: Boolean
+        get() = false
+    override val isFloat: Boolean
+        get() = false
+    override val isDouble: Boolean
+        get() = false
+    override val isChar: Boolean
+        get() = false
+    override val isBoolean: Boolean
+        get() = false
+    override val isByte: Boolean
+        get() = false
+    override val isString: Boolean
+        get() = false
+    override val isObject: Boolean
+        get() = false
+
+    override val isArray: Boolean
+        get() = true
+
+    override val parameters: List<UTypeProjection> by lz {
+        val type = JavaConverter.convertType(type.componentType, this)
+        val typeProjection = object : UTypeProjection {
+            override val type = type
+            override val variance: UastVariance
+                get() = UastVariance.INVARIANT
+        }
+        listOf(typeProjection)
+    }
+
+    override fun resolve(context: UastContext) = null
+
+    override val annotations: List<UAnnotation>
+        get() = emptyList()
 }

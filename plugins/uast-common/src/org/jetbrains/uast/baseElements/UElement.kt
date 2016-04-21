@@ -27,9 +27,14 @@ interface UElement {
     val parent: UElement?
 
     /**
+     * Returns comments associated with this element.
+     */
+    val comments: List<String>
+
+    /**
      * Returns true if this element is valid, false otherwise.
      */
-    open val isValid: Boolean
+    val isValid: Boolean
         get() = true
 
     /**
@@ -67,7 +72,7 @@ interface UElement {
 
     /**
      * Returns the string as written in the source file.
-     * //TODO write about usages
+     * Use this String only for logging and diagnostic text messages.
      *
      * @return the original text.
      */
@@ -180,4 +185,13 @@ interface UResolvable {
      *         or if the resolved [UElement] is not an instance of [UClass].
      */
     fun resolveClass(context: UastContext): UClass? = resolve(context) as? UClass
+
+    /**
+     * Returns the declaration [UClass] element of an empty Uast [UClass] element if the declaration was not resolved.
+     *
+     * @param context the Uast context
+     * @return the resolved [UClass] element, or an empty error Uast [UClass] element if the class was not resolved,
+     *         or if the resolved [UElement] is not an instance of [UClass].
+     */
+    fun resolveClassOrEmpty(context: UastContext) = resolveClass(context) ?: UClassNotResolved
 }

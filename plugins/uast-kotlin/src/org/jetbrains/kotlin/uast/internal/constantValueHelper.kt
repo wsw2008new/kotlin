@@ -27,12 +27,15 @@ fun ConstantValue<*>.getUastValue(project: Project): UConstantValue<*> {
     return when (this) {
         is AnnotationValue -> {
             val source = value.source.getPsi() as? KtAnnotationEntry ?: return UErrorValue
-            UAnnotationValue(KotlinConverter.convertClass(source, null))
+            UAnnotationValue(KotlinConverter.convertAnnotation(source, null))
         }
         is ArrayValue -> UArrayValue(value.map { it.getUastValue(project) })
         is BooleanValue -> UBooleanValue(value)
         is DoubleValue -> UDoubleValue(value)
-        is EnumValue -> UEnumValue(KotlinConverter.convertType(type, project, null))
+        is EnumValue -> {
+            val enumValueType = KotlinConverter.convertType(type, project, null)
+            UEnumValue(enumValueType, enumValueType, enumValueType.name)
+        }
         is FloatValue -> UFloatValue(value)
         is ByteValue -> UByteValue(value)
         is CharValue -> UCharValue(value)

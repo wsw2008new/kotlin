@@ -76,7 +76,12 @@ internal object JavaConverter : UastConverter {
         }
     }
 
-    internal fun convertType(type: PsiType?, parent: UElement?) = JavaUType(type, parent)
+    internal fun convertType(type: PsiType?, parent: UElement?): UType {
+        if (type is PsiArrayType) {
+            return JavaUArrayType(type, parent)
+        }
+        return JavaUType(type, parent)
+    }
 
     internal fun convertParameter(parameter: PsiParameter, parent: UElement) = JavaValueParameterUVariable(parameter, parent)
 

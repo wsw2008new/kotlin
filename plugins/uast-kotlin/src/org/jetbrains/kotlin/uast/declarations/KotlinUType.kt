@@ -24,7 +24,10 @@ import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeProjection
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.uast.*
+import org.jetbrains.uast.kinds.UastVariance
 import org.jetbrains.uast.psi.PsiElementBacked
 
 class KotlinUType(
@@ -75,12 +78,18 @@ class KotlinUType(
     override val isObject: Boolean
         get() = checkType(KotlinBuiltIns.FQ_NAMES.any)
 
+    override val isArray: Boolean
+        get() = checkType(KotlinBuiltIns.FQ_NAMES.array)
+
     private fun checkType(fqNameUnsafe: FqNameUnsafe): Boolean {
+        val fqName = fqNameUnsafe.toSafe()
         val descriptor = type.constructor.declarationDescriptor
         return descriptor is ClassDescriptor
-               && descriptor.getName() == fqNameUnsafe.shortName()
-               && fqNameUnsafe == DescriptorUtils.getFqName(descriptor)
+               && descriptor.getName() == fqName.shortName()
+               && fqName == DescriptorUtils.getFqName(descriptor).toSafe()
     }
+
+    override val parameters by lz { type.arguments.map { KotlinUTypeProjection(it, project) } }
 
     override fun matchesFqName(fqName: String): Boolean {
         return when (fqName) {
@@ -94,4 +103,17 @@ class KotlinUType(
 
     //TODO support descriptor annotations
     override val annotations = emptyList<UAnnotation>()
+}
+
+class KotlinUTypeProjection(val projection: TypeProjection, project: Project) : UTypeProjection {
+    override val type by lz { KotlinConverter.convertType(projection.type, project, null) }
+    override val variance: UastVariance
+        get() {
+            if (projection.isStarProjection) return UastVariance.UNKNOWN
+            return when (projection.projectionKind) {
+                Variance.INVARIANT -> UastVariance.INVARIANT
+                Variance.IN_VARIANCE -> UastVariance.CONTRAVARIANT
+                Variance.OUT_VARIANCE -> UastVariance.COVARIANT
+            }
+        }
 }

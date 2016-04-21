@@ -23,13 +23,11 @@ interface UConstantValue<T> {
     val value: T
 }
 
+interface USimpleConstantValue<T> : UConstantValue<T>
+
 class UAnnotationValue(override val value: UAnnotation) : UConstantValue<UAnnotation>
 
 class UArrayValue(override val value: List<UConstantValue<*>>) : UConstantValue<List<UConstantValue<*>>>
-
-class UBooleanValue(override val value: Boolean) : UConstantValue<Boolean>
-
-class UDoubleValue(override val value: Double) : UConstantValue<Double>
 
 class UEnumValue(override val value: UType?, val enumType: UType, val valueName: String) : UConstantValue<UType?>
 
@@ -37,24 +35,30 @@ object UErrorValue : UConstantValue<Unit> {
     override val value = Unit
 }
 
-class UFloatValue(override val value: Float) : UConstantValue<Float>
+interface UIntegralValue<T> : USimpleConstantValue<T>
 
-interface UIntegralValue<T> : UConstantValue<T>
+interface URealValue<T> : USimpleConstantValue<T>
 
-class UCharValue(override val value: Char) : UConstantValue<Char>
+class UDoubleValue(override val value: Double) : URealValue<Double>
 
-class UByteValue(override val value: Byte) : UConstantValue<Byte>
+class UFloatValue(override val value: Float) : URealValue<Float>
 
-class UIntValue(override val value: Int) : UConstantValue<Int>
+class UCharValue(override val value: Char) : USimpleConstantValue<Char>
 
-class ULongValue(override val value: Long) : UConstantValue<Long>
+class UByteValue(override val value: Byte) : UIntegralValue<Byte>
 
-class UShortValue(override val value: Short) : UConstantValue<Short>
+class UIntValue(override val value: Int) : UIntegralValue<Int>
+
+class ULongValue(override val value: Long) : UIntegralValue<Long>
+
+class UShortValue(override val value: Short) : UIntegralValue<Short>
 
 class UTypeValue(override val value: UType) : UConstantValue<UType>
 
-object UNullValue : UConstantValue<Any?> {
+object UNullValue : USimpleConstantValue<Any?> {
     override val value = null
 }
 
-class UStringValue(override val value: String) : UConstantValue<String>
+class UBooleanValue(override val value: Boolean) : USimpleConstantValue<Boolean>
+
+class UStringValue(override val value: String) : USimpleConstantValue<String>

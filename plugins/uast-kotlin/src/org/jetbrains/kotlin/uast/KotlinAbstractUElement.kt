@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.uast
 
 import org.jetbrains.uast.UElement
+import org.jetbrains.uast.baseElements.UComment
 import org.jetbrains.uast.psi.PsiElementBacked
 
 abstract class KotlinAbstractUElement : UElement {
@@ -25,6 +26,14 @@ abstract class KotlinAbstractUElement : UElement {
             return this === other
         }
 
+        if (other.javaClass != this.javaClass) return false
         return this.psi == other.psi
+    }
+
+    override fun originalString(): String {
+        if (this is PsiElementBacked) {
+            return this.psi?.text ?: super.originalString()
+        }
+        return super.originalString()
     }
 }

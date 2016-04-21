@@ -30,7 +30,7 @@ class JavaUCallExpression(
         get() = UastCallKind.FUNCTION_CALL
 
     override val functionReference by lz {
-        JavaConverter.convert(psi.methodExpression.referenceNameElement, this) as? USimpleReferenceExpression
+        JavaConverter.convertReference(psi.methodExpression, this) as? USimpleReferenceExpression
     }
 
     override val classReference: USimpleReferenceExpression?

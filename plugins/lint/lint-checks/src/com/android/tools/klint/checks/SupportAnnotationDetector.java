@@ -49,6 +49,8 @@ import com.google.common.collect.Sets;
 import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.uast.*;
+import org.jetbrains.uast.baseElements.UConstantValue;
+import org.jetbrains.uast.baseElements.USimpleConstantValue;
 import org.jetbrains.uast.check.UastAndroidContext;
 import org.jetbrains.uast.check.UastScanner;
 import org.jetbrains.uast.java.JavaUFunction;
@@ -60,11 +62,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.io.File;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Looks up annotations on method calls and enforces the various things they
@@ -283,7 +281,7 @@ public class SupportAnnotationDetector extends Detector implements UastScanner {
             // don't want to (a) create redundant warnings or (b) work harder than we
             // have to
             if (signature.equals(INT_DEF_ANNOTATION)) {
-                boolean flag = annotation.getValue(TYPE_DEF_FLAG_ATTRIBUTE) == Boolean.TRUE;
+                boolean flag = annotation.getValue(TYPE_DEF_FLAG_ATTRIBUTE).getValue() == Boolean.TRUE;
                 checkTypeDefConstant(context, annotation, argument, null, flag);
             } else if (signature.equals(STRING_DEF_ANNOTATION)) {
                 checkTypeDefConstant(context, annotation, argument, null, false);
@@ -371,7 +369,7 @@ public class SupportAnnotationDetector extends Detector implements UastScanner {
             if (!handlesMissingPermission) {
                 UFunction declaration = UastUtils.getParentOfType(parent, UFunction.class);
                 if (declaration instanceof JavaUFunction) {
-                    List<UType> thrownExceptions = ((JavaUFunction)declaration).getThrownExceptions();
+                    List<UType> thrownExceptions = declaration.getThrows();
                     for (UType typeReference : thrownExceptions) {
                         if (isSecurityException(typeReference)) {
                             handlesMissingPermission = true;
@@ -1116,12 +1114,12 @@ public class SupportAnnotationDetector extends Detector implements UastScanner {
     private static void reportTypeDef(@NonNull UastAndroidContext context,
             @NonNull UAnnotation annotation, @NonNull UElement argument,
             @Nullable UElement errorNode) {
-        List<Pair<String, Object>> allowed = annotation.getValues();
+        Map<String, UConstantValue<?>> allowed = annotation.getValues();
         reportTypeDef(context, argument, errorNode, false, allowed);
     }
 
     private static void reportTypeDef(@NonNull UastAndroidContext context, @NonNull UElement node,
-            @Nullable UElement errorNode, boolean flag, @NonNull List<Pair<String, Object>> allowedValues) {
+            @Nullable UElement errorNode, boolean flag, @NonNull Map<String, UConstantValue<?>> allowedValues) {
         String values = listAllowedValues(allowedValues);
         String message;
         if (flag) {
@@ -1135,29 +1133,12 @@ public class SupportAnnotationDetector extends Detector implements UastScanner {
         context.report(TYPE_DEF, errorNode, context.getLocation(errorNode), message);
     }
 
-    private static String listAllowedValues(@NonNull List<Pair<String, Object>> allowedValues) {
+    private static String listAllowedValues(@NonNull Map<String, UConstantValue<?>> allowedValues) {
         StringBuilder sb = new StringBuilder();
-        for (Pair<String, Object> namedValue : allowedValues) {
-            Object allowedValue = namedValue.getSecond();
+        for (Map.Entry<String, UConstantValue<?>> namedValue : allowedValues.entrySet()) {
             String s;
-            if (allowedValue instanceof Integer) {
-                s = allowedValue.toString();
-            } else if (allowedValue instanceof UVariable) {
-                UVariable variable = (UVariable) allowedValue;
-                UClass containingClass = UastUtils.getContainingClassOrEmpty(variable);
-                String containingClassName = containingClass.getFqName();
-                if (containingClassName == null) {
-                    continue;
-                }
-                containingClassName = containingClassName.substring(containingClassName.lastIndexOf('.') + 1);
-                s = containingClassName + "." + variable.getName();
-            } else if (allowedValue instanceof UFqNamed) {
-                String fqName = ((UFqNamed)allowedValue).getFqName();
-                if (fqName != null) {
-                    s = fqName;
-                } else {
-                    continue;
-                }
+            if (namedValue instanceof USimpleConstantValue<?>) {
+                s = namedValue.getValue().toString();
             } else {
                 continue;
             }

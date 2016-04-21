@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+@file:JvmMultifileClass
 @file:JvmName("UastUtils")
 package org.jetbrains.uast
 
@@ -126,14 +127,6 @@ fun UCallExpression.getReceiver(): UExpression? = (this.parent as? UQualifiedExp
 fun UElement.resolveIfCan(context: UastContext): UDeclaration? = (this as? UResolvable)?.resolve(context)
 
 /**
- * Find an annotation with the required qualified name.
- *
- * @param fqName the qualified name to search
- * @return [UAnnotation] element if the annotation with the specified [fqName] was found, null otherwise.
- */
-fun UAnnotated.findAnnotation(fqName: String) = annotations.firstOrNull { it.fqName == fqName }
-
-/**
  * Get all class declarations (including supertypes).
  *
  * @param context the Uast context
@@ -147,24 +140,6 @@ fun UClass.getAllDeclarations(context: UastContext): List<UDeclaration> = mutabl
 }
 
 fun UClass.getAllFunctions(context: UastContext) = getAllDeclarations(context).filterIsInstance<UFunction>()
-
-tailrec fun UQualifiedExpression.getCallElementFromQualified(): UCallExpression? {
-    val selector = this.selector
-    return when (selector) {
-        is UQualifiedExpression -> selector.getCallElementFromQualified()
-        is UCallExpression -> selector
-        else -> null
-    }
-}
-
-fun UCallExpression.getQualifiedCallElement(): UExpression {
-    fun findParent(element: UExpression?): UExpression? = when (element) {
-        is UQualifiedExpression -> findParent(element.parent as? UExpression) ?: element
-        else -> null
-    }
-
-    return findParent(parent as? UExpression) ?: this
-}
 
 inline fun <reified T: UElement> UElement.getParentOfType(strict: Boolean = true): T? = getParentOfType(T::class.java, strict)
 
@@ -211,52 +186,4 @@ fun <T> UClass.findStaticMemberOfType(name: String, type: Class<out T>): T? {
         it.name == name && it is UModifierOwner
                 && it.hasModifier(UastModifier.STATIC) && type.isInstance(it)
     } as T
-}
-
-fun UExpression.asQualifiedPath(): List<String>? {
-    var error = false
-    val list = mutableListOf<String>()
-    fun addIdentifiers(expr: UQualifiedExpression) {
-        val receiver = expr.receiver
-        val selector = expr.selector as? USimpleReferenceExpression ?: run { error = true; return }
-        when (receiver) {
-            is UQualifiedExpression -> addIdentifiers(receiver)
-            is USimpleReferenceExpression -> list += receiver.identifier
-            else -> {
-                error = true
-                return
-            }
-        }
-        list += selector.identifier
-    }
-    when (this) {
-        is UQualifiedExpression -> addIdentifiers(this)
-        is USimpleReferenceExpression -> listOf(identifier)
-        else -> return null
-    }
-    return if (error || list.isEmpty()) null else list
-}
-
-fun UExpression.matchesQualified(fqName: String): Boolean {
-    val identifiers = this.asQualifiedPath() ?: return false
-    val passedIdentifiers = fqName.trim('.').split('.')
-    return identifiers == passedIdentifiers
-}
-
-fun UExpression.startsWithQualified(fqName: String): Boolean {
-    val identifiers = this.asQualifiedPath() ?: return false
-    val passedIdentifiers = fqName.trim('.').split('.')
-    identifiers.forEachIndexed { i, identifier ->
-        if (identifier != passedIdentifiers[i]) return false
-    }
-    return true
-}
-
-fun UExpression.endsWithQualified(fqName: String): Boolean {
-    val identifiers = this.asQualifiedPath() ?: return false
-    val passedIdentifiers = fqName.trim('.').split('.')
-    identifiers.forEachIndexed { i, identifier ->
-        if (identifier != passedIdentifiers[i]) return false
-    }
-    return true
 }
