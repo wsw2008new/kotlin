@@ -6625,6 +6625,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("any_ifAssign_moveDeclaration.kt")
+        public void testAny_ifAssign_moveDeclaration() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/any_ifAssign_moveDeclaration.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("any_ifAssign_moveInitialization.kt")
+        public void testAny_ifAssign_moveInitialization() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/any_ifAssign_moveInitialization.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("any_ifAssign_noBreak.kt")
         public void testAny_ifAssign_noBreak() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/any_ifAssign_noBreak.kt");
@@ -7246,6 +7258,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("toSetWithMap.kt")
         public void testToSetWithMap() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/toSetWithMap.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("twoInitializationsBeforeLoop.kt")
+        public void testTwoInitializationsBeforeLoop() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/twoInitializationsBeforeLoop.kt");
             doTest(fileName);
         }
     }
