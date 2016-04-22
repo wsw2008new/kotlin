@@ -6709,6 +6709,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("assignFilterIndexed.kt")
+        public void testAssignFilterIndexed() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/assignFilterIndexed.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("assignFilterNotNull.kt")
+        public void testAssignFilterNotNull() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/assignFilterNotNull.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("assignFilter_ArrayListRequired.kt")
         public void testAssignFilter_ArrayListRequired() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/assignFilter_ArrayListRequired.kt");
@@ -6742,6 +6754,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("assignMap.kt")
         public void testAssignMap() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/assignMap.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("assignMap2.kt")
+        public void testAssignMap2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/assignMap2.kt");
             doTest(fileName);
         }
 
