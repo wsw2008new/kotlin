@@ -6763,6 +6763,30 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("contains.kt")
+        public void testContains() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/contains.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("contains2.kt")
+        public void testContains2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/contains2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("contains3.kt")
+        public void testContains3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/contains3.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("contains4.kt")
+        public void testContains4() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/contains4.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("count1.kt")
         public void testCount1() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/count1.kt");
