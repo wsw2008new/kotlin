@@ -6787,6 +6787,24 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("embeddedBreak1.kt")
+        public void testEmbeddedBreak1() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/embeddedBreak1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("embeddedBreak2.kt")
+        public void testEmbeddedBreak2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/embeddedBreak2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("embeddedContinue.kt")
+        public void testEmbeddedContinue() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/embeddedContinue.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("filterIndexed.kt")
         public void testFilterIndexed() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/filterIndexed.kt");
@@ -7171,6 +7189,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("mapIndexedNotNull_elvisContinue.kt")
+        public void testMapIndexedNotNull_elvisContinue() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/mapIndexedNotNull_elvisContinue.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("mapIndexed_afterFilter.kt")
         public void testMapIndexed_afterFilter() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/mapIndexed_afterFilter.kt");
@@ -7180,6 +7204,24 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("mapIndexed_twice.kt")
         public void testMapIndexed_twice() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/mapIndexed_twice.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("mapNotNull_elvisContinue.kt")
+        public void testMapNotNull_elvisContinue() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/mapNotNull_elvisContinue.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("mapNotNull_nestedLoopElvisContinue.kt")
+        public void testMapNotNull_nestedLoopElvisContinue() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/mapNotNull_nestedLoopElvisContinue.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("mapNotNull_wrongElvisContinue.kt")
+        public void testMapNotNull_wrongElvisContinue() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/mapNotNull_wrongElvisContinue.kt");
             doTest(fileName);
         }
 
