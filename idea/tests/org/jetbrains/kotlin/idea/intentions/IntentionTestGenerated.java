@@ -7195,9 +7195,27 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("mapIndexedNotNullTo.kt")
+        public void testMapIndexedNotNullTo() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/mapIndexedNotNullTo.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("mapIndexedNotNullTo_elvisContinue.kt")
+        public void testMapIndexedNotNullTo_elvisContinue() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/mapIndexedNotNullTo_elvisContinue.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("mapIndexedNotNull_elvisContinue.kt")
         public void testMapIndexedNotNull_elvisContinue() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/mapIndexedNotNull_elvisContinue.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("mapIndexedTo.kt")
+        public void testMapIndexedTo() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/mapIndexedTo.kt");
             doTest(fileName);
         }
 
@@ -7270,12 +7288,6 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("mapTo4.kt")
         public void testMapTo4() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/mapTo4.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("mapTo_indexUsed.kt")
-        public void testMapTo_indexUsed() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/mapTo_indexUsed.kt");
             doTest(fileName);
         }
 
