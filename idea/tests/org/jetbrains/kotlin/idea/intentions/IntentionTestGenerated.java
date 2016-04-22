@@ -7213,6 +7213,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("indexOf.kt")
+        public void testIndexOf() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/indexOf.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("indexOfFirst_ifAssign.kt")
         public void testIndexOfFirst_ifAssign() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/indexOfFirst_ifAssign.kt");
@@ -7246,6 +7252,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("itAlreadyUsed.kt")
         public void testItAlreadyUsed() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/itAlreadyUsed.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("lastIndexOf.kt")
+        public void testLastIndexOf() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/lastIndexOf.kt");
             doTest(fileName);
         }
 
