@@ -7189,6 +7189,30 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("indexOfFirst_ifAssign.kt")
+        public void testIndexOfFirst_ifAssign() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/indexOfFirst_ifAssign.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("indexOfFirst_ifReturn.kt")
+        public void testIndexOfFirst_ifReturn() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/indexOfFirst_ifReturn.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("indexOfFirst_mustBeNoIndexInCondition.kt")
+        public void testIndexOfFirst_mustBeNoIndexInCondition() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/indexOfFirst_mustBeNoIndexInCondition.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("indexOfLast_ifAssign.kt")
+        public void testIndexOfLast_ifAssign() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/indexOfLast_ifAssign.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("indexWithNestedLoop.kt")
         public void testIndexWithNestedLoop() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/indexWithNestedLoop.kt");
