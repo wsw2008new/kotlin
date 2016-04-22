@@ -6615,6 +6615,24 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("addToCollection_badReceiver1.kt")
+        public void testAddToCollection_badReceiver1() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/addToCollection_badReceiver1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("addToCollection_badReceiver2.kt")
+        public void testAddToCollection_badReceiver2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/addToCollection_badReceiver2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("addToCollection_goodReceiver.kt")
+        public void testAddToCollection_goodReceiver() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/addToCollection_goodReceiver.kt");
+            doTest(fileName);
+        }
+
         public void testAllFilesPresentInLoopToCallChain() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/loopToCallChain"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
