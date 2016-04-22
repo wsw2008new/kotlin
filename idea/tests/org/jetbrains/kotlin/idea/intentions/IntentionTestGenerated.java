@@ -7429,6 +7429,24 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("smartCastRequired3.kt")
+        public void testSmartCastRequired3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/smartCastRequired3.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("smartCastRequired4.kt")
+        public void testSmartCastRequired4() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/smartCastRequired4.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("smartCastRequired5.kt")
+        public void testSmartCastRequired5() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/smartCastRequired5.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("smartCastThisRequired.kt")
         public void testSmartCastThisRequired() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/smartCastThisRequired.kt");
