@@ -7189,6 +7189,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("mapIndexedNotNull.kt")
+        public void testMapIndexedNotNull() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/mapIndexedNotNull.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("mapIndexedNotNull_elvisContinue.kt")
         public void testMapIndexedNotNull_elvisContinue() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/mapIndexedNotNull_elvisContinue.kt");
@@ -7204,6 +7210,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("mapIndexed_twice.kt")
         public void testMapIndexed_twice() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/mapIndexed_twice.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("mapNotNull.kt")
+        public void testMapNotNull() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/mapNotNull.kt");
             doTest(fileName);
         }
 
