@@ -72,7 +72,7 @@ class VarianceCheckerCore(
             if (!checkClassHeader(klass)) return false
         }
         for (member in klass.declarations) {
-            member as? KtCallableDeclaration ?: continue
+            if (member !is KtCallableDeclaration) continue
             val descriptor = context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, member) as? CallableMemberDescriptor ?: continue
             if (!checkMember(member, descriptor)) return false
         }

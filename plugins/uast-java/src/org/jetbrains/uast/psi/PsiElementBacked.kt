@@ -24,8 +24,6 @@ import java.util.*
 interface PsiElementBacked : UElement {
     val psi: PsiElement?
 
-    override fun originalString() = psi?.text ?: super.originalString()
-
     override val comments: List<String>
         get() = psi?.children?.fold(ArrayList<String>(0)) { list, item ->
             if (item is PsiComment) {

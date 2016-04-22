@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.uast
 
 import org.jetbrains.uast.UElement
-import org.jetbrains.uast.baseElements.UComment
 import org.jetbrains.uast.psi.PsiElementBacked
 
 abstract class KotlinAbstractUElement : UElement {

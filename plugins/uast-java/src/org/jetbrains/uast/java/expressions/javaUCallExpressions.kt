@@ -29,9 +29,7 @@ class JavaUCallExpression(
     override val kind: UastCallKind
         get() = UastCallKind.FUNCTION_CALL
 
-    override val functionReference by lz {
-        JavaConverter.convertReference(psi.methodExpression, this) as? USimpleReferenceExpression
-    }
+    override val functionReference by lz { JavaConverter.convert(psi.methodExpression, this) as? USimpleReferenceExpression }
 
     override val classReference: USimpleReferenceExpression?
         get() = null
@@ -45,8 +43,7 @@ class JavaUCallExpression(
     override val functionName: String
         get() = psi.methodExpression.referenceName ?: "<error name>"
 
-    override val functionNameElement: UElement?
-        get() = functionReference
+    override val functionNameElement by lz { JavaDumbUElement(psi.methodExpression.referenceNameElement, this) }
 
     override fun resolve(context: UastContext) = psi.resolveMethod()?.let { context.convert(it) as? UFunction }
 }

@@ -30,6 +30,7 @@ interface UElement {
      * Returns comments associated with this element.
      */
     val comments: List<String>
+        get() = emptyList()
 
     /**
      * Returns true if this element is valid, false otherwise.
