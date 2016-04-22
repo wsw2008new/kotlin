@@ -6877,6 +6877,24 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("filterIndexed_merge1.kt")
+        public void testFilterIndexed_merge1() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/filterIndexed_merge1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("filterIndexed_merge2.kt")
+        public void testFilterIndexed_merge2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/filterIndexed_merge2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("filterIndexed_merge3.kt")
+        public void testFilterIndexed_merge3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/filterIndexed_merge3.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("filterIndexed_twoIndices.kt")
         public void testFilterIndexed_twoIndices() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/filterIndexed_twoIndices.kt");
