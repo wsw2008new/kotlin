@@ -7219,6 +7219,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("mapNotNullTo.kt")
+        public void testMapNotNullTo() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/mapNotNullTo.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("mapNotNullTo_elvisContinue.kt")
+        public void testMapNotNullTo_elvisContinue() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/mapNotNullTo_elvisContinue.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("mapNotNull_elvisContinue.kt")
         public void testMapNotNull_elvisContinue() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/mapNotNull_elvisContinue.kt");
