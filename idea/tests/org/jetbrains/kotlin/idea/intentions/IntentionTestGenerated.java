@@ -7381,6 +7381,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("moveInitializationsCloserToLoop.kt")
+        public void testMoveInitializationsCloserToLoop() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/moveInitializationsCloserToLoop.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("none_ifReturn.kt")
         public void testNone_ifReturn() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/none_ifReturn.kt");
