@@ -39,7 +39,7 @@ interface UDeclarationsExpression : UExpression {
         visitor.afterVisitDeclarationsExpression(this)
     }
 
-    override fun renderString() = declarations.joinToString("\n") { it.renderString() }
+    override fun renderString() = declarations.joinToString(LINE_SEPARATOR) { it.renderString() }
     override fun logString() = log("UDeclarationsExpression", declarations)
 }
 

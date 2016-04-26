@@ -43,8 +43,8 @@ interface ULambdaExpression : UExpression {
         val renderedValueParameters = if (valueParameters.isEmpty())
             ""
         else
-            valueParameters.joinToString { it.renderString() } + " ->\n"
+            valueParameters.joinToString { it.renderString() } + " ->" + LINE_SEPARATOR
 
-        return "{ " + renderedValueParameters + body.renderString().withMargin + "\n}"
+        return "{ " + renderedValueParameters + body.renderString().withMargin + LINE_SEPARATOR + "}"
     }
 }

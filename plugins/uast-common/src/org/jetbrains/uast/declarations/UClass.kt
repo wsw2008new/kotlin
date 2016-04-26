@@ -121,8 +121,8 @@ interface UClass : UDeclaration, UFqNamed, UModifierOwner, UVisibilityOwner, UAn
 
         val declarations = if (declarations.isEmpty()) "" else buildString {
             appendln("{")
-            append(declarations.joinToString("\n\n") { it.renderString().trim('\n') }.withMargin)
-            append("\n}")
+            append(declarations.joinToString(LINE_SEPARATOR * 2) { it.renderString().trim('\n', '\r') }.withMargin)
+            append(LINE_SEPARATOR).append("}")
         }
         append(declarations)
     }

@@ -55,7 +55,8 @@ interface UFile: UElement {
         visitor.afterVisitFile(this)
     }
 
-    override fun logString() = "UFile (package = $packageFqName)\n" + declarations.joinToString("\n") { it.logString().withMargin }
+    override fun logString() = "UFile (package = $packageFqName)" + LINE_SEPARATOR +
+                               declarations.joinToString(LINE_SEPARATOR) { it.logString().withMargin }
 
     override fun renderString() = buildString {
         if (!packageFqName.isNullOrBlank()) {

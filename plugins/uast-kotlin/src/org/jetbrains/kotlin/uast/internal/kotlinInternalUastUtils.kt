@@ -28,6 +28,11 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.uast.kinds.KotlinUastVisibilities
 import org.jetbrains.uast.*
 
+internal val LINE_SEPARATOR = System.getProperty("line.separator") ?: "\n"
+
+private val JVM_STATIC_FQNAME = "kotlin.jvm.JvmStatic"
+private val JVM_FIELD_FQNAME = "kotlin.jvm.JvmField"
+
 private val MODIFIER_MAP = mapOf(
         UastModifier.ABSTRACT to KtTokens.ABSTRACT_KEYWORD,
         UastModifier.OVERRIDE to KtTokens.OVERRIDE_KEYWORD

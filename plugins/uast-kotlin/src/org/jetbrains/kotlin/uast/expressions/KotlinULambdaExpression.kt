@@ -30,10 +30,10 @@ class KotlinULambdaExpression(
         val renderedValueParameters = if (valueParameters.isEmpty())
             ""
         else
-            valueParameters.joinToString { it.renderString() } + " ->\n"
+            valueParameters.joinToString { it.renderString() } + " ->" + LINE_SEPARATOR
         val expressions = (body as? UBlockExpression)?.expressions
-                                  ?.joinToString("\n") { it.renderString().withMargin } ?: body.renderString()
+                                  ?.joinToString(LINE_SEPARATOR) { it.renderString().withMargin } ?: body.renderString()
 
-        return "{ " + renderedValueParameters + "\n" + expressions + "\n}"
+        return "{ " + renderedValueParameters + LINE_SEPARATOR + expressions + LINE_SEPARATOR + "}"
     }
 }

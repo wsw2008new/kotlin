@@ -15,7 +15,11 @@
  */
 package org.jetbrains.uast
 
-internal fun List<UElement>.logString() = joinToString("\n") { it.logString().withMargin }
+internal val LINE_SEPARATOR = System.getProperty("line.separator") ?: "\n"
+
+internal operator fun String.times(n: Int) = this.repeat(n)
+
+internal fun List<UElement>.logString() = joinToString(LINE_SEPARATOR) { it.logString().withMargin }
 
 internal fun UModifierOwner.renderModifiers() = UastModifier.VALUES
         .filter { hasModifier(it) }

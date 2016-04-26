@@ -87,7 +87,7 @@ fun UDeclaration.isTopLevel() = parent is UFile
  * @return the rendered log string.
  */
 fun UElement.log(firstLine: String, vararg nested: Any?): String {
-    return (if (firstLine.isBlank()) "" else firstLine + "\n") + nested.joinToString("\n") {
+    return (if (firstLine.isBlank()) "" else firstLine + LINE_SEPARATOR) + nested.joinToString(LINE_SEPARATOR) {
         when (it) {
             null -> "<no element>".withMargin
             is List<*> ->
@@ -100,7 +100,7 @@ fun UElement.log(firstLine: String, vararg nested: Any?): String {
 }
 
 val String.withMargin: String
-    get() = lines().joinToString("\n") { "    " + it }
+    get() = lines().joinToString(LINE_SEPARATOR) { "    " + it }
 
 fun List<UElement>.acceptList(visitor: UastVisitor) {
     for (element in this) {

@@ -69,15 +69,12 @@ interface UTryExpression : UExpression {
 
     override fun renderString() = buildString {
         append("try ")
-        appendln(tryClause.renderString().trim('\n'))
-        catchClauses.forEach { appendln(it.renderString().trim('\n')) }
-        finallyClause?.let { append("finally ").append(it.renderString().trim('\n')) }
+        appendln(tryClause.renderString().trim('\n', '\r'))
+        catchClauses.forEach { appendln(it.renderString().trim('\n', '\r')) }
+        finallyClause?.let { append("finally ").append(it.renderString().trim('\n', '\r')) }
     }
 
-    override fun logString() = "UTryExpression\n" +
-            tryClause.logString().withMargin +
-            catchClauses.joinToString("\n") { it.logString().withMargin } +
-            (finallyClause?.let { it.logString().withMargin } ?: "<no finally clause>" )
+    override fun logString() = log("UTryExpression", tryClause, catchClauses, finallyClause)
 }
 
 /**

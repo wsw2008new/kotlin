@@ -29,7 +29,7 @@ class KotlinUSwitchExpression(
 
     override val body: UExpression by lz {
         object : KotlinUSpecialExpressionList(psi, KotlinSpecialExpressionKinds.WHEN, this) {
-            override fun renderString() = expressions.joinToString("\n") { it.renderString().withMargin }
+            override fun renderString() = expressions.joinToString(LINE_SEPARATOR) { it.renderString().withMargin }
         }.apply {
             expressions = this@KotlinUSwitchExpression.psi.entries.map { KotlinUSwitchEntry(it, this) }
         }

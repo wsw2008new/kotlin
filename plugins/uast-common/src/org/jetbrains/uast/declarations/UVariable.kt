@@ -69,7 +69,7 @@ interface UVariable : UDeclaration, UModifierOwner, UVisibilityOwner, UAnnotated
         }
     }
 
-    override fun logString() = "UVariable ($name, kind = ${kind.name})\n" +
+    override fun logString() = "UVariable ($name, kind = ${kind.name})" + LINE_SEPARATOR +
             (initializer?.let { it.logString().withMargin } ?: "<no initializer>")
 }
 
