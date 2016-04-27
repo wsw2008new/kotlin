@@ -15,7 +15,6 @@
  */
 package org.jetbrains.uast.java
 
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.psi.*
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.uast.*
@@ -95,8 +94,6 @@ internal inline fun String?.orAnonymous(kind: String = ""): String {
     return this ?: "<anonymous" + (if (kind.isNotBlank()) " $kind" else "") + ">"
 }
 
-internal fun <T> runReadAction(action: () -> T): T {
-    return ApplicationManager.getApplication().runReadAction<T>(action)
-}
-
 internal fun <T> lz(initializer: () -> T) = lazy(LazyThreadSafetyMode.NONE, initializer)
+
+internal fun PsiType.unwrapArrayType() = if (this is PsiArrayType) componentType else this

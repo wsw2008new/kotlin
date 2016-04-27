@@ -17,7 +17,6 @@
 package org.jetbrains.uast.visitor
 
 import org.jetbrains.uast.*
-import org.jetbrains.uast.visitor.UastVisitor
 
 class UastExtendableVisitor(
         private val original: UastVisitor,

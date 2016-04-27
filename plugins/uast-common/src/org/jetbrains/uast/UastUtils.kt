@@ -37,7 +37,7 @@ tailrec fun UElement?.getContainingClass(): UClass? {
  * Returns the containing file of an element.
  *
  * @return the containing [UFile] element,
- *         or null if the receiver is null, or the element is not inside a [UFile] (it is abmormal).
+ *         or null if the receiver is null, or the element is not inside a [UFile] (it is abnormal).
  */
 tailrec fun UElement?.getContainingFile(): UFile? {
     val parent = this?.parent ?: return null

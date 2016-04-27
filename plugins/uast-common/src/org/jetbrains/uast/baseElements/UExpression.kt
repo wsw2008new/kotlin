@@ -21,7 +21,7 @@ import org.jetbrains.uast.visitor.UastVisitor
  * Represents an expression or statement (which is considered as an expression in Uast).
  */
 interface UExpression : UElement {
-    open fun evaluate(): Any? = null
+    fun evaluate(): Any? = null
     fun evaluateString(): String? = evaluate() as? String
 
     /**
@@ -30,7 +30,7 @@ interface UExpression : UElement {
      *
      * Calling [isStatement] should be relatively cheap, and it should not depend on [getExpressionType].
      */
-    open val isStatement: Boolean
+    val isStatement: Boolean
         get() = false
 
     /**

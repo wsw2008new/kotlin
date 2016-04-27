@@ -68,7 +68,8 @@ interface UFunction : UDeclaration, UModifierOwner, UVisibilityOwner, UAnnotated
     /**
      * Returns the function JVM descriptor (for example, "(ILjava/lang/String;)[I"), or null if the descriptor is unknown.
      */
-    open val bytecodeDescriptor: String?
+
+    val bytecodeDescriptor: String?
         get() = null
 
 

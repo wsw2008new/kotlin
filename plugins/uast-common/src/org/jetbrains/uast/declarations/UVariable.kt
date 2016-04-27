@@ -36,7 +36,7 @@ interface UVariable : UDeclaration, UModifierOwner, UVisibilityOwner, UAnnotated
     /**
      * Return the list of accessors if the variable is a property, or null otherwise.
      */
-    open val accessors: List<UFunction>?
+    val accessors: List<UFunction>?
         get() = null
 
     override fun accept(visitor: UastVisitor) {

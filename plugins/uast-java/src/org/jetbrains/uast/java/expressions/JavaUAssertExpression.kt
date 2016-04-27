@@ -56,4 +56,6 @@ class JavaUAssertExpression(
         get() = JavaUastCallKinds.ASSERT
 
     override fun resolve(context: UastContext) = null
+
+    override fun resolveType(context: UastContext) = null
 }

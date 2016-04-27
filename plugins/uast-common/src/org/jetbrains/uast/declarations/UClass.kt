@@ -50,7 +50,7 @@ interface UClass : UDeclaration, UFqNamed, UModifierOwner, UVisibilityOwner, UAn
     /**
      * Returns the class JVM name, or null if the JVM name is unknown.
      */
-    open val internalName: String?
+    val internalName: String?
         get() = null
 
     /**

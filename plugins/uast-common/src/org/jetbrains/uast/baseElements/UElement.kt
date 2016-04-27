@@ -86,6 +86,7 @@ interface UElement {
      */
     fun accept(visitor: UastVisitor) {
         visitor.visitElement(this)
+        visitor.afterVisitElement(this)
     }
 }
 
@@ -177,22 +178,4 @@ interface UResolvable {
      * @see [UDeclarationNotResolved]
      */
     fun resolveOrEmpty(context: UastContext): UDeclaration = resolve(context) ?: UDeclarationNotResolved
-
-    /**
-     * Returns the declaration [UClass] element of null if the declaration was not resolved.
-     *
-     * @param context the Uast context
-     * @return the resolved [UClass] element, or null if the class was not resolved,
-     *         or if the resolved [UElement] is not an instance of [UClass].
-     */
-    fun resolveClass(context: UastContext): UClass? = resolve(context) as? UClass
-
-    /**
-     * Returns the declaration [UClass] element of an empty Uast [UClass] element if the declaration was not resolved.
-     *
-     * @param context the Uast context
-     * @return the resolved [UClass] element, or an empty error Uast [UClass] element if the class was not resolved,
-     *         or if the resolved [UElement] is not an instance of [UClass].
-     */
-    fun resolveClassOrEmpty(context: UastContext) = resolveClass(context) ?: UClassNotResolved
 }

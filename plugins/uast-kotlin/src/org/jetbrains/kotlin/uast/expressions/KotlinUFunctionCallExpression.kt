@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.uast.*
 import org.jetbrains.uast.psi.PsiElementBacked
@@ -30,7 +29,11 @@ class KotlinUFunctionCallExpression(
         override val psi: KtCallExpression,
         override val parent: UElement
 ) : KotlinAbstractUElement(), UCallExpression, PsiElementBacked, KotlinUElementWithType {
-    override val functionName: String? by lz { resolveCall()?.resultingDescriptor?.name?.asString().orAnonymous() }
+    private val resolvedCall by lz {
+        psi.getResolvedCall(psi.analyze(BodyResolveMode.PARTIAL))
+    }
+
+    override val functionName: String? by lz { resolvedCall?.resultingDescriptor?.name?.asString().orAnonymous() }
     override fun matchesFunctionName(name: String) = functionName == name
 
     override val functionNameElement by lz { psi.calleeExpression?.let { KotlinConverter.convert(it, this) } }
@@ -56,14 +59,13 @@ class KotlinUFunctionCallExpression(
     override val typeArguments by lz { psi.typeArguments.map { KotlinConverter.convertType(it.typeReference, this) } }
 
     override val kind by lz {
-        when (resolveCall()?.resultingDescriptor) {
+        when (resolvedCall?.resultingDescriptor) {
             is ConstructorDescriptor -> UastCallKind.CONSTRUCTOR_CALL
             else -> UastCallKind.FUNCTION_CALL
         }
     }
 
     override fun resolve(context: UastContext): UFunction? {
-        val resolvedCall = resolveCall()
         val descriptor = resolvedCall?.resultingDescriptor ?: return null
         val source = descriptor.toSource() ?: return null
 
@@ -76,12 +78,15 @@ class KotlinUFunctionCallExpression(
         return context.convert(source) as? UFunction
     }
 
-    private fun resolveCall() = psi.getResolvedCall(psi.analyze(BodyResolveMode.PARTIAL))
+    override fun resolveType(context: UastContext): UType? {
+        val constructorDescriptor = resolvedCall?.resultingDescriptor as? ConstructorDescriptor ?: return null
+        return KotlinConverter.convertType(constructorDescriptor.returnType, psi.project, this)
+    }
 }
 
 class KotlinUComponentFunctionCallExpression(
         override val psi: PsiElement,
-        val n: Int,
+        n: Int,
         override val parent: UElement
 ) : UCallExpression, PsiElementBacked {
     override val valueArgumentCount = 0
@@ -94,4 +99,5 @@ class KotlinUComponentFunctionCallExpression(
     override val functionNameElement = null
     override val kind = UastCallKind.FUNCTION_CALL
     override fun resolve(context: UastContext) = null
+    override fun resolveType(context: UastContext) = null
 }

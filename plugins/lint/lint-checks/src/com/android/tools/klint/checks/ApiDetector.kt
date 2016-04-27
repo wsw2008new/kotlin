@@ -246,7 +246,7 @@ open class ApiDetector : Detector(), UastScanner {
             }
 
             fun checkCondition(node: UExpression, invertCondition: Boolean = false): Boolean? {
-                if (node is UBinaryExpression && node.operator is UastBinaryOperator.ComparationOperator) {
+                if (node is UBinaryExpression && node.operator is UastBinaryOperator.ComparisonOperator) {
                     var invert: Boolean = invertCondition
 
                     val value: UExpression

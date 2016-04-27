@@ -55,7 +55,7 @@ interface UCallExpression : UExpression, UResolvable {
      * @param name the name to check against.
      * @return true if the call is a function call, and the function name is [name], false otherwise.
      */
-    open fun matchesFunctionName(name: String) = functionName == name
+    fun matchesFunctionName(name: String) = functionName == name
 
     /**
      * Checks if the function name is [name], and the function declaration's containing class qualified name is [containingClassFqName].
@@ -67,7 +67,7 @@ interface UCallExpression : UExpression, UResolvable {
      *              and the qualified name of the function direct containing class is [containingClassFqName],
      *         false otherwise.
      */
-    open fun matchesFunctionNameWithContaining(containingClassFqName: String, name: String, context: UastContext): Boolean {
+    fun matchesFunctionNameWithContaining(containingClassFqName: String, name: String, context: UastContext): Boolean {
         if (!matchesFunctionName(name)) return false
         val containingClass = resolve(context)?.getContainingClass() ?: return false
         return containingClass.matchesFqName(containingClassFqName)
@@ -108,10 +108,27 @@ interface UCallExpression : UExpression, UResolvable {
      * Try to resolve the call to the [UFunction] element.
      *
      * @param context the Uast context
-     * @return the [UFunction] element, of [UFunctionNotResolved] if the reference was not resolved,
-     *         or the call is not a function call.
+     * @return the [UFunction] element, or [UFunctionNotResolved] if the reference was not resolved,
+     *         or if the call is not a function call.
      */
     override fun resolveOrEmpty(context: UastContext): UFunction = resolve(context) ?: UFunctionNotResolved
+
+    /**
+     * Resolve the call to the [UType] element, if the call is a constructor call.
+     *
+     * @param context the Uast context
+     * @return the [UType] element, or null if the reference was not resolved, or if the call is not a constructor call.
+     */
+    fun resolveType(context: UastContext): UType?
+
+    /**
+     * Try to resolve the call to the [UType] element, if the call is a constructor call.
+     *
+     * @param context the Uast context
+     * @return the [UType] element, or [UastErrorType] if the reference was not resolved,
+     *         or if the call is not a constructor call.
+     */
+    fun resolveTypeOrEmpty(context: UastContext): UType = resolveType(context) ?: UastErrorType
 
     override fun accept(visitor: UastVisitor) {
         if (visitor.visitCallExpression(this)) return

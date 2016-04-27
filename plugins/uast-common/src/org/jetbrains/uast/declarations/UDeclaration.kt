@@ -27,18 +27,29 @@ interface UDeclaration : UElement, UNamed {
     val nameElement: UElement?
 
     /**
-     * Checks if the function name is [name], and the function containing class qualified name is [containingClassFqName].
+     * Checks if the declaration's containing class qualified name is [containingClassFqName].
      *
      * @param containingClassFqName the required containing class qualified name.
-     * @param name the function name to check against.
-     * @return true if the call is a function call, the function name is [name],
-     *              and the qualified name of the function direct containing class is [containingClassFqName],
+     * @return true if the qualified name of the containing class is [containingClassFqName],
      *         false otherwise.
      */
-    open fun matchesNameWithContaining(containingClassFqName: String, name: String): Boolean {
-        if (!matchesName(name)) return false
+    fun matchesContaining(containingClassFqName: String): Boolean {
         val containingClass = this.getContainingClass() ?: return false
         return containingClass.matchesFqName(containingClassFqName)
+    }
+
+    /**
+     * Checks if the declaration name is [name], and the declaration's containing class qualified name is [containingClassFqName].
+     *
+     * @param containingClassFqName the required containing class qualified name.
+     * @param name the declaration name to check against.
+     * @return true if the declaration name is [name],
+     *              and the qualified name of the containing class is [containingClassFqName],
+     *         false otherwise.
+     */
+    fun matchesNameWithContaining(containingClassFqName: String, name: String): Boolean {
+        if (!matchesName(name)) return false
+        return matchesContaining(containingClassFqName)
     }
 
     override fun accept(visitor: UastVisitor) {

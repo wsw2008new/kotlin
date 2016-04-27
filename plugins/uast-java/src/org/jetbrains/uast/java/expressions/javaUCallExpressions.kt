@@ -19,6 +19,7 @@ import com.intellij.psi.PsiArrayInitializerExpression
 import com.intellij.psi.PsiArrayInitializerMemberValue
 import com.intellij.psi.PsiMethodCallExpression
 import com.intellij.psi.PsiNewExpression
+import com.intellij.psi.util.PsiTypesUtil
 import org.jetbrains.uast.*
 import org.jetbrains.uast.psi.PsiElementBacked
 
@@ -46,6 +47,8 @@ class JavaUCallExpression(
     override val functionNameElement by lz { JavaDumbUElement(psi.methodExpression.referenceNameElement, this) }
 
     override fun resolve(context: UastContext) = psi.resolveMethod()?.let { context.convert(it) as? UFunction }
+
+    override fun resolveType(context: UastContext) = null
 }
 
 class JavaConstructorUCallExpression(
@@ -110,6 +113,12 @@ class JavaConstructorUCallExpression(
     override val functionNameElement by lz { JavaDumbUElement(psi, this) }
 
     override fun resolve(context: UastContext) = psi.resolveConstructor()?.let { context.convert(it) } as? UFunction
+
+    override fun resolveType(context: UastContext): UType? {
+        val constructorClass = psi.resolveConstructor()?.containingClass ?: return null
+        val type = PsiTypesUtil.getClassType(constructorClass)
+        return context.convert(type) as? UType
+    }
 }
 
 class JavaArrayInitializerUCallExpression(
@@ -141,6 +150,11 @@ class JavaArrayInitializerUCallExpression(
         get() = UastCallKind.ARRAY_INITIALIZER
 
     override fun resolve(context: UastContext) = null
+
+    override fun resolveType(context: UastContext): UType? {
+        val type = psi.type?.unwrapArrayType() ?: return null
+        return context.convert(type) as? UType
+    }
 }
 
 class JavaAnnotationArrayInitializerUCallExpression(
@@ -176,4 +190,6 @@ class JavaAnnotationArrayInitializerUCallExpression(
         get() = emptyList()
 
     override fun resolve(context: UastContext) = null
+
+    override fun resolveType(context: UastContext) = null
 }
