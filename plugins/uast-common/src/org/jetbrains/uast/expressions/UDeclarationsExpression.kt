@@ -44,6 +44,6 @@ interface UDeclarationsExpression : UExpression {
 }
 
 class SimpleUDeclarationsExpression(
-        override val parent: UElement,
+        override val parent: UElement?,
         override val declarations: List<UElement>
 ) : UDeclarationsExpression

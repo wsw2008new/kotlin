@@ -56,6 +56,7 @@ interface UVariable : UDeclaration, UModifierOwner, UVisibilityOwner, UAnnotated
     }
 
     override fun renderString(): String = buildString {
+        append(renderAnnotations(annotations))
         if (kind != UastVariableKind.VALUE_PARAMETER) appendWithSpace(visibility.name)
         appendWithSpace(renderModifiers())
         if (kind != UastVariableKind.VALUE_PARAMETER) append("var ")

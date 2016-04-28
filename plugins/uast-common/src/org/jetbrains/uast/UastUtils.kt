@@ -19,7 +19,7 @@ package org.jetbrains.uast
 
 import org.jetbrains.uast.visitor.UastVisitor
 
-internal val ERROR_NAME: String = "<error>"
+internal val ERROR_NAME = "<error>"
 
 /**
  * Returns the containing class of an element.

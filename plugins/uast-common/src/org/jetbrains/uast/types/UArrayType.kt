@@ -18,4 +18,12 @@ package org.jetbrains.uast
 
 interface UArrayType : UType {
     val arrayElementType: UType
+
+    fun findDeepElementType(): UType {
+        var current = arrayElementType
+        while (current is UArrayType) {
+            current = current.arrayElementType
+        }
+        return current
+    }
 }

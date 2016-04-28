@@ -114,6 +114,7 @@ interface UClass : UDeclaration, UFqNamed, UModifierOwner, UVisibilityOwner, UAn
     }
 
     override fun renderString() = buildString {
+        append(renderAnnotations(annotations))
         appendWithSpace(visibility.name)
         appendWithSpace(renderModifiers())
         appendWithSpace(kind.text)

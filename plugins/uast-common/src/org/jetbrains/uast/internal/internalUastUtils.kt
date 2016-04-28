@@ -31,3 +31,12 @@ internal fun StringBuilder.appendWithSpace(s: String) {
         append(' ')
     }
 }
+
+internal fun renderAnnotations(annotations: List<UAnnotation>): String = buildString {
+    for (annotation in annotations) {
+        appendln(annotation.renderString())
+    }
+    if (annotations.isNotEmpty()) {
+        appendln()
+    }
+}

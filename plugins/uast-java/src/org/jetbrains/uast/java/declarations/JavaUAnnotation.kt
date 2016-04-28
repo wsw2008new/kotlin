@@ -50,5 +50,5 @@ class JavaUAnnotation(
         return values
     }
 
-    override fun resolve(context: UastContext) = context.convert(psi.reference?.resolve()) as? UClass
+    override fun resolve(context: UastContext) = context.convert(psi.nameReferenceElement?.resolve()) as? UClass
 }

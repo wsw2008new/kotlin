@@ -30,7 +30,7 @@ class UNamedExpression(
     }
 
     override fun logString() = log("UNamedExpression ($name)", expression)
-    override fun renderString() = "$name: $expression"
+    override fun renderString() = name + " = " + expression.renderString()
 
     override fun evaluate() = expression.evaluate()
 }

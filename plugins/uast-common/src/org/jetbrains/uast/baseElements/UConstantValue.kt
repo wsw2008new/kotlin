@@ -16,8 +16,6 @@
 
 package org.jetbrains.uast
 
-import org.jetbrains.uast.UAnnotation
-
 interface UConstantValue<T> {
     val value: T
 }

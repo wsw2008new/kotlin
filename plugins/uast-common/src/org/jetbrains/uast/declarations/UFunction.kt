@@ -92,6 +92,7 @@ interface UFunction : UDeclaration, UModifierOwner, UVisibilityOwner, UAnnotated
     }
 
     override fun renderString(): String = buildString {
+        append(renderAnnotations(annotations))
         appendWithSpace(visibility.name)
         appendWithSpace(renderModifiers())
         append("fun ")
