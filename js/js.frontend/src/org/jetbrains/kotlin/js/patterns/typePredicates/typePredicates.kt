@@ -26,6 +26,7 @@ public interface TypePredicate : Predicate<KotlinType> {
 
 private val KOTLIN = TypePredicateImpl("kotlin")
 public val COMPARABLE: TypePredicate = KOTLIN.inner("Comparable")
+val CHAR_SEQUENCE: TypePredicate = KOTLIN.inner("CharSequence")
 
 // TODO: replace all NamePredicate usages to TypePredicate
 /**
