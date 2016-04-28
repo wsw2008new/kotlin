@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isNullExpres
 import org.jetbrains.kotlin.psi.KtConstantExpression
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.ULiteralExpression
-import org.jetbrains.uast.UType
+
 import org.jetbrains.uast.psi.PsiElementBacked
 
 class KotlinULiteralExpression(

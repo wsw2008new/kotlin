@@ -75,7 +75,7 @@ public class ServiceCastDetector extends Detector implements UastScanner {
 
     @Override
     public void visitCall(UastAndroidContext context, UCallExpression node) {
-        UExpression receiver = UastUtils.getQualifiedCallElement(node);
+        UExpression receiver = UastUtils.getQualifiedParentOrThis(node);
         UElement parent = receiver.getParent();
         if (!(parent instanceof UBinaryExpressionWithType)
                 || ((UBinaryExpressionWithType)parent).getOperationKind() != UastBinaryExpressionWithTypeKind.TYPE_CAST) {

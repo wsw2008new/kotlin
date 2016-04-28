@@ -44,7 +44,7 @@ class JavaUFunction(
     override val typeParameterCount: Int
         get() = psi.typeParameters.size
 
-    override val returnType by lz { psi.returnType?.let { JavaConverter.convertType(it, this) } }
+    override val returnType by lz { psi.returnType?.let { JavaConverter.convertType(it) } }
 
     override fun hasModifier(modifier: UastModifier) = psi.hasModifier(modifier)
 
@@ -55,7 +55,7 @@ class JavaUFunction(
     
     override val body by lz { psi.body?.let { JavaConverter.convertBlock(it, this) } }
 
-    override val throws by lz { psi.throwsList.referencedTypes.map { JavaConverter.convertType(it, this) } }
+    override val throws by lz { psi.throwsList.referencedTypes.map { JavaConverter.convertType(it) } }
 
     override val bytecodeDescriptor by lz { getDescriptor(psi) }
 
@@ -83,7 +83,7 @@ class JavaUFunction(
             PsiType.BOOLEAN -> "Z"
             PsiType.VOID -> "V"
             is PsiArrayType -> renderType(type.componentType)?.let { "[$it" }
-            is PsiClassType -> type.resolve()?.qualifiedName?.let { "L$it;" }
+            is PsiClassType -> type.resolve()?.qualifiedName?.replace('.', '/')?.let { "L$it;" }
             else -> null
         }
     }

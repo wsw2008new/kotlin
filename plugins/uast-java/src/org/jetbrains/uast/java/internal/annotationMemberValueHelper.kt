@@ -18,7 +18,7 @@ package org.jetbrains.uast.java.internal
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.*
-import org.jetbrains.uast.baseElements.*
+import org.jetbrains.uast.*
 import org.jetbrains.uast.java.JavaConverter
 
 fun PsiAnnotationMemberValue?.getUastValue(project: Project): UConstantValue<*> {
@@ -48,14 +48,14 @@ fun PsiAnnotationMemberValue?.getUastValue(project: Project): UConstantValue<*> 
         is PsiReferenceExpression -> {
             val element = resolve()
             if (element is PsiEnumConstant) {
-                UEnumValue(null, JavaConverter.convertType(element.type, null), element.name ?: "<error>")
+                UEnumValue(null, JavaConverter.convertType(element.type), element.name ?: "<error>")
             } else {
                 UErrorValue
             }
         }
         is PsiArrayInitializerMemberValue -> UArrayValue(initializers.map { it.getUastValue(project) })
         is PsiAnnotation -> UAnnotationValue(JavaConverter.convertAnnotation(this, null))
-        is PsiClassObjectAccessExpression -> UTypeValue(JavaConverter.convertType(type, null))
+        is PsiClassObjectAccessExpression -> UTypeValue(JavaConverter.convertType(type))
         else -> throw UnsupportedOperationException("Unsupported annotation this type: " + this)
     }
 }

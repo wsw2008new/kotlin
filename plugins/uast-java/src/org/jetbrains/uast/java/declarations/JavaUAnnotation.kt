@@ -16,11 +16,7 @@
 package org.jetbrains.uast.java
 
 import com.intellij.psi.PsiAnnotation
-import org.jetbrains.uast.UAnnotation
-import org.jetbrains.uast.UClass
-import org.jetbrains.uast.UElement
-import org.jetbrains.uast.UastContext
-import org.jetbrains.uast.baseElements.UConstantValue
+import org.jetbrains.uast.*
 import org.jetbrains.uast.java.internal.getUastValue
 import org.jetbrains.uast.psi.PsiElementBacked
 

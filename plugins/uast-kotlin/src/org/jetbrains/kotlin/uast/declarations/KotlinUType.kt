@@ -27,13 +27,15 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeProjection
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.uast.*
+import org.jetbrains.uast.declarations.UClassType
+import org.jetbrains.uast.declarations.UResolvedType
 import org.jetbrains.uast.kinds.UastVariance
 import org.jetbrains.uast.psi.PsiElementBacked
+
 
 class KotlinUType(
         val type: KotlinType,
         val project: Project,
-        override val parent: UElement?,
         override val psi: PsiElement? = null
 ) : KotlinAbstractUElement(), UType, PsiElementBacked {
     override val name: String
@@ -41,13 +43,7 @@ class KotlinUType(
 
     override val fqName: String?
         get() = type.constructor.declarationDescriptor?.fqNameSafe?.asString()
-
-    override fun resolve(context: UastContext): UClass? {
-        val descriptor = type.constructor.declarationDescriptor ?: return null
-        val sourceElement = descriptor.toSource() ?: return null
-        return context.convert(sourceElement) as? UClass
-    }
-
+    
     override val isBoolean: Boolean
         get() = checkType(KotlinBuiltIns.FQ_NAMES._boolean)
 
@@ -89,8 +85,6 @@ class KotlinUType(
                && fqName == DescriptorUtils.getFqName(descriptor).toSafe()
     }
 
-    override val parameters by lz { type.arguments.map { KotlinUTypeProjection(it, project) } }
-
     override fun matchesFqName(fqName: String): Boolean {
         return when (fqName) {
             "java.lang.CharSequence" -> super.matchesFqName(fqName) ||
@@ -99,6 +93,11 @@ class KotlinUType(
                                   super.matchesFqName(KotlinBuiltIns.FQ_NAMES.string.asString())
             else -> super.matchesFqName(fqName)
         }
+    }
+
+    //TODO
+    override fun resolve(): UResolvedType {
+        return UastErrorResolvedType
     }
 
     //TODO support descriptor annotations

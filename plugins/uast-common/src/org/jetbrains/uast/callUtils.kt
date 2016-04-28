@@ -14,12 +14,16 @@
  * limitations under the License.
  */
 
+@file:JvmMultifileClass
+@file:JvmName("UastUtils")
 package org.jetbrains.uast
 
-import org.jetbrains.uast.kinds.UastVariance
+fun UCallExpression.isConstructorCall() = this.kind == UastCallKind.CONSTRUCTOR_CALL
 
+fun UCallExpression.isFunctionCall() = this.kind == UastCallKind.FUNCTION_CALL
 
-interface UTypeProjection {
-    val type: UType
-    val variance: UastVariance
-}
+fun UCallExpression.isNewArrayWithDimensions() = this.kind == UastCallKind.NEW_ARRAY_WITH_DIMENSIONS
+
+fun UCallExpression.isNewArrayWithInitializer() = this.kind == UastCallKind.NEW_ARRAY_WITH_INITIALIZER
+
+fun UCallExpression.isNestedArrayInitializer() = this.kind == UastCallKind.NESTED_ARRAY_INITIALIZER

@@ -107,7 +107,7 @@ public class AnnotationDetector extends Detector implements UastScanner {
                                 return super.visitAnnotation(node);
                             }
                         } else if (valueNode instanceof UCallExpression &&
-                                   ((UCallExpression) valueNode).getKind() == UastCallKind.ARRAY_INITIALIZER) {
+                                   ((UCallExpression) valueNode).getKind() == UastCallKind.NESTED_ARRAY_INITIALIZER) {
                             UCallExpression array = (UCallExpression) valueNode;
                             if (array.getValueArgumentCount() == 0) {
                                 continue;

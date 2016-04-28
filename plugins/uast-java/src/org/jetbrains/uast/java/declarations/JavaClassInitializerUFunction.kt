@@ -20,6 +20,7 @@ import com.intellij.psi.PsiModifier
 import org.jetbrains.uast.*
 import org.jetbrains.uast.psi.PsiElementBacked
 
+
 class JavaClassInitializerUFunction(
         override val psi: PsiClassInitializer,
         override val parent: UElement

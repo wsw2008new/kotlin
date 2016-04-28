@@ -2375,7 +2375,7 @@ public class LintDriver {
                             return true;
                         }
                     } else if (valueNode instanceof UCallExpression
-                               && ((UCallExpression)valueNode).getKind() == UastCallKind.ARRAY_INITIALIZER) {
+                               && ((UCallExpression)valueNode).getKind() == UastCallKind.NESTED_ARRAY_INITIALIZER) {
                         UCallExpression array = (UCallExpression) valueNode;
                         List<UExpression> expressions = array.getValueArguments();
                         for (UExpression arrayElement : expressions) {

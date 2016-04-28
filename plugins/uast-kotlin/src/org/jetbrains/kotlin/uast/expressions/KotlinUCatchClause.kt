@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.uast.UCatchClause
 import org.jetbrains.uast.UElement
-import org.jetbrains.uast.UType
+
 import org.jetbrains.uast.UVariable
 import org.jetbrains.uast.psi.PsiElementBacked
 

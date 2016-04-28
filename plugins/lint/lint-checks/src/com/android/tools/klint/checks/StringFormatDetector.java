@@ -66,6 +66,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.uast.*;
 import org.jetbrains.uast.check.UastAndroidContext;
 import org.jetbrains.uast.check.UastScanner;
+
 import org.jetbrains.uast.visitor.AbstractUastVisitor;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;

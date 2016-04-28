@@ -23,6 +23,7 @@ import com.intellij.psi.util.PsiTypesUtil
 import org.jetbrains.uast.*
 import org.jetbrains.uast.psi.PsiElementBacked
 
+
 class JavaUCallExpression(
         override val psi: PsiMethodCallExpression,
         override val parent: UElement
@@ -39,7 +40,7 @@ class JavaUCallExpression(
     override val valueArguments by lz { psi.argumentList.expressions.map { JavaConverter.convert(it, this) } }
 
     override val typeArgumentCount by lz { psi.typeArguments.size }
-    override val typeArguments by lz { psi.typeArguments.map { JavaConverter.convertType(it, this) } }
+    override val typeArguments by lz { psi.typeArguments.map { JavaConverter.convertType(it) } }
 
     override val functionName: String
         get() = psi.methodExpression.referenceName ?: "<error name>"
@@ -57,8 +58,8 @@ class JavaConstructorUCallExpression(
 ) : JavaAbstractUExpression(), UCallExpression, PsiElementBacked {
     override val kind by lz {
         when {
-            psi.arrayInitializer != null -> JavaUastCallKinds.NEW_ARRAY_WITH_INITIALIZER
-            psi.arrayDimensions.isNotEmpty() -> JavaUastCallKinds.NEW_ARRAY_DIMENTIONS
+            psi.arrayInitializer != null -> UastCallKind.NEW_ARRAY_WITH_INITIALIZER
+            psi.arrayDimensions.isNotEmpty() -> UastCallKind.NEW_ARRAY_WITH_DIMENSIONS
             else -> UastCallKind.CONSTRUCTOR_CALL
         }
     }
@@ -98,7 +99,7 @@ class JavaConstructorUCallExpression(
     }
 
     override val typeArgumentCount by lz { psi.typeArguments.size }
-    override val typeArguments by lz { psi.typeArguments.map { JavaConverter.convertType(it, this) } }
+    override val typeArguments by lz { psi.typeArguments.map { JavaConverter.convertType(it) } }
 
     override val functionName: String?
         get() {
@@ -114,8 +115,13 @@ class JavaConstructorUCallExpression(
 
     override fun resolve(context: UastContext) = psi.resolveConstructor()?.let { context.convert(it) } as? UFunction
 
+    private fun resolveUsingExpressionType(context: UastContext): UType? {
+        val type = psi.type ?: return null
+        return context.convert(type) as? UType
+    }
+
     override fun resolveType(context: UastContext): UType? {
-        val constructorClass = psi.resolveConstructor()?.containingClass ?: return null
+        val constructorClass = psi.resolveConstructor()?.containingClass ?: return resolveUsingExpressionType(context)
         val type = PsiTypesUtil.getClassType(constructorClass)
         return context.convert(type) as? UType
     }
@@ -147,7 +153,7 @@ class JavaArrayInitializerUCallExpression(
         get() = emptyList()
 
     override val kind: UastCallKind
-        get() = UastCallKind.ARRAY_INITIALIZER
+        get() = UastCallKind.NESTED_ARRAY_INITIALIZER
 
     override fun resolve(context: UastContext) = null
 
@@ -162,7 +168,7 @@ class JavaAnnotationArrayInitializerUCallExpression(
         override val parent: UElement
 ) : JavaAbstractUExpression(), UCallExpression, PsiElementBacked {
     override val kind: UastCallKind
-        get() = UastCallKind.ARRAY_INITIALIZER
+        get() = UastCallKind.NESTED_ARRAY_INITIALIZER
 
     override val functionReference: USimpleReferenceExpression?
         get() = null

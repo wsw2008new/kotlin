@@ -101,7 +101,7 @@ public class ToastDetector extends Detector implements UastScanner {
             return;
         }
 
-        UExpression nodeWithPossibleQualifier = UastUtils.getQualifiedCallElement(node);
+        UExpression nodeWithPossibleQualifier = UastUtils.getQualifiedParentOrThis(node);
         ShowFinder finder = new ShowFinder(nodeWithPossibleQualifier);
         method.accept(finder);
         if (!finder.isShowCalled()) {

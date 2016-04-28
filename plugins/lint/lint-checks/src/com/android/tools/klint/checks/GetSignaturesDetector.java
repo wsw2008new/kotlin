@@ -31,6 +31,7 @@ import org.jetbrains.uast.*;
 import org.jetbrains.uast.check.UastAndroidContext;
 import org.jetbrains.uast.check.UastScanner;
 
+
 public class GetSignaturesDetector extends Detector implements UastScanner {
     public static final Issue ISSUE = Issue.create(
             "PackageManagerGetSignatures", //$NON-NLS-1$

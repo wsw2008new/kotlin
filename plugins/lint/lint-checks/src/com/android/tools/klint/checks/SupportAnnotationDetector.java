@@ -46,7 +46,6 @@ import com.android.utils.XmlUtils;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
-import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.uast.*;
 import org.jetbrains.uast.baseElements.UConstantValue;
@@ -54,6 +53,7 @@ import org.jetbrains.uast.baseElements.USimpleConstantValue;
 import org.jetbrains.uast.check.UastAndroidContext;
 import org.jetbrains.uast.check.UastScanner;
 import org.jetbrains.uast.java.JavaUFunction;
+
 import org.jetbrains.uast.visitor.AbstractUastVisitor;
 import org.jetbrains.uast.visitor.UastVisitor;
 import org.w3c.dom.Document;
@@ -968,7 +968,7 @@ public class SupportAnnotationDetector extends Detector implements UastScanner {
             assert s != null;
             actual = s.length();
         } else if (argument instanceof UCallExpression
-                   && ((UCallExpression)argument).getKind() == UastCallKind.ARRAY_INITIALIZER) {
+                   && ((UCallExpression)argument).getKind() == UastCallKind.NESTED_ARRAY_INITIALIZER) {
             UCallExpression initializer = (UCallExpression) argument;
             actual = initializer.getValueArgumentCount();
         } else {
@@ -1100,7 +1100,7 @@ public class SupportAnnotationDetector extends Detector implements UastScanner {
         for (UNamedExpression namedExpression : annotation.getValueArguments()) {
             UExpression expression = namedExpression.getExpression();
             if (expression instanceof UCallExpression &&
-                ((UCallExpression) expression).getKind() == UastCallKind.ARRAY_INITIALIZER) {
+                ((UCallExpression) expression).getKind() == UastCallKind.NESTED_ARRAY_INITIALIZER) {
                 for (UExpression arg : ((UCallExpression) expression).getValueArguments()) {
                     if (value.equals(arg.evaluate())) {
                         return;

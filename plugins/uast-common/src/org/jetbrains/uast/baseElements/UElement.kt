@@ -117,7 +117,7 @@ interface UNamed {
 /**
  * An interface for the [UElement] which has a qualified name.
  */
-interface UFqNamed : UNamed {
+interface UFqNamed {
     /**
      * Returns the qualified name of this element, or null if the qualified name was not resolved.
      */
@@ -127,7 +127,7 @@ interface UFqNamed : UNamed {
      * Checks if the element qualified name is equal to the passed name.
      *
      * @param fqName qualified name to check against
-     * @return true if the element name is not null and is equal to [name], false otherwise.
+     * @return true if the element name is not null and is equal to [fqName], false otherwise.
      */
     fun matchesFqName(fqName: String) = this.fqName == fqName
 }

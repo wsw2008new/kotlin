@@ -15,20 +15,17 @@
  */
 package org.jetbrains.uast.java
 
-import com.intellij.psi.PsiArrayType
-import com.intellij.psi.PsiClassType
-import com.intellij.psi.PsiType
-import com.intellij.psi.PsiWildcardType
+import com.intellij.psi.*
 import org.jetbrains.uast.*
 import org.jetbrains.uast.kinds.UastVariance
+import org.jetbrains.uast.UTypeProjection
 
-class JavaUType(
-        val psi: PsiType?,
-        override val parent: UElement?
-) : JavaAbstractUElement(), UType {
+
+class JavaUType(val psi: PsiType?) : JavaAbstractUElement(), UType {
     override val name: String
         get() = when (psi) {
             is PsiClassType -> psi.className.substringAfterLast('.')
+            is PsiArrayType -> "Array"
             else -> psi?.canonicalText?.substringAfterLast('.')
         }.orAnonymous("type")
 
@@ -68,14 +65,11 @@ class JavaUType(
     override val isObject: Boolean
         get() = (psi as? PsiClassType)?.resolve()?.qualifiedName == "java.lang.Object"
 
-    override val isArray: Boolean
-        get() = false
-
-    override val parameters by lz {
+    override val arguments by lz {
         val classType = psi as? PsiClassType ?: return@lz emptyList<UTypeProjection>()
         if (!classType.hasParameters()) return@lz emptyList<UTypeProjection>()
         classType.parameters.map {
-            val type = JavaConverter.convertType(it, null)
+            val type = JavaConverter.convertType(it)
             val variance = when (it) {
                 is PsiWildcardType -> {
                     if (it.isSuper)
@@ -106,7 +100,7 @@ class JavaUType(
     }
 }
 
-class JavaUArrayType(val type: PsiArrayType, override val parent: UElement?) : UType {
+class JavaUArrayType(val type: PsiArrayType) : UArrayType {
     override val name: String
         get() = "Array"
     override val fqName: String
@@ -133,11 +127,10 @@ class JavaUArrayType(val type: PsiArrayType, override val parent: UElement?) : U
     override val isObject: Boolean
         get() = false
 
-    override val isArray: Boolean
-        get() = true
+    override val arrayElementType by lz { JavaConverter.convertType(type.componentType) }
 
-    override val parameters: List<UTypeProjection> by lz {
-        val type = JavaConverter.convertType(type.componentType, this)
+    override val arguments: List<UTypeProjection> by lz {
+        val type = JavaConverter.convertType(type.componentType)
         val typeProjection = object : UTypeProjection {
             override val type = type
             override val variance: UastVariance

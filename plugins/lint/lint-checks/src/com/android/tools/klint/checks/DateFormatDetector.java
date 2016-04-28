@@ -32,7 +32,7 @@ import java.util.List;
 
 import org.jetbrains.uast.UFunction;
 import org.jetbrains.uast.UCallExpression;
-import org.jetbrains.uast.UType;
+
 import org.jetbrains.uast.check.UastAndroidContext;
 import org.jetbrains.uast.check.UastScanner;
 

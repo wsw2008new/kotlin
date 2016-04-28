@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package org.jetbrains.uast.baseElements
+package org.jetbrains.uast
 
 import org.jetbrains.uast.UAnnotation
-import org.jetbrains.uast.UType
 
 interface UConstantValue<T> {
     val value: T

@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2016 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,11 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jetbrains.uast.java
 
-import org.jetbrains.uast.UastCallKind
+package org.jetbrains.uast.kinds
 
-object JavaUastCallKinds {
-    @JvmField
-    val ASSERT = UastCallKind("assert")
+open class UastVariableInitialierKind(val name: String) {
+    class Expression(name: String) : UastVariableInitialierKind(name)
+
+    companion object {
+        @JvmField
+        val EXPRESSION = Expression("expression")
+
+        @JvmField
+        val NO_INITIALIZER = UastVariableInitialierKind("no_initializer")
+    }
 }

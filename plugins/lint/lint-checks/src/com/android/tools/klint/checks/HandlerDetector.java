@@ -33,6 +33,7 @@ import org.jetbrains.uast.*;
 import org.jetbrains.uast.check.UastAndroidContext;
 import org.jetbrains.uast.check.UastScanner;
 
+
 /**
  * Checks that Handler implementations are top level classes or static.
  * See the corresponding check in the android.os.Handler source code.

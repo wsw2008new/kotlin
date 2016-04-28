@@ -35,6 +35,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.uast.*;
 import org.jetbrains.uast.check.UastAndroidContext;
 import org.jetbrains.uast.check.UastScanner;
+
 import org.jetbrains.uast.visitor.AbstractUastVisitor;
 
 /**
@@ -123,7 +124,7 @@ public class JavaScriptInterfaceDetector extends Detector implements UastScanner
             } else {
                 UType returnType = method.getReturnType();
                 if (returnType != null) {
-                    UClass resolvedClass = returnType.resolve(context);
+                    UClass resolvedClass = returnType.resolveToClass(context);
                     if (resolvedClass != null) {
                         resolved = resolvedClass;
                     }
@@ -132,7 +133,7 @@ public class JavaScriptInterfaceDetector extends Detector implements UastScanner
         } else {
             UType type = first.getExpressionType();
             if (type != null) {
-                UClass resolvedClass = type.resolve(context);
+                UClass resolvedClass = type.resolveToClass(context);
                 if (resolvedClass != null) {
                     resolved = resolvedClass;
                 }
@@ -202,7 +203,7 @@ public class JavaScriptInterfaceDetector extends Detector implements UastScanner
                 if (resolved instanceof UVariable) {
                     resolvedClass = mVariableTypes.get(resolved);
                     if (resolvedClass == null) {
-                        return ((UVariable) resolved).getType().resolve(mContext);
+                        return ((UVariable) resolved).getType().resolveToClass(mContext);
                     }
                 }
             }

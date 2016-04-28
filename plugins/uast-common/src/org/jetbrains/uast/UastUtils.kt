@@ -19,7 +19,7 @@ package org.jetbrains.uast
 
 import org.jetbrains.uast.visitor.UastVisitor
 
-internal val ERROR_NAME = "<error>"
+internal val ERROR_NAME: String = "<error>"
 
 /**
  * Returns the containing class of an element.
@@ -139,12 +139,30 @@ fun UClass.getAllDeclarations(context: UastContext): List<UDeclaration> = mutabl
     }
 }
 
+/**
+ * Get all functions in class (including supertypes).
+ *
+ * @param context the Uast context
+ * @return the list of functions for the receiver class and its supertypes
+ */
 fun UClass.getAllFunctions(context: UastContext) = getAllDeclarations(context).filterIsInstance<UFunction>()
 
+/**
+ * Get the nearest parent of the type [T].
+ *
+ * @return the nearest parent of type [T], or null if the parent with such type was not found.
+ */
 inline fun <reified T: UElement> UElement.getParentOfType(strict: Boolean = true): T? = getParentOfType(T::class.java, strict)
+
 
 fun <T: UElement> UElement.getParentOfType(clazz: Class<T>): T? = getParentOfType(clazz, strict = true)
 
+/**
+ * Get the nearest parent of the type [T].
+ *
+ * @param strict if false, return the received element if it's type is [T], do not check the received element overwise.
+ * @return the nearest parent of type [T], or null if the parent with such type was not found.
+ */
 fun <T: UElement> UElement.getParentOfType(clazz: Class<T>, strict: Boolean): T? {
     tailrec fun findParent(element: UElement?): UElement? {
         return when {
@@ -187,3 +205,4 @@ fun <T> UClass.findStaticMemberOfType(name: String, type: Class<out T>): T? {
                 && it.hasModifier(UastModifier.STATIC) && type.isInstance(it)
     } as T
 }
+

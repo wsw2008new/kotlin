@@ -20,6 +20,7 @@ import com.intellij.psi.*
 import org.jetbrains.uast.*
 import org.jetbrains.uast.java.expressions.JavaUSynchronizedExpression
 
+
 object JavaUastLanguagePlugin : UastLanguagePlugin {
     override val converter: UastConverter = JavaConverter
     override val visitorExtensions = emptyList<UastVisitorExtension>()
@@ -38,8 +39,10 @@ internal object JavaConverter : UastConverter {
     }
 
     override fun convertWithParent(element: Any?): UElement? {
-        if (element !is PsiElement) return null
         if (element is PsiJavaFile) return JavaUFile(element)
+        if (element is PsiType) return convertType(element)
+
+        if (element !is PsiElement) return null
 
         val parent = element.parent ?: return null
         val parentUElement = convertWithParent(parent) ?: return null
@@ -63,7 +66,7 @@ internal object JavaConverter : UastConverter {
         is PsiParameter -> convertParameter(element, parent)
         is PsiTypeParameter -> convertTypeParameter(element, parent)
         is PsiNameValuePair -> convertNameValue(element, parent)
-        is PsiType -> convertType(element, parent)
+        is PsiType -> convertType(element)
         is PsiArrayInitializerMemberValue -> JavaAnnotationArrayInitializerUCallExpression(element, parent)
         else -> null
     }
@@ -76,11 +79,11 @@ internal object JavaConverter : UastConverter {
         }
     }
 
-    internal fun convertType(type: PsiType?, parent: UElement?): UType {
+    internal fun convertType(type: PsiType?): UType {
         if (type is PsiArrayType) {
-            return JavaUArrayType(type, parent)
+            return JavaUArrayType(type)
         }
-        return JavaUType(type, parent)
+        return JavaUType(type)
     }
 
     internal fun convertParameter(parameter: PsiParameter, parent: UElement) = JavaValueParameterUVariable(parameter, parent)

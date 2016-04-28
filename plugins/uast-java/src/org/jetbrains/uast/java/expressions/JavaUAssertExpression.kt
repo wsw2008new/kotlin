@@ -20,6 +20,7 @@ import com.intellij.psi.PsiAssertStatement
 import org.jetbrains.uast.*
 import org.jetbrains.uast.psi.PsiElementBacked
 
+
 class JavaUAssertExpression(
         override val psi: PsiAssertStatement,
         override val parent: UElement

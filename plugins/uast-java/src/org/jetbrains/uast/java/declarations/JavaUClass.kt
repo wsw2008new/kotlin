@@ -22,7 +22,9 @@ import com.intellij.psi.util.InheritanceUtil
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.PsiTypesUtil
 import org.jetbrains.uast.*
+import org.jetbrains.uast.kinds.UastVariableInitialierKind
 import org.jetbrains.uast.psi.PsiElementBacked
+
 
 class JavaUClass(
         override val psi: PsiClass,
@@ -53,7 +55,7 @@ class JavaUClass(
         }
     }
 
-    override val defaultType by lz { JavaConverter.convertType(PsiTypesUtil.getClassType(psi), this) }
+    override val defaultType by lz { JavaConverter.convertType(PsiTypesUtil.getClassType(psi)) }
 
     override val companions: List<UClass>
         get() = emptyList()
@@ -155,7 +157,7 @@ class JavaUClass(
 
 private class JavaUAnonymousClassConstructor(
         override val psi: PsiAnonymousClass,
-        val newExpression: PsiNewExpression,
+        newExpression: PsiNewExpression,
         override val parent: UElement
 ) : JavaAbstractUElement(), UFunction, PsiElementBacked, NoAnnotations, NoModifiers {
     override val kind = UastFunctionKind.CONSTRUCTOR
@@ -199,10 +201,13 @@ private class JavaUAnonymousClassConstructorParameter(
 ) : JavaAbstractUElement(), UVariable, NoAnnotations, NoModifiers {
     override val initializer by lz { JavaConverter.convert(psi.expressions[index], this) }
 
+    override val initializerKind: UastVariableInitialierKind
+        get() = UastVariableInitialierKind.EXPRESSION
+
     override val kind: UastVariableKind
         get() = UastVariableKind.VALUE_PARAMETER
 
-    override val type by lz { JavaConverter.convertType(psi.expressionTypes[index], this) }
+    override val type by lz { JavaConverter.convertType(psi.expressionTypes[index]) }
 
     override val nameElement: UElement?
         get() = null

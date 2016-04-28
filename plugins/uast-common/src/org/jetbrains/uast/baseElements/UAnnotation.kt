@@ -15,7 +15,6 @@
  */
 package org.jetbrains.uast
 
-import org.jetbrains.uast.baseElements.UConstantValue
 import org.jetbrains.uast.visitor.UastVisitor
 
 /**

@@ -19,11 +19,12 @@ import com.intellij.psi.PsiClassObjectAccessExpression
 import org.jetbrains.uast.UClassLiteralExpression
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UType
+
 import org.jetbrains.uast.psi.PsiElementBacked
 
 class JavaUClassLiteralExpression(
         override val psi: PsiClassObjectAccessExpression,
         override val parent: UElement
 ) : JavaAbstractUExpression(), UClassLiteralExpression, PsiElementBacked {
-    override val type: UType by lz { JavaConverter.convertType(psi.type, this) }
+    override val type: UType by lz { JavaConverter.convertType(psi.type) }
 }

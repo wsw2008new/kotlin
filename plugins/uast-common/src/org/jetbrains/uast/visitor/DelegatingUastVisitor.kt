@@ -18,6 +18,7 @@ package org.jetbrains.uast.visitor
 
 import org.jetbrains.uast.*
 
+
 class DelegatingUastVisitor(private val visitors: List<UastVisitor>): UastVisitor {
     override fun visitElement(node: UElement): Boolean {
         return visitors.all { it.visitElement(node) }

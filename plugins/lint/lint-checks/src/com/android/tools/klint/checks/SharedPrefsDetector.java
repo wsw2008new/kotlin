@@ -36,6 +36,7 @@ import org.jetbrains.uast.*;
 import org.jetbrains.uast.check.UastAndroidContext;
 import org.jetbrains.uast.check.UastScanner;
 import org.jetbrains.uast.java.JavaUAssertExpression;
+
 import org.jetbrains.uast.visitor.AbstractUastVisitor;
 
 /**
@@ -124,7 +125,7 @@ public class SharedPrefsDetector extends Detector implements UastScanner {
         } else {
             if (!verifiedType) {
                 UType type = definition.getType();
-                UClass clazz = type.resolveOrEmpty(context);
+                UClass clazz = type.resolveToClassOrEmpty(context);
                 String possiblefqName = clazz.getFqName();
                 if (possiblefqName == null) {
                     possiblefqName = clazz.getName();
@@ -191,7 +192,7 @@ public class SharedPrefsDetector extends Detector implements UastScanner {
 
         @Override
         public boolean visitCallExpression(@NotNull UCallExpression node) {
-            UElement qualifiedElement = UastUtils.getQualifiedCallElement(node);
+            UElement qualifiedElement = UastUtils.getQualifiedParentOrThis(node);
 
             if (node == mTarget) {
                 mSeenTarget = true;

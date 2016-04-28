@@ -21,6 +21,7 @@ import com.intellij.psi.PsiExpression
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UExpression
 import org.jetbrains.uast.UType
+
 import org.jetbrains.uast.psi.PsiElementBacked
 
 abstract class JavaAbstractUElement : UElement {
@@ -49,6 +50,6 @@ abstract class JavaAbstractUExpression : JavaAbstractUElement(), UExpression {
 
     override fun getExpressionType(): UType? {
         val expression = (this as? PsiElementBacked)?.psi as? PsiExpression ?: return null
-        return expression.type?.let { JavaConverter.convertType(it, this) }
+        return expression.type?.let { JavaConverter.convertType(it) }
     }
 }

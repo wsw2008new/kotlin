@@ -43,5 +43,5 @@ class JavaUCatchClause(
 ) : JavaAbstractUElement(), UCatchClause, PsiElementBacked {
     override val body by lz { JavaConverter.convertOrEmpty(psi.catchBlock, this) }
     override val parameters by lz { psi.parameter?.let { listOf(JavaConverter.convertParameter(it, this)) } ?: emptyList() }
-    override val types by lz { psi.preciseCatchTypes.map { JavaConverter.convertType(it, this) } }
+    override val types by lz { psi.preciseCatchTypes.map { JavaConverter.convertType(it) } }
 }
