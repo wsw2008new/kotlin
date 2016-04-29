@@ -20,12 +20,12 @@ import com.google.common.base.Predicate
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.types.KotlinType
 
-public interface TypePredicate : Predicate<KotlinType> {
+interface TypePredicate : Predicate<KotlinType> {
     override fun apply(type: KotlinType?): Boolean
 }
 
 private val KOTLIN = TypePredicateImpl("kotlin")
-public val COMPARABLE: TypePredicate = KOTLIN.inner("Comparable")
+val COMPARABLE: TypePredicate = KOTLIN.inner("Comparable")
 val CHAR_SEQUENCE: TypePredicate = KOTLIN.inner("CharSequence")
 
 // TODO: replace all NamePredicate usages to TypePredicate
@@ -52,6 +52,5 @@ private class TypePredicateImpl
         return true
     }
 
-    fun inner(name: String): TypePredicateImpl =
-            TypePredicateImpl(nameParts + listOf(name))
+    fun inner(name: String) = TypePredicateImpl(nameParts + listOf(name))
 }
