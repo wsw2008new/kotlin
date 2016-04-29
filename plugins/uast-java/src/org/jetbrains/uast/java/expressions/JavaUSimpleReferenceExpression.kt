@@ -24,7 +24,7 @@ import org.jetbrains.uast.psi.PsiElementBacked
 class JavaUSimpleReferenceExpression(
         override val psi: PsiElement,
         override val identifier: String,
-        override val parent: UElement
+        override val parent: UElement?
 ) : JavaAbstractUExpression(), USimpleReferenceExpression, PsiElementBacked {
     override fun resolve(context: UastContext): UDeclaration? {
         val resolvedElement = when (psi) {
@@ -38,7 +38,7 @@ class JavaUSimpleReferenceExpression(
 class JavaClassUSimpleReferenceExpression(
         override val identifier: String,
         val ref: PsiJavaReference,
-        override val parent: UElement
+        override val parent: UElement?
 ) : JavaAbstractUExpression(), USimpleReferenceExpression, PsiElementBacked {
     override val psi: PsiElement?
         get() = ref.element

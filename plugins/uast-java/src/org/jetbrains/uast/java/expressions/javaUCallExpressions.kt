@@ -26,7 +26,7 @@ import org.jetbrains.uast.psi.PsiElementBacked
 
 class JavaUCallExpression(
         override val psi: PsiMethodCallExpression,
-        override val parent: UElement
+        override val parent: UElement?
 ) : JavaAbstractUExpression(), UCallExpression, PsiElementBacked {
     override val kind: UastCallKind
         get() = UastCallKind.FUNCTION_CALL
@@ -54,7 +54,7 @@ class JavaUCallExpression(
 
 class JavaConstructorUCallExpression(
         override val psi: PsiNewExpression,
-        override val parent: UElement
+        override val parent: UElement?
 ) : JavaAbstractUExpression(), UCallExpression, PsiElementBacked {
     override val kind by lz {
         when {
@@ -129,7 +129,7 @@ class JavaConstructorUCallExpression(
 
 class JavaArrayInitializerUCallExpression(
         override val psi: PsiArrayInitializerExpression,
-        override val parent: UElement
+        override val parent: UElement?
 ) : JavaAbstractUExpression(), UCallExpression, PsiElementBacked {
     override val functionReference: USimpleReferenceExpression?
         get() = null
@@ -165,7 +165,7 @@ class JavaArrayInitializerUCallExpression(
 
 class JavaAnnotationArrayInitializerUCallExpression(
         override val psi: PsiArrayInitializerMemberValue,
-        override val parent: UElement
+        override val parent: UElement?
 ) : JavaAbstractUExpression(), UCallExpression, PsiElementBacked {
     override val kind: UastCallKind
         get() = UastCallKind.NESTED_ARRAY_INITIALIZER

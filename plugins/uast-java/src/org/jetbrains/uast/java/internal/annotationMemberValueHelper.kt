@@ -20,6 +20,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.*
 import org.jetbrains.uast.*
 import org.jetbrains.uast.java.JavaConverter
+import org.jetbrains.uast.java.lz
 
 internal fun PsiAnnotationMemberValue?.getUastValue(project: Project): UConstantValue<*> {
     if (this == null) return UErrorValue
@@ -29,18 +30,20 @@ internal fun PsiAnnotationMemberValue?.getUastValue(project: Project): UConstant
     }
 
     fun computeConstantExpression() = JavaPsiFacade.getInstance(project).constantEvaluationHelper.computeConstantExpression(this)
+
     val literalValue = (this as? PsiLiteralExpression)?.value ?: computeConstantExpression()
 
     if (literalValue != null) {
         when (literalValue) {
-            is Double -> return UDoubleValue(literalValue)
-            is Float -> return UFloatValue(literalValue)
-            is String -> return UStringValue(literalValue)
-            is Char -> return UCharValue(literalValue)
-            is Byte -> return UByteValue(literalValue)
-            is Short -> return UShortValue(literalValue)
-            is Int -> return UIntValue(literalValue)
-            is Long -> return ULongValue(literalValue)
+            is Boolean -> return JavaUBooleanValue(literalValue, this)
+            is Double -> return JavaUDoubleValue(literalValue, this)
+            is Float -> return JavaUFloatValue(literalValue, this)
+            is String -> return JavaUStringValue(literalValue, this)
+            is Char -> return JavaUCharValue(literalValue, this)
+            is Byte -> return JavaUByteValue(literalValue, this)
+            is Short -> return JavaUShortValue(literalValue, this)
+            is Int -> return JavaUIntValue(literalValue, this)
+            is Long -> return JavaULongValue(literalValue, this)
         }
     }
 
@@ -49,7 +52,8 @@ internal fun PsiAnnotationMemberValue?.getUastValue(project: Project): UConstant
             val element = resolve()
             if (element is PsiEnumConstant) {
                 UEnumValue(null, JavaConverter.convertType(element.type), element.name ?: "<error>")
-            } else {
+            }
+            else {
                 UErrorValue
             }
         }
@@ -58,4 +62,46 @@ internal fun PsiAnnotationMemberValue?.getUastValue(project: Project): UConstant
         is PsiClassObjectAccessExpression -> UTypeValue(JavaConverter.convertType(type))
         else -> throw UnsupportedOperationException("Unsupported annotation this type: " + this)
     }
+}
+
+private interface WithOriginal {
+    val psi: PsiAnnotationMemberValue
+}
+
+private fun WithOriginal.calc() = JavaConverter.convertWithoutParent(psi) as? UExpression
+
+class JavaUDoubleValue(override val value: Double, override val psi: PsiAnnotationMemberValue) : URealValue<Double>, WithOriginal {
+    override val original by lz { calc() }
+}
+
+class JavaUFloatValue(override val value: Float, override val psi: PsiAnnotationMemberValue) : URealValue<Float>, WithOriginal {
+    override val original by lz { calc() }
+}
+
+class JavaUCharValue(override val value: Char, override val psi: PsiAnnotationMemberValue) : USimpleConstantValue<Char>, WithOriginal {
+    override val original by lz { calc() }
+}
+
+class JavaUByteValue(override val value: Byte, override val psi: PsiAnnotationMemberValue) : UIntegralValue<Byte>, WithOriginal {
+    override val original by lz { calc() }
+}
+
+class JavaUIntValue(override val value: Int, override val psi: PsiAnnotationMemberValue) : UIntegralValue<Int>, WithOriginal {
+    override val original by lz { calc() }
+}
+
+class JavaULongValue(override val value: Long, override val psi: PsiAnnotationMemberValue) : UIntegralValue<Long>, WithOriginal {
+    override val original by lz { calc() }
+}
+
+class JavaUShortValue(override val value: Short, override val psi: PsiAnnotationMemberValue) : UIntegralValue<Short>, WithOriginal {
+    override val original by lz { calc() }
+}
+
+class JavaUBooleanValue(override val value: Boolean, override val psi: PsiAnnotationMemberValue) : USimpleConstantValue<Boolean>, WithOriginal {
+    override val original by lz { calc() }
+}
+
+class JavaUStringValue(override val value: String, override val psi: PsiAnnotationMemberValue) : USimpleConstantValue<String>, WithOriginal {
+    override val original by lz { calc() }
 }

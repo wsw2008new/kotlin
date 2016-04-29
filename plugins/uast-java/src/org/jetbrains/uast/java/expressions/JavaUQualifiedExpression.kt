@@ -21,7 +21,7 @@ import org.jetbrains.uast.psi.PsiElementBacked
 
 class JavaUQualifiedExpression(
         override val psi: PsiReferenceExpression,
-        override val parent: UElement
+        override val parent: UElement?
 ) : JavaAbstractUExpression(), UQualifiedExpression, PsiElementBacked {
     override val receiver by lz { JavaConverter.convertOrEmpty(psi.qualifierExpression, this) }
     override val selector by lz { JavaUSimpleReferenceExpression(psi, psi.referenceName ?: "<error>", this) }

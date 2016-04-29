@@ -22,7 +22,7 @@ import org.jetbrains.uast.psi.PsiElementBacked
 
 class JavaUSwitchExpression(
         override val psi: PsiSwitchStatement,
-        override val parent: UElement
+        override val parent: UElement?
 ) : JavaAbstractUExpression(), USwitchExpression, PsiElementBacked {
     override val expression by lz { JavaConverter.convertOrEmpty(psi.expression, this) }
     override val body by lz { JavaConverter.convertOrEmpty(psi.body, this) }
@@ -33,7 +33,7 @@ class JavaUSwitchExpression(
 
 class JavaUCaseSwitchClauseExpression(
         override val psi: PsiSwitchLabelStatement,
-        override val parent: UElement
+        override val parent: UElement?
 ) : JavaAbstractUExpression(), USwitchClauseExpression, PsiElementBacked {
     override val caseValues by lz {
         val value = psi.caseValue ?: return@lz null
@@ -44,7 +44,7 @@ class JavaUCaseSwitchClauseExpression(
         get() = true
 }
 
-class DefaultUSwitchClauseExpression(override val parent: UElement) : USwitchClauseExpression {
+class DefaultUSwitchClauseExpression(override val parent: UElement?) : USwitchClauseExpression {
     override val caseValues: List<UExpression>?
         get() = null
 

@@ -24,7 +24,7 @@ import org.jetbrains.uast.psi.PsiElementBacked
 
 class JavaUFunction(
         override val psi: PsiMethod,
-        override val parent: UElement
+        override val parent: UElement?
 ) : JavaAbstractUElement(), UFunction, PsiElementBacked {
     override val kind: UastFunctionKind
         get() = if (psi.isConstructor) UastFunctionKind.CONSTRUCTOR else UastFunctionKind.FUNCTION

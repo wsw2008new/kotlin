@@ -23,7 +23,7 @@ import org.jetbrains.uast.psi.PsiElementBacked
 
 class JavaUObjectLiteralExpression(
         override val psi: PsiNewExpression,
-        override val parent: UElement
+        override val parent: UElement?
 ) : JavaAbstractUExpression(), UObjectLiteralExpression, PsiElementBacked {
     override val declaration by lz {
         psi.anonymousClass?.let { JavaUClass(it, this, psi) } ?: UClassNotResolved

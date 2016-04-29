@@ -24,7 +24,7 @@ import org.jetbrains.uast.psi.PsiElementBacked
 
 class JavaUImportStatement(
         override val psi: PsiImportStatement,
-        override val parent: UElement
+        override val parent: UElement?
 ) : JavaAbstractUElement(), UImportStatement, PsiElementBacked {
     override val fqNameToImport: String?
         get() = psi.qualifiedName

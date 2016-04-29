@@ -18,15 +18,18 @@ package org.jetbrains.uast
 
 interface UConstantValue<T> {
     val value: T
+
+    val original: UExpression?
+        get() = null
 }
 
 interface USimpleConstantValue<T> : UConstantValue<T>
 
-class UAnnotationValue(override val value: UAnnotation) : UConstantValue<UAnnotation>
+open class UAnnotationValue(override val value: UAnnotation) : UConstantValue<UAnnotation>
 
-class UArrayValue(override val value: List<UConstantValue<*>>) : UConstantValue<List<UConstantValue<*>>>
+open class UArrayValue(override val value: List<UConstantValue<*>>) : UConstantValue<List<UConstantValue<*>>>
 
-class UEnumValue(override val value: UType?, val enumType: UType, val valueName: String) : UConstantValue<UType?>
+open class UEnumValue(override val value: UType?, val enumType: UType, val valueName: String) : UConstantValue<UType?>
 
 object UErrorValue : UConstantValue<Unit> {
     override val value = Unit
@@ -36,26 +39,28 @@ interface UIntegralValue<T> : USimpleConstantValue<T>
 
 interface URealValue<T> : USimpleConstantValue<T>
 
-class UDoubleValue(override val value: Double) : URealValue<Double>
+open class UDoubleValue(override val value: Double) : URealValue<Double>
 
-class UFloatValue(override val value: Float) : URealValue<Float>
+open class UFloatValue(override val value: Float) : URealValue<Float>
 
-class UCharValue(override val value: Char) : USimpleConstantValue<Char>
+open class UCharValue(override val value: Char) : USimpleConstantValue<Char>
 
-class UByteValue(override val value: Byte) : UIntegralValue<Byte>
+open class UByteValue(override val value: Byte) : UIntegralValue<Byte>
 
-class UIntValue(override val value: Int) : UIntegralValue<Int>
+open class UIntValue(override val value: Int) : UIntegralValue<Int>
 
-class ULongValue(override val value: Long) : UIntegralValue<Long>
+open class ULongValue(override val value: Long) : UIntegralValue<Long>
 
-class UShortValue(override val value: Short) : UIntegralValue<Short>
+open class UShortValue(override val value: Short) : UIntegralValue<Short>
 
-class UTypeValue(override val value: UType) : UConstantValue<UType>
+open class UBooleanValue(override val value: Boolean) : USimpleConstantValue<Boolean>
+
+open class UStringValue(override val value: String) : USimpleConstantValue<String>
+
+open class UTypeValue(override val value: UType) : UConstantValue<UType>
+
+open class UExpressionValue(override val value: UExpression) : UConstantValue<UExpression>
 
 object UNullValue : USimpleConstantValue<Any?> {
     override val value = null
 }
-
-class UBooleanValue(override val value: Boolean) : USimpleConstantValue<Boolean>
-
-class UStringValue(override val value: String) : USimpleConstantValue<String>

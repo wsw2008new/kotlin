@@ -32,12 +32,18 @@ interface UastConverter {
      *
      * No exceptions should be thrown during conversion, return `null` instead.
      */
-    fun convert(element: Any?, parent: UElement): UElement?
+    fun convert(element: Any?, parent: UElement?): UElement?
 
     /**
      * Convert [element] to the [UElement] with the given parent.
      */
     fun convertWithParent(element: Any?): UElement?
+
+    /**
+     * Convert[element] to the [UElement] without the parent.
+     * The [UElement.parent] value will be `null`.
+     */
+    fun convertWithoutParent(element: Any?): UElement?
 
     /**
      * Checks if the file with the given [name] is supported.

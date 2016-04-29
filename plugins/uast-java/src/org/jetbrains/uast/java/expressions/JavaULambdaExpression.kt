@@ -25,7 +25,7 @@ import org.jetbrains.uast.psi.PsiElementBacked
 
 class JavaULambdaExpression(
         override val psi: PsiLambdaExpression,
-        override val parent: UElement
+        override val parent: UElement?
 ) : JavaAbstractUExpression(), ULambdaExpression, PsiElementBacked {
     override val valueParameters by lz { psi.parameterList.parameters.map { JavaConverter.convertParameter(it, this) } }
 

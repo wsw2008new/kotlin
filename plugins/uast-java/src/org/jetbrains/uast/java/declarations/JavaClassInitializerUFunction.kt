@@ -23,7 +23,7 @@ import org.jetbrains.uast.psi.PsiElementBacked
 
 class JavaClassInitializerUFunction(
         override val psi: PsiClassInitializer,
-        override val parent: UElement
+        override val parent: UElement?
 ) : JavaAbstractUElement(), UFunction, PsiElementBacked, NoAnnotations {
     override val kind: UastFunctionKind.UastInitializerKind
         get() {

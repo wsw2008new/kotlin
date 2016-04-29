@@ -80,9 +80,16 @@ internal fun KtModifierListOwner.hasModifier(modifier: UastModifier): Boolean {
             return context[BindingContext.BACKING_FIELD_REQUIRED, descriptor] ?: false
         }
     }
+    if (modifier == UastModifier.FINAL) {
+        if (hasModifier(KtTokens.FINAL_KEYWORD)) return true
+        when (this) {
+            is KtConstructor<*>, is KtObjectDeclaration -> return true
+            is KtFunction, is KtProperty, is KtClass -> return !hasModifier(KtTokens.OPEN_KEYWORD)
+            else -> return true
+        }
+    }
     if (modifier == UastModifier.FINAL) return hasModifier(KtTokens.FINAL_KEYWORD)
     if (modifier == UastModifier.IMMUTABLE && this is KtVariableDeclaration && !this.isVar) return true
-    if (modifier == UastModifier.FINAL && hasModifier(KtTokens.FINAL_KEYWORD)) return true
 
     val javaModifier = MODIFIER_MAP[modifier] ?: return false
     return hasModifier(javaModifier)

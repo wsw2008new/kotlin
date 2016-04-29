@@ -22,7 +22,7 @@ import org.jetbrains.uast.psi.PsiElementBacked
 
 class JavaValueParameterUVariable(
         override val psi: PsiParameter,
-        override val parent: UElement
+        override val parent: UElement?
 ) : JavaAbstractUElement(), UVariable, PsiElementBacked {
     override val name: String
         get() = psi.name.orAnonymous()

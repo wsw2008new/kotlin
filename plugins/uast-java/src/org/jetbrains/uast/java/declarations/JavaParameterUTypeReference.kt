@@ -24,7 +24,7 @@ import org.jetbrains.uast.psi.PsiElementBacked
 
 class JavaParameterUTypeReference(
         override val psi: PsiTypeParameter,
-        override val parent: UElement
+        override val parent: UElement?
 ) : JavaAbstractUElement(), UTypeReference, PsiElementBacked {
     override val name: String
         get() = psi.name.orAnonymous()

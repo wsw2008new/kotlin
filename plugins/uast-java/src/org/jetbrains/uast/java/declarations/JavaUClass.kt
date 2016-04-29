@@ -28,8 +28,8 @@ import org.jetbrains.uast.psi.PsiElementBacked
 
 class JavaUClass(
         override val psi: PsiClass,
-        override val parent: UElement,
-        val newExpression: PsiNewExpression? = null
+        override val parent: UElement?,
+        newExpression: PsiNewExpression? = null
 ) : JavaAbstractUElement(), UClass, PsiElementBacked {
     override val name: String
         get() = psi.name.orAnonymous()
@@ -158,7 +158,7 @@ class JavaUClass(
 private class JavaUAnonymousClassConstructor(
         override val psi: PsiAnonymousClass,
         newExpression: PsiNewExpression,
-        override val parent: UElement
+        override val parent: UElement?
 ) : JavaAbstractUElement(), UFunction, PsiElementBacked, NoAnnotations, NoModifiers {
     override val kind = UastFunctionKind.CONSTRUCTOR
 
@@ -197,7 +197,7 @@ private class JavaUAnonymousClassConstructor(
 private class JavaUAnonymousClassConstructorParameter(
         val psi: PsiExpressionList,
         val index: Int,
-        override val parent: UElement
+        override val parent: UElement?
 ) : JavaAbstractUElement(), UVariable, NoAnnotations, NoModifiers {
     override val initializer by lz { JavaConverter.convert(psi.expressions[index], this) }
 

@@ -38,6 +38,14 @@ internal fun PsiModifierListOwner.hasModifier(modifier: UastModifier): Boolean {
     if (modifier == UastModifier.IMMUTABLE && this is PsiVariable) {
         return this.hasModifierProperty(PsiModifier.FINAL)
     }
+    if (modifier == UastModifier.FINAL) {
+        when (this) {
+            is PsiMethod -> return if (this.isConstructor) true else hasModifierProperty(PsiModifier.FINAL)
+            is PsiLocalVariable -> return true
+            is PsiClass, is PsiVariable -> return hasModifierProperty(PsiModifier.FINAL)
+            else -> return true
+        }
+    }
     if (modifier == UastModifier.FINAL && this is PsiVariable) {
         return false;
     }

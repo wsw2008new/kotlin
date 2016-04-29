@@ -20,7 +20,7 @@ import org.jetbrains.uast.*
 import org.jetbrains.uast.psi.PsiElementBacked
 
 class JavaUCompositeQualifiedExpression(
-        override val parent: UElement
+        override val parent: UElement?
 ) : JavaAbstractUExpression(), UQualifiedExpression, PsiElementBacked {
     override lateinit var receiver: UExpression
         internal set
