@@ -157,7 +157,12 @@ public final class PatternTranslator extends AbstractTranslator {
                 return getIsTypeCheckCallableForReifiedType(typeParameterDescriptor);
             }
 
-            return doGetIsTypeCheckCallable(TypeIntersector.getUpperBoundsAsType(typeParameterDescriptor));
+            JsExpression result = null;
+            for (KotlinType upperBound : typeParameterDescriptor.getUpperBounds()) {
+                JsExpression next = doGetIsTypeCheckCallable(upperBound);
+                result = result != null ? namer().andPredicate(result, next) : next;
+            }
+            return result != null ? result : JsLiteral.TRUE;
         }
 
         JsNameRef typeName = getClassNameReference(type);
