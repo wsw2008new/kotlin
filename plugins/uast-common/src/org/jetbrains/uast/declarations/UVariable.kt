@@ -46,6 +46,8 @@ interface UVariable : UDeclaration, UModifierOwner, UVisibilityOwner, UAnnotated
     val accessors: List<UFunction>?
         get() = null
 
+    override fun getOverriddenDeclarations(context: UastContext): List<UVariable>
+
     override fun accept(visitor: UastVisitor) {
         if (visitor.visitVariable(this)) return
         nameElement?.accept(visitor)
@@ -85,6 +87,7 @@ object UVariableNotResolved : UVariable {
     override val initializer = null
     override val initializerKind = UastVariableInitialierKind.NO_INITIALIZER
     override val kind = UastVariableKind(ERROR_NAME)
+    override fun getOverriddenDeclarations(context: UastContext) = emptyList<UVariable>()
     override val type = UastErrorType
     override val nameElement = null
     override val parent = null

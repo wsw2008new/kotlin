@@ -19,8 +19,6 @@ package org.jetbrains.uast
 
 import org.jetbrains.uast.visitor.UastVisitor
 
-internal val ERROR_NAME = "<error>"
-
 /**
  * Returns the containing class of an element.
  *
@@ -127,14 +125,14 @@ fun UCallExpression.getReceiver(): UExpression? = (this.parent as? UQualifiedExp
 fun UElement.resolveIfCan(context: UastContext): UDeclaration? = (this as? UResolvable)?.resolve(context)
 
 /**
- * Get all class declarations (including supertypes).
+ * Get all class declarations (including properties and functions in class supertypes).
  *
  * @param context the Uast context
  * @return the list of declarations for the receiver class
  */
 fun UClass.getAllDeclarations(context: UastContext): List<UDeclaration> = mutableListOf<UDeclaration>().apply {
     this += declarations
-    for (superClass in getSuperClasses(context)) {
+    for (superClass in getOverriddenDeclarations(context)) {
         this += superClass.declarations
     }
 }
@@ -206,3 +204,13 @@ fun <T> UClass.findStaticMemberOfType(name: String, type: Class<out T>): T? {
     } as T
 }
 
+/**
+ * Checks if the received [UElement] is a child of [maybeParent].
+ *
+ * @return true if the received element is a child of [maybeParent], false otherwise.
+ */
+tailrec fun UElement.isChild(maybeParent: UElement): Boolean {
+    val parent = this.parent ?: return false
+    if (parent == maybeParent) return true
+    return parent.isChild(maybeParent)
+}

@@ -62,6 +62,6 @@ class JavaClassInitializerUFunction(
     override val throws: List<UType>
         get() = emptyList()
 
-    override fun getSuperFunctions(context: UastContext) = emptyList<UFunction>()
+    override fun getOverriddenDeclarations(context: UastContext) = emptyList<UFunction>()
     override fun hasModifier(modifier: UastModifier) = psi.hasModifier(modifier)
 }

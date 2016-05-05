@@ -23,6 +23,10 @@ class UNamedExpression(
 ): UExpression, UNamed {
     lateinit var expression: UExpression
 
+    constructor(name: String, expression: UExpression, parent: UElement?) : this(name, parent) {
+        this.expression = expression
+    }
+
     override fun accept(visitor: UastVisitor) {
         if (visitor.visitElement(this)) return
         expression.accept(visitor)

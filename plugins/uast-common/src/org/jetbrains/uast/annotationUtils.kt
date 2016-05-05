@@ -26,18 +26,16 @@ package org.jetbrains.uast
  */
 fun UAnnotated.findAnnotation(fqName: String) = annotations.firstOrNull { it.fqName == fqName }
 
-fun UFunction.getAllAnnotations(context: UastContext): List<UAnnotation> {
-    val annotations = this.annotations.toMutableList()
-    for (superFunction in this.getSuperFunctions(context)) {
-        annotations += superFunction.annotations
+fun UDeclaration.getAllAnnotations(context: UastContext) : List<UAnnotation> {
+    val annotations = mutableListOf<UAnnotation>()
+    if (this is UAnnotated) {
+        annotations += this.annotations
     }
-    return annotations
-}
 
-fun UClass.getAllAnnotations(context: UastContext): List<UAnnotation> {
-    val annotations = this.annotations.toMutableList()
-    for (superFunction in this.getSuperClasses(context)) {
-        annotations += superFunction.annotations
+    for (overridden in this.getOverriddenDeclarations(context)) {
+        if (overridden is UAnnotated) {
+            annotations += overridden.annotations
+        }
     }
     return annotations
 }

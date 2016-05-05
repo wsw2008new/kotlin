@@ -36,6 +36,8 @@ class JavaUAnnotation(
         }
     }
 
+    override val nameElement by lz { JavaDumbUElement(psi.nameReferenceElement, this) }
+
     override fun getValue(name: String?): UConstantValue<*>? {
         val attributes = psi.parameterList.attributes
         val value = if (name == null) psi.findAttributeValue(null) else attributes.firstOrNull { it.name == name }?.value

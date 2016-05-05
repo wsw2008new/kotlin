@@ -44,4 +44,6 @@ class JavaValueParameterUVariable(
 
     override fun hasModifier(modifier: UastModifier) = psi.hasModifier(modifier)
     override val annotations by lz { psi.modifierList.getAnnotations(this) }
+
+    override fun getOverriddenDeclarations(context: UastContext) = emptyList<UVariable>()
 }

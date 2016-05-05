@@ -26,6 +26,8 @@ interface UImportStatement : UElement {
      */
     val fqNameToImport: String?
 
+    val nameElement: UElement?
+
     /**
      * Returns true is the import is a "star" import (on-demand, all-under).
      */

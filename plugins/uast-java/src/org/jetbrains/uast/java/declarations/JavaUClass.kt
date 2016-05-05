@@ -65,7 +65,7 @@ class JavaUClass(
 
     override val internalName by lz { getInternalName(psi) }
 
-    override fun getSuperClasses(context: UastContext): List<UClass> {
+    override fun getOverriddenDeclarations(context: UastContext): List<UClass> {
         val superClasses = mutableListOf<UClass>()
         for (superClass in InheritanceUtil.getSuperClasses(psi)) {
             (context.convert(superClass) as? UClass)?.let { superClasses += it }
@@ -182,7 +182,7 @@ private class JavaUAnonymousClassConstructor(
     override val visibility: UastVisibility
         get() = UastVisibility.LOCAL
 
-    override fun getSuperFunctions(context: UastContext) = emptyList<UFunction>()
+    override fun getOverriddenDeclarations(context: UastContext) = emptyList<UFunction>()
 
     override val throws: List<UType>
         get() = emptyList()
@@ -217,4 +217,6 @@ private class JavaUAnonymousClassConstructorParameter(
 
     override val visibility: UastVisibility
         get() = UastVisibility.LOCAL
+
+    override fun getOverriddenDeclarations(context: UastContext) = emptyList<UVariable>()
 }

@@ -15,6 +15,8 @@
  */
 package org.jetbrains.uast
 
+internal val ERROR_NAME = "<error>"
+
 internal val LINE_SEPARATOR = System.getProperty("line.separator") ?: "\n"
 
 internal operator fun String.times(n: Int) = this.repeat(n)
@@ -40,3 +42,5 @@ internal fun renderAnnotations(annotations: List<UAnnotation>): String = buildSt
         appendln()
     }
 }
+
+internal fun <T> lz(f: () -> T) = lazy(LazyThreadSafetyMode.NONE, f)

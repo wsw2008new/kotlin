@@ -16,10 +16,7 @@
 package org.jetbrains.uast.java
 
 import com.intellij.psi.PsiTypeParameter
-import org.jetbrains.uast.UClass
-import org.jetbrains.uast.UElement
-import org.jetbrains.uast.UTypeReference
-import org.jetbrains.uast.UastContext
+import org.jetbrains.uast.*
 import org.jetbrains.uast.psi.PsiElementBacked
 
 class JavaParameterUTypeReference(
@@ -32,4 +29,6 @@ class JavaParameterUTypeReference(
     override val nameElement by lz { psi.nameIdentifier?.let { JavaDumbUElement(it, this) } }
 
     override fun resolve(context: UastContext) = psi.reference?.resolve()?.let { JavaConverter.convertWithParent(it) } as? UClass
+
+    override fun getOverriddenDeclarations(context: UastContext) = emptyList<UDeclaration>()
 }

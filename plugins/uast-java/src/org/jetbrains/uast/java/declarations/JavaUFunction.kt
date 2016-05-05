@@ -59,7 +59,7 @@ class JavaUFunction(
 
     override val bytecodeDescriptor by lz { getDescriptor(psi) }
 
-    override fun getSuperFunctions(context: UastContext): List<UFunction> {
+    override fun getOverriddenDeclarations(context: UastContext): List<UFunction> {
         return psi.findSuperMethods().map { context.convert(it) as? UFunction }.filterNotNull()
     }
     

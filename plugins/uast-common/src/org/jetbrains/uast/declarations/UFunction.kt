@@ -73,11 +73,7 @@ interface UFunction : UDeclaration, UModifierOwner, UVisibilityOwner, UAnnotated
     val bytecodeDescriptor: String?
         get() = null
 
-
-    /**
-     * Get the list of all super functions for this function.
-     */
-    fun getSuperFunctions(context: UastContext): List<UFunction>
+    override fun getOverriddenDeclarations(context: UastContext): List<UFunction>
 
     override fun accept(visitor: UastVisitor) {
         if (visitor.visitFunction(this)) return
@@ -131,7 +127,7 @@ object UFunctionNotResolved : UFunction {
     override val name = ERROR_NAME
 
     override fun hasModifier(modifier: UastModifier) = false
-    override fun getSuperFunctions(context: UastContext) = emptyList<UFunction>()
+    override fun getOverriddenDeclarations(context: UastContext) = emptyList<UFunction>()
     override val annotations = emptyList<UAnnotation>()
     override val throws = emptyList<UType>()
 }

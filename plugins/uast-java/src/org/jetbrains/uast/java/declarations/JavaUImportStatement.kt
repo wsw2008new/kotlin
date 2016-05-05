@@ -29,6 +29,8 @@ class JavaUImportStatement(
     override val fqNameToImport: String?
         get() = psi.qualifiedName
 
+    override val nameElement by lz { psi.importReference?.let { JavaDumbUElement(it, this) } }
+
     override val isStarImport: Boolean
         get() = psi.isOnDemand
 

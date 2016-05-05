@@ -80,6 +80,14 @@ interface UType : UElement, UNamed, UFqNamed, UAnnotated, UResolvable {
     val isObject: Boolean
 
     /**
+     * Returns true if the type is either boxed or an unboxed [Void], false otherwise.
+     */
+    val isVoid: Boolean
+
+    val isBuiltinType: Boolean
+        get() = isInt || isShort || isLong || isFloat || isDouble || isChar || isBoolean || isByte || isString || isVoid
+
+    /**
      * Returns the list of type parameters of this type.
      */
     val arguments: List<UTypeProjection>

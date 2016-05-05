@@ -18,6 +18,8 @@
 @file:JvmName("UastUtils")
 package org.jetbrains.uast
 
+fun UQualifiedExpression.asQualifiedString(): String? = asQualifiedPath()?.joinToString(".")
+
 fun UExpression.asQualifiedPath(): List<String>? {
     if (this is USimpleReferenceExpression) {
         return listOf(this.identifier)

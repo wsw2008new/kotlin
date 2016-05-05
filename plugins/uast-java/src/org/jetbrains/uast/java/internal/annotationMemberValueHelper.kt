@@ -19,14 +19,16 @@ package org.jetbrains.uast.java.internal
 import com.intellij.openapi.project.Project
 import com.intellij.psi.*
 import org.jetbrains.uast.*
+import org.jetbrains.uast.expressions.UastExpressionFactory
 import org.jetbrains.uast.java.JavaConverter
-import org.jetbrains.uast.java.lz
 
 internal fun PsiAnnotationMemberValue?.getUastValue(project: Project): UConstantValue<*> {
-    if (this == null) return UErrorValue
+    val originalFactory = UastExpressionFactory { JavaConverter.convertWithoutParent(this) as? UExpression }
+
+    if (this == null) return UErrorValue(originalFactory)
 
     if (this is PsiLiteralExpression && this.type == PsiType.NULL) {
-        return UNullValue
+        return UNullValue(originalFactory)
     }
 
     fun computeConstantExpression() = JavaPsiFacade.getInstance(project).constantEvaluationHelper.computeConstantExpression(this)
@@ -35,15 +37,15 @@ internal fun PsiAnnotationMemberValue?.getUastValue(project: Project): UConstant
 
     if (literalValue != null) {
         when (literalValue) {
-            is Boolean -> return JavaUBooleanValue(literalValue, this)
-            is Double -> return JavaUDoubleValue(literalValue, this)
-            is Float -> return JavaUFloatValue(literalValue, this)
-            is String -> return JavaUStringValue(literalValue, this)
-            is Char -> return JavaUCharValue(literalValue, this)
-            is Byte -> return JavaUByteValue(literalValue, this)
-            is Short -> return JavaUShortValue(literalValue, this)
-            is Int -> return JavaUIntValue(literalValue, this)
-            is Long -> return JavaULongValue(literalValue, this)
+            is Boolean -> return UBooleanValue(literalValue, originalFactory)
+            is Double -> return UDoubleValue(literalValue, originalFactory)
+            is Float -> return UFloatValue(literalValue, originalFactory)
+            is String -> return UStringValue(literalValue, originalFactory)
+            is Char -> return UCharValue(literalValue, originalFactory)
+            is Byte -> return UByteValue(literalValue, originalFactory)
+            is Short -> return UShortValue(literalValue, originalFactory)
+            is Int -> return UIntValue(literalValue, originalFactory)
+            is Long -> return ULongValue(literalValue, originalFactory)
         }
     }
 
@@ -51,57 +53,15 @@ internal fun PsiAnnotationMemberValue?.getUastValue(project: Project): UConstant
         is PsiReferenceExpression -> {
             val element = resolve()
             if (element is PsiEnumConstant) {
-                UEnumValue(null, JavaConverter.convertType(element.type), element.name ?: "<error>")
+                UEnumValue(null, JavaConverter.convertType(element.type), element.name ?: "<error>", originalFactory)
             }
             else {
-                UErrorValue
+                UErrorValue(originalFactory)
             }
         }
-        is PsiArrayInitializerMemberValue -> UArrayValue(initializers.map { it.getUastValue(project) })
-        is PsiAnnotation -> UAnnotationValue(JavaConverter.convertAnnotation(this, null))
-        is PsiClassObjectAccessExpression -> UTypeValue(JavaConverter.convertType(type))
+        is PsiArrayInitializerMemberValue -> UArrayValue(initializers.map { it.getUastValue(project) }, originalFactory)
+        is PsiAnnotation -> UAnnotationValue(JavaConverter.convertAnnotation(this, null), originalFactory)
+        is PsiClassObjectAccessExpression -> UTypeValue(JavaConverter.convertType(type), originalFactory)
         else -> throw UnsupportedOperationException("Unsupported annotation this type: " + this)
     }
-}
-
-private interface WithOriginal {
-    val psi: PsiAnnotationMemberValue
-}
-
-private fun WithOriginal.calc() = JavaConverter.convertWithoutParent(psi) as? UExpression
-
-class JavaUDoubleValue(override val value: Double, override val psi: PsiAnnotationMemberValue) : URealValue<Double>, WithOriginal {
-    override val original by lz { calc() }
-}
-
-class JavaUFloatValue(override val value: Float, override val psi: PsiAnnotationMemberValue) : URealValue<Float>, WithOriginal {
-    override val original by lz { calc() }
-}
-
-class JavaUCharValue(override val value: Char, override val psi: PsiAnnotationMemberValue) : USimpleConstantValue<Char>, WithOriginal {
-    override val original by lz { calc() }
-}
-
-class JavaUByteValue(override val value: Byte, override val psi: PsiAnnotationMemberValue) : UIntegralValue<Byte>, WithOriginal {
-    override val original by lz { calc() }
-}
-
-class JavaUIntValue(override val value: Int, override val psi: PsiAnnotationMemberValue) : UIntegralValue<Int>, WithOriginal {
-    override val original by lz { calc() }
-}
-
-class JavaULongValue(override val value: Long, override val psi: PsiAnnotationMemberValue) : UIntegralValue<Long>, WithOriginal {
-    override val original by lz { calc() }
-}
-
-class JavaUShortValue(override val value: Short, override val psi: PsiAnnotationMemberValue) : UIntegralValue<Short>, WithOriginal {
-    override val original by lz { calc() }
-}
-
-class JavaUBooleanValue(override val value: Boolean, override val psi: PsiAnnotationMemberValue) : USimpleConstantValue<Boolean>, WithOriginal {
-    override val original by lz { calc() }
-}
-
-class JavaUStringValue(override val value: String, override val psi: PsiAnnotationMemberValue) : USimpleConstantValue<String>, WithOriginal {
-    override val original by lz { calc() }
 }

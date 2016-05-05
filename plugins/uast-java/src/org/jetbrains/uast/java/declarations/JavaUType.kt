@@ -36,28 +36,31 @@ class JavaUType(val psi: PsiType?) : JavaAbstractUElement(), UType {
         }
 
     override val isInt: Boolean
-        get() = check("int", "java.lang.Integer")
+        get() = check(PsiType.INT, "java.lang.Integer")
 
     override val isLong: Boolean
-        get() = check("long", "java.lang.Long")
+        get() = check(PsiType.LONG, "java.lang.Long")
 
     override val isShort: Boolean
-        get() = check("short", "java.lang.Short")
+        get() = check(PsiType.SHORT, "java.lang.Short")
 
     override val isFloat: Boolean
-        get() = check("float", "java.lang.Float")
+        get() = check(PsiType.FLOAT, "java.lang.Float")
 
     override val isDouble: Boolean
-        get() = check("double", "java.lang.Double")
+        get() = check(PsiType.DOUBLE, "java.lang.Double")
 
     override val isChar: Boolean
-        get() = check("char", "java.lang.Character")
+        get() = check(PsiType.CHAR, "java.lang.Character")
 
     override val isBoolean: Boolean
-        get() = check("boolean", "java.lang.Boolean")
+        get() = check(PsiType.BOOLEAN, "java.lang.Boolean")
 
     override val isByte: Boolean
-        get() = check("byte", "java.lang.Byte")
+        get() = check(PsiType.BYTE, "java.lang.Byte")
+
+    override val isVoid: Boolean
+        get() = check(PsiType.VOID, "java.lang.Byte")
 
     override val isString: Boolean
         get() = (psi as? PsiClassType)?.resolve()?.qualifiedName == "java.lang.String"
@@ -89,14 +92,25 @@ class JavaUType(val psi: PsiType?) : JavaAbstractUElement(), UType {
     }
 
     @Suppress("NOTHING_TO_INLINE")
-    private inline fun check(unboxedType: String, boxedType: String): Boolean =
-            name == unboxedType || (psi as? PsiClassType)?.resolve()?.qualifiedName == boxedType
+    private inline fun check(primitiveType: PsiPrimitiveType, boxedType: String): Boolean =
+            psi == primitiveType || (psi as? PsiClassType)?.resolve()?.qualifiedName == boxedType
 
     override val annotations by lz { psi.getAnnotations(this) }
 
     override fun resolve(context: UastContext) = when (psi) {
         is PsiClassType -> psi.resolve()?.let { context.convert(it) as? UClass }
         else -> null
+    }
+
+    override fun equals(other: Any?): Boolean{
+        if (this === other) return true
+        if (other?.javaClass != javaClass) return false
+        if (!super.equals(other)) return false
+
+        other as JavaUType
+
+        if (psi != other.psi) return false
+        return true
     }
 }
 
@@ -125,6 +139,8 @@ class JavaUArrayType(val type: PsiArrayType) : UArrayType {
     override val isString: Boolean
         get() = false
     override val isObject: Boolean
+        get() = false
+    override val isVoid: Boolean
         get() = false
 
     override val arrayElementType by lz { JavaConverter.convertType(type.componentType) }

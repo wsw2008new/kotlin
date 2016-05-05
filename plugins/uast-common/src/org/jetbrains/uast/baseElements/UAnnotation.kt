@@ -27,6 +27,11 @@ interface UAnnotation : UElement, UNamed, UFqNamed {
     val valueArguments: List<UNamedExpression>
 
     /**
+     * Returns an element for the annotation name node, or null if the node does not exist in the underlying AST (Psi).
+     */
+    val nameElement: UElement?
+
+    /**
      * Returns the class of this annotation.
      *
      * @return annotation class or null if the class was not resolved

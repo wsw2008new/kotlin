@@ -27,6 +27,14 @@ interface UDeclaration : UElement, UNamed {
     val nameElement: UElement?
 
     /**
+     * Get the list of all overridden declarations for this declaration.
+     *
+     * @param context the Uast context
+     * @return returns the list of all overridden declaration. Order is not guaranteed.
+     */
+    fun getOverriddenDeclarations(context: UastContext): List<UDeclaration>
+
+    /**
      * Checks if the declaration's containing class qualified name is [containingClassFqName].
      *
      * @param containingClassFqName the required containing class qualified name.
@@ -65,4 +73,6 @@ object UDeclarationNotResolved : UDeclaration {
 
     override fun logString() = "[!] $name"
     override fun renderString() = name
+
+    override fun getOverriddenDeclarations(context: UastContext) = emptyList<UDeclaration>()
 }

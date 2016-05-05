@@ -16,51 +16,90 @@
 
 package org.jetbrains.uast
 
+import org.jetbrains.uast.expressions.UastExpressionFactory
+
 interface UConstantValue<T> {
     val value: T
-
     val original: UExpression?
-        get() = null
 }
 
 interface USimpleConstantValue<T> : UConstantValue<T>
 
-open class UAnnotationValue(override val value: UAnnotation) : UConstantValue<UAnnotation>
+open class UAnnotationValue(override val value: UAnnotation, originalFactory: UastExpressionFactory) : UConstantValue<UAnnotation> {
+    override val original by lz { originalFactory() }
+}
 
-open class UArrayValue(override val value: List<UConstantValue<*>>) : UConstantValue<List<UConstantValue<*>>>
+open class UArrayValue(
+        override val value: List<UConstantValue<*>>,
+        originalFactory: UastExpressionFactory
+) : UConstantValue<List<UConstantValue<*>>> {
+    override val original by lz { originalFactory() }
+}
 
-open class UEnumValue(override val value: UType?, val enumType: UType, val valueName: String) : UConstantValue<UType?>
+open class UEnumValue(
+        override val value: UType?,
+        val enumType: UType,
+        val valueName: String,
+        originalFactory: UastExpressionFactory) : UConstantValue<UType?> {
+    override val original by lz { originalFactory() }
+}
 
-object UErrorValue : UConstantValue<Unit> {
+open class UErrorValue(originalFactory: UastExpressionFactory) : UConstantValue<Unit> {
     override val value = Unit
+    override val original by lz { originalFactory() }
 }
 
 interface UIntegralValue<T> : USimpleConstantValue<T>
 
 interface URealValue<T> : USimpleConstantValue<T>
 
-open class UDoubleValue(override val value: Double) : URealValue<Double>
+open class UDoubleValue(override val value: Double, originalFactory: UastExpressionFactory) : URealValue<Double> {
+    override val original by lz { originalFactory() }
+}
 
-open class UFloatValue(override val value: Float) : URealValue<Float>
+open class UFloatValue(override val value: Float, originalFactory: UastExpressionFactory) : URealValue<Float> {
+    override val original by lz { originalFactory() }
+}
 
-open class UCharValue(override val value: Char) : USimpleConstantValue<Char>
+open class UCharValue(override val value: Char, originalFactory: UastExpressionFactory) : USimpleConstantValue<Char> {
+    override val original by lz { originalFactory() }
+}
 
-open class UByteValue(override val value: Byte) : UIntegralValue<Byte>
+open class UByteValue(override val value: Byte, originalFactory: UastExpressionFactory) : UIntegralValue<Byte> {
+    override val original by lz { originalFactory() }
+}
 
-open class UIntValue(override val value: Int) : UIntegralValue<Int>
+open class UIntValue(override val value: Int, originalFactory: UastExpressionFactory) : UIntegralValue<Int> {
+    override val original by lz { originalFactory() }
+}
 
-open class ULongValue(override val value: Long) : UIntegralValue<Long>
+open class ULongValue(override val value: Long, originalFactory: UastExpressionFactory) : UIntegralValue<Long> {
+    override val original by lz { originalFactory() }
+}
 
-open class UShortValue(override val value: Short) : UIntegralValue<Short>
+open class UShortValue(override val value: Short, originalFactory: UastExpressionFactory) : UIntegralValue<Short> {
+    override val original by lz { originalFactory() }
+}
 
-open class UBooleanValue(override val value: Boolean) : USimpleConstantValue<Boolean>
+open class UBooleanValue(override val value: Boolean, originalFactory: UastExpressionFactory) : USimpleConstantValue<Boolean> {
+    override val original by lz { originalFactory() }
+}
 
-open class UStringValue(override val value: String) : USimpleConstantValue<String>
+open class UStringValue(override val value: String, originalFactory: UastExpressionFactory) : USimpleConstantValue<String> {
+    override val original by lz { originalFactory() }
+}
 
-open class UTypeValue(override val value: UType) : UConstantValue<UType>
+open class UTypeValue(override val value: UType, originalFactory: UastExpressionFactory) : UConstantValue<UType> {
+    override val original by lz { originalFactory() }
+}
 
-open class UExpressionValue(override val value: UExpression) : UConstantValue<UExpression>
+open class UExpressionValue(override val value: UExpression, originalFactory: UastExpressionFactory) : UConstantValue<UExpression> {
+    override val original by lz { originalFactory() }
+}
 
-object UNullValue : USimpleConstantValue<Any?> {
-    override val value = null
+open class UNullValue(originalFactory: UastExpressionFactory) : UConstantValue<Any?> {
+    override val value: Any?
+        get() = null
+
+    override val original by lz { originalFactory() }
 }
