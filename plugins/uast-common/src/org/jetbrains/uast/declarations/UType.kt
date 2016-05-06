@@ -44,9 +44,10 @@ object UastErrorType : UType, NoAnnotations {
     override val isChar = false
     override val isByte = false
     override val isString = false
+    override val isCharSequence = false
     override val isObject = false
     override val isVoid = false
-    override val isPrimitiveType = false
+    override val isPrimitive = false
     override val parent = null
     override val arguments = emptyList<UTypeProjection>()
     override val name = ERROR_NAME

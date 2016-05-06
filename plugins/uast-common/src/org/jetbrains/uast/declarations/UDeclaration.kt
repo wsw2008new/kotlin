@@ -42,8 +42,22 @@ interface UDeclaration : UElement, UNamed {
      *         false otherwise.
      */
     fun matchesContaining(containingClassFqName: String): Boolean {
+        return matchesContaining(containingClassFqName, false)
+    }
+
+    /**
+     * Checks if the declaration's containing class qualified name is [containingClassFqName].
+     *
+     * @param containingClassFqName the required containing class qualified name.
+     * @param allowInherit if true, the containing class could also a subtype of [containingClassFqName].
+     * @return true if the qualified name of the containing class is [containingClassFqName],
+     *         false otherwise.
+     */
+    fun matchesContaining(containingClassFqName: String, allowInherit: Boolean): Boolean {
         val containingClass = this.getContainingClass() ?: return false
-        return containingClass.matchesFqName(containingClassFqName)
+        val matchesExactly = containingClass.matchesFqName(containingClassFqName)
+        if (!allowInherit || matchesExactly) return matchesExactly
+        return containingClass.isSubclassOf(containingClassFqName, true)
     }
 
     /**

@@ -53,12 +53,15 @@ class JavaPrimitiveUType(val psi: PsiPrimitiveType): JavaAbstractUElement(), UTy
         get() = psi === PsiPrimitiveType.VOID
 
     override val isString: Boolean
-        get() = throw UnsupportedOperationException()
+        get() = false
+
+    override val isCharSequence: Boolean
+        get() = false
 
     override val isObject: Boolean
         get() = false
 
-    override val isPrimitiveType: Boolean
+    override val isPrimitive: Boolean
         get() = true
 
     override val arguments: List<UTypeProjection>

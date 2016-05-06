@@ -71,11 +71,22 @@ interface UType : UElement, UNamed, UFqNamed, UAnnotated, UResolvable {
 
     /**
      * Returns true if the type is [lava.lang.String], false otherwise.
+     * Some languages might provide own [lava.lang.String] wrappers,
+     *  so calling [isString] is more reliable than checking [fqName] manually.
      */
     val isString: Boolean
 
     /**
+     * Returns true if the type is [java.lang.CharSequence], false otherwise.
+     * Some languages might provide own [lava.lang.CharSequence] wrappers,
+     *  so calling [isCharSequence] is more reliable than checking [fqName] manually.
+     */
+    val isCharSequence: Boolean
+
+    /**
      * Returns true if the type is [java.lang.Object], false otherwise.
+     * Some languages might provide own [lava.lang.Object] wrappers,
+     *  so calling [isObject] is more reliable than checking [fqName] manually.
      */
     val isObject: Boolean
 
@@ -90,7 +101,7 @@ interface UType : UElement, UNamed, UFqNamed, UAnnotated, UResolvable {
      *  there are no primitive types, and the actual bytecode type is calculated during the compile time.
      * If you are uncertain if the generated type will be primitive or not, return `false`.
      */
-    val isPrimitiveType: Boolean
+    val isPrimitive: Boolean
 
     /**
      * Returns true if the type is a built-in type.

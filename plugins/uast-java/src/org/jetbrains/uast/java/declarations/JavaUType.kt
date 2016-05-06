@@ -62,11 +62,14 @@ class JavaUType(val psi: PsiType?) : JavaAbstractUElement(), UType {
     override val isVoid: Boolean
         get() = check(PsiType.VOID, "java.lang.Byte")
 
-    override val isPrimitiveType: Boolean
+    override val isPrimitive: Boolean
         get() = psi is PsiPrimitiveType
 
     override val isString: Boolean
         get() = (psi as? PsiClassType)?.resolve()?.qualifiedName == "java.lang.String"
+
+    override val isCharSequence: Boolean
+        get() = (psi as? PsiClassType)?.resolve()?.qualifiedName == "java.lang.CharSequence"
 
     override val isObject: Boolean
         get() = (psi as? PsiClassType)?.resolve()?.qualifiedName == "java.lang.Object"
@@ -141,11 +144,13 @@ class JavaUArrayType(val type: PsiArrayType) : UArrayType {
         get() = false
     override val isString: Boolean
         get() = false
+    override val isCharSequence: Boolean
+        get() = false
     override val isObject: Boolean
         get() = false
     override val isVoid: Boolean
         get() = false
-    override val isPrimitiveType: Boolean
+    override val isPrimitive: Boolean
         get() = false
 
     override val arrayElementType by lz { JavaConverter.convertType(type.componentType) }
