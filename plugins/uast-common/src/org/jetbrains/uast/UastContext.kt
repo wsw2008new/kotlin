@@ -27,6 +27,12 @@ interface UastContext {
     val languagePlugins: List<UastLanguagePlugin>
 
     /**
+     * Returns all active converters sorted by its priority.
+     */
+    val converters: List<UastConverter>
+        get() = languagePlugins.map { it.converter }.sortedByDescending { it.priority }
+
+    /**
      * Convert an element of some language-specific AST to Uast element.
      * If two or more language plugins can convert the given [element] type,
      *  the first converter in the [languagePlugins] list will be chosen.
@@ -39,8 +45,8 @@ interface UastContext {
             return null
         }
 
-        for (plugin in languagePlugins) {
-            val uelement = plugin.converter.convertWithParent(element)
+        for (converter in converters) {
+            val uelement = converter.convertWithParent(element)
             if (uelement != null) {
                 return uelement
             }

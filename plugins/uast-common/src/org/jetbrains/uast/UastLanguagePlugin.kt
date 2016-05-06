@@ -24,6 +24,17 @@ import org.jetbrains.uast.visitor.UastVisitor
  */
 interface UastConverter {
     /**
+     * Returns the converter priority. Might be positive, negative or 0 (Java's is 0).
+     * UastConverter with the higher priority will be queried earlier.
+     *
+     * Priority is useful when a language N wraps its own elements (NElement) to, for example, Java's PsiElements,
+     *  and Java resolves the reference to such wrapped PsiElements, not the original NElement.
+     * In this case N implementation can handle such wrappers in UastConverter earlier than Java's converter,
+     *  so N language converter will have a higher priority.
+     */
+    val priority: Int
+
+    /**
      * Convert a language-specific AST element to the [UElement] implementation with the given parent.
      *
      * @param element the element of the supported language-specific AST.

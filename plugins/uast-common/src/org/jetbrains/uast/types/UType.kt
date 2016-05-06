@@ -84,6 +84,18 @@ interface UType : UElement, UNamed, UFqNamed, UAnnotated, UResolvable {
      */
     val isVoid: Boolean
 
+    /**
+     * Returns true if the type is a primitive type.
+     * Calculation of this value could potentially be expensive, because in some languages (e.g. Scala, Kotlin)
+     *  there are no primitive types, and the actual bytecode type is calculated during the compile time.
+     * If you are uncertain if the generated type will be primitive or not, return `false`.
+     */
+    val isPrimitiveType: Boolean
+
+    /**
+     * Returns true if the type is a built-in type.
+     * Complete built-in type list: int, short, long, float, double, char, boolean, byte, void (or its boxed wrappers), and String.
+     */
     val isBuiltinType: Boolean
         get() = isInt || isShort || isLong || isFloat || isDouble || isChar || isBoolean || isByte || isString || isVoid
 

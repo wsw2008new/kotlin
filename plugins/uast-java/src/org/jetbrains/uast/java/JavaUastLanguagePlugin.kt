@@ -18,6 +18,7 @@ package org.jetbrains.uast.java
 
 import com.intellij.psi.*
 import org.jetbrains.uast.*
+import org.jetbrains.uast.java.declarations.JavaPrimitiveUType
 import org.jetbrains.uast.java.expressions.JavaUSynchronizedExpression
 
 
@@ -27,6 +28,8 @@ object JavaUastLanguagePlugin : UastLanguagePlugin {
 }
 
 internal object JavaConverter : UastConverter {
+    override val priority = 0
+
     override fun isFileSupported(name: String): Boolean {
         return name.endsWith(".java", ignoreCase = true)
     }
@@ -88,6 +91,9 @@ internal object JavaConverter : UastConverter {
     }
 
     internal fun convertType(type: PsiType?): UType {
+        if (type is PsiPrimitiveType) {
+            return JavaPrimitiveUType(type)
+        }
         if (type is PsiArrayType) {
             return JavaUArrayType(type)
         }

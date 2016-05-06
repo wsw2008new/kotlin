@@ -46,6 +46,7 @@ object UastErrorType : UType, NoAnnotations {
     override val isString = false
     override val isObject = false
     override val isVoid = false
+    override val isPrimitiveType = false
     override val parent = null
     override val arguments = emptyList<UTypeProjection>()
     override val name = ERROR_NAME
