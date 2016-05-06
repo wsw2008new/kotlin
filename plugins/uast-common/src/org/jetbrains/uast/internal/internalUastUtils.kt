@@ -19,6 +19,9 @@ internal val ERROR_NAME = "<error>"
 
 internal val LINE_SEPARATOR = System.getProperty("line.separator") ?: "\n"
 
+internal val String.withMargin: String
+    get() = lines().joinToString(LINE_SEPARATOR) { "    " + it }
+
 internal operator fun String.times(n: Int) = this.repeat(n)
 
 internal fun List<UElement>.logString() = joinToString(LINE_SEPARATOR) { it.logString().withMargin }
@@ -32,6 +35,11 @@ internal fun StringBuilder.appendWithSpace(s: String) {
         append(s)
         append(' ')
     }
+}
+
+internal tailrec fun UExpression.unwrapParenthesis(): UExpression = when (this) {
+    is UParenthesizedExpression -> expression.unwrapParenthesis()
+    else -> this
 }
 
 internal fun renderAnnotations(annotations: List<UAnnotation>): String = buildString {

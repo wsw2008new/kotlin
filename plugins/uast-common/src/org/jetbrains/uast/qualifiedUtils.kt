@@ -18,6 +18,8 @@
 @file:JvmName("UastUtils")
 package org.jetbrains.uast
 
+import kotlin.system.exitProcess
+
 fun UQualifiedExpression.asQualifiedString(): String? = asQualifiedPath()?.joinToString(".")
 
 fun UExpression.asQualifiedPath(): List<String>? {
@@ -30,7 +32,7 @@ fun UExpression.asQualifiedPath(): List<String>? {
     var error = false
     val list = mutableListOf<String>()
     fun addIdentifiers(expr: UQualifiedExpression) {
-        val receiver = expr.receiver
+        val receiver = expr.receiver.unwrapParenthesis()
         val selector = expr.selector as? USimpleReferenceExpression ?: run { error = true; return }
         when (receiver) {
             is UQualifiedExpression -> addIdentifiers(receiver)
@@ -114,6 +116,7 @@ fun UExpression.getQualifiedParentOrThis(): UExpression {
             else
                 previous
         }
+        is UParenthesizedExpression -> findParent(current.expression, previous) ?: previous
         else -> null
     }
 
@@ -133,11 +136,13 @@ fun UExpression.getQualifiedParentOrThis(): UExpression {
  *   Outermost qualified (return value): a.b.c(asd).g
  */
 fun UExpression.getOutermostQualified(): UQualifiedExpression? {
-    val parent = this.parent
-    return when (parent) {
-        is UQualifiedExpression -> parent.getOutermostQualified()
-        else -> if (this is UQualifiedExpression) this else null
+    tailrec fun getOutermostQualified(current: UElement?, previous: UExpression): UQualifiedExpression? = when (current) {
+        is UQualifiedExpression -> getOutermostQualified(current.parent, current)
+        is UParenthesizedExpression -> getOutermostQualified(current.parent, previous)
+        else -> if (previous is UQualifiedExpression) previous else null
     }
+
+    return getOutermostQualified(this.parent, this)
 }
 
 /**
@@ -151,14 +156,14 @@ fun UExpression.getOutermostQualified(): UQualifiedExpression? {
  */
 fun UExpression.getQualifiedChain(): List<UExpression> {
     fun collect(expr: UQualifiedExpression, chains: MutableList<UExpression>) {
-        val receiver = expr.receiver
+        val receiver = expr.receiver.unwrapParenthesis()
         if (receiver is UQualifiedExpression) {
             collect(receiver, chains)
         } else {
             chains += receiver
         }
 
-        val selector = expr.selector
+        val selector = expr.selector.unwrapParenthesis()
         if (selector is UQualifiedExpression) {
             collect(selector, chains)
         } else {

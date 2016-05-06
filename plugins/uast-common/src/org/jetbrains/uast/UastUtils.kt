@@ -97,9 +97,6 @@ fun UElement.log(firstLine: String, vararg nested: Any?): String {
     }
 }
 
-val String.withMargin: String
-    get() = lines().joinToString(LINE_SEPARATOR) { "    " + it }
-
 fun List<UElement>.acceptList(visitor: UastVisitor) {
     for (element in this) {
         element.accept(visitor)

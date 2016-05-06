@@ -47,9 +47,16 @@ internal object JavaConverter : UastConverter {
 
         if (element !is PsiElement) return null
 
-        val parent = element.parent ?: return null
+        val parent = unwrapParents(element.parent) ?: return null
         val parentUElement = convertWithParent(parent) ?: return null
         return convertPsiElement(element, parentUElement)
+    }
+
+    private tailrec fun unwrapParents(parent: PsiElement?): PsiElement? = when (parent) {
+        is PsiExpressionStatement -> unwrapParents(parent.parent)
+        is PsiParameterList -> unwrapParents(parent.parent)
+        is PsiAnnotationParameterList -> unwrapParents(parent.parent)
+        else -> parent
     }
 
     override fun convertWithoutParent(element: Any?): UElement? {
@@ -66,6 +73,7 @@ internal object JavaConverter : UastConverter {
         is PsiCodeBlock -> convertBlock(element, parent)
         is PsiMethod -> convertMethod(element, parent)
         is PsiField -> convertField(element, parent)
+        is PsiParameter -> convertParameter(element, parent)
         is PsiVariable -> convertVariable(element, parent)
         is PsiClassInitializer -> convertInitializer(element, parent)
         is PsiAnnotation -> convertAnnotation(element, parent)
@@ -74,7 +82,6 @@ internal object JavaConverter : UastConverter {
         is PsiStatement -> convert(element, parent)
         is PsiIdentifier -> JavaUSimpleReferenceExpression(element, element.text, parent)
         is PsiImportStatementBase -> convertImportStatement(element, parent)
-        is PsiParameter -> convertParameter(element, parent)
         is PsiTypeParameter -> convertTypeParameter(element, parent)
         is PsiNameValuePair -> convertNameValue(element, parent)
         is PsiType -> convertType(element)
