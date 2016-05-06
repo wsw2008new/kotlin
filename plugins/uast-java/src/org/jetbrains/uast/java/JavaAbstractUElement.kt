@@ -40,6 +40,8 @@ abstract class JavaAbstractUElement : UElement {
         }
         return super.originalString()
     }
+
+    override fun toString() = renderString()
 }
 
 abstract class JavaAbstractUExpression : JavaAbstractUElement(), UExpression {

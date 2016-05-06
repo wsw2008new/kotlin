@@ -35,4 +35,6 @@ abstract class KotlinAbstractUElement : UElement {
         }
         return super.originalString()
     }
+
+    override fun toString() = renderString()
 }

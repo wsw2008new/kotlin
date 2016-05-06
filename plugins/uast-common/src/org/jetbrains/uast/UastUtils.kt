@@ -171,7 +171,7 @@ fun <T: UElement> UElement.getParentOfType(clazz: Class<T>, strict: Boolean): T?
     }
 
     @Suppress("UNCHECKED_CAST")
-    return findParent(if (strict) parent else this) as T
+    return findParent(if (strict) parent else this) as T?
 }
 
 fun <T: UElement> UElement.getParentOfType(clazz: Class<T>, strict: Boolean, vararg stopAt: Class<out UElement>): T? {
@@ -185,7 +185,7 @@ fun <T: UElement> UElement.getParentOfType(clazz: Class<T>, strict: Boolean, var
     }
 
     @Suppress("UNCHECKED_CAST")
-    return findParent(if (strict) parent else this) as T
+    return findParent(if (strict) parent else this) as T?
 }
 
 fun <T> UClass.findStaticMemberOfType(name: String, type: Class<out T>): T? {
@@ -194,14 +194,14 @@ fun <T> UClass.findStaticMemberOfType(name: String, type: Class<out T>): T? {
             it.name == name && type.isInstance(it) && it is UModifierOwner && it.hasModifier(UastModifier.STATIC)
         }
         @Suppress("UNCHECKED_CAST")
-        if (member != null) return member as T
+        if (member != null) return member as T?
     }
 
     @Suppress("UNCHECKED_CAST")
     return declarations.firstOrNull {
         it.name == name && it is UModifierOwner
                 && it.hasModifier(UastModifier.STATIC) && type.isInstance(it)
-    } as T
+    } as T?
 }
 
 /**
