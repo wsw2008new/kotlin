@@ -37,6 +37,8 @@ interface UVariable : UDeclaration, UModifierOwner, UVisibilityOwner, UAnnotated
 
     /**
      * Return the variable type.
+     *
+     * If variable has a [UastModifier.VARARG] modifier, [type] should return the vararg type, not an array type.
      */
     val type: UType
 

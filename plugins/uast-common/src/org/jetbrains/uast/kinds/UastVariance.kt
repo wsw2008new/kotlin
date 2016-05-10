@@ -28,6 +28,9 @@ class UastVariance(val text: String) {
         val CONTRAVARIANT = UastVariance("contravariant")
 
         @JvmField
+        val STAR = UastVariance("star")
+
+        @JvmField
         val UNKNOWN = UastVariance("unknown")
     }
 }

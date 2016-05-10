@@ -22,7 +22,7 @@ import org.jetbrains.uast.visitor.UastVisitor
  * Represents the type.
  * The abstraction is quite simple. Intersection types, union types, platform types are yet to be supported.
  */
-interface UType : UElement, UNamed, UFqNamed, UAnnotated, UResolvable {
+interface UType : UElement, UNamed, UFqNamed, UAnnotated {
     /**
      * Returns the simple (non-qualified) type name.
      * The simple type name is only for the debug purposes. Do not check against it in the production code.
@@ -121,15 +121,17 @@ interface UType : UElement, UNamed, UFqNamed, UAnnotated, UResolvable {
     override val parent: UElement?
         get() = null
 
+    fun resolve(): UResolvedType
+
     /**
      * Returns the [UClass] declaration element for this type.
      *
      * @param context the Uast context
      * @return the [UClass] declaration element, or null if the class was not resolved.
      */
-    override fun resolve(context: UastContext): UClass?
+    fun resolveToClass(context: UastContext): UClass?
 
-    override fun resolveOrEmpty(context: UastContext) = resolve(context) ?: UClassNotResolved
+    fun resolveToClassOrEmpty(context: UastContext) = resolveToClass(context) ?: UClassNotResolved
 
     override fun logString() = "UType ($name)"
     override fun renderString() = name

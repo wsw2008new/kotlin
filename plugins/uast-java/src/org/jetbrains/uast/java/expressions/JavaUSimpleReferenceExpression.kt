@@ -18,6 +18,7 @@ package org.jetbrains.uast.java
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiJavaReference
 import com.intellij.psi.PsiReference
+import com.intellij.psi.PsiTypeElement
 import org.jetbrains.uast.*
 import org.jetbrains.uast.psi.PsiElementBacked
 
@@ -33,6 +34,16 @@ class JavaUSimpleReferenceExpression(
         }
         return resolvedElement?.let { context.convert(it) } as? UDeclaration
     }
+}
+
+class JavaTypeElementUSimpleReferenceExpression(
+        override val psi: PsiTypeElement,
+        override val parent: UElement?
+) : JavaAbstractUExpression(), USimpleReferenceExpression, PsiElementBacked {
+    override val identifier: String
+        get() = psi.type.presentableText.substringAfterLast('.')
+
+    override fun resolve(context: UastContext) = null
 }
 
 class JavaClassUSimpleReferenceExpression(

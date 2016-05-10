@@ -27,4 +27,5 @@ class JavaUClassLiteralExpression(
         override val parent: UElement?
 ) : JavaAbstractUExpression(), UClassLiteralExpression, PsiElementBacked {
     override val type: UType by lz { JavaConverter.convertType(psi.type) }
+    override val expression by lz { JavaTypeElementUSimpleReferenceExpression(psi.operand, this) }
 }

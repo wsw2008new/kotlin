@@ -18,7 +18,6 @@ package org.jetbrains.uast.java
 
 import com.intellij.psi.*
 import org.jetbrains.uast.*
-import org.jetbrains.uast.java.declarations.JavaPrimitiveUType
 import org.jetbrains.uast.java.expressions.JavaUSynchronizedExpression
 
 
@@ -97,15 +96,7 @@ internal object JavaConverter : UastConverter {
         }
     }
 
-    internal fun convertType(type: PsiType?): UType {
-        if (type is PsiPrimitiveType) {
-            return JavaPrimitiveUType(type)
-        }
-        if (type is PsiArrayType) {
-            return JavaUArrayType(type)
-        }
-        return JavaUType(type)
-    }
+    internal fun convertType(type: PsiType?): UType = JavaUType(type)
 
     internal fun convertParameter(parameter: PsiParameter, parent: UElement?) = JavaValueParameterUVariable(parameter, parent)
 

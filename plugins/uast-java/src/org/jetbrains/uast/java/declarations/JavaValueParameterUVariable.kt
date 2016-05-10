@@ -15,6 +15,7 @@
  */
 package org.jetbrains.uast.java
 
+import com.intellij.psi.PsiArrayType
 import com.intellij.psi.PsiParameter
 import org.jetbrains.uast.*
 import org.jetbrains.uast.kinds.UastVariableInitialierKind
@@ -28,7 +29,14 @@ class JavaValueParameterUVariable(
         get() = psi.name.orAnonymous()
 
     override val nameElement by lz { JavaDumbUElement(psi.nameIdentifier, this) }
-    override val type by lz { JavaConverter.convertType(psi.type) }
+
+    override val type by lz {
+        val psiType = psi.type
+        if (psi.isVarArgs && psiType is PsiArrayType) {
+            return@lz JavaConverter.convertType(psiType.componentType)
+        }
+        JavaConverter.convertType(psi.type)
+    }
 
     override val initializer: UExpression?
         get() = null

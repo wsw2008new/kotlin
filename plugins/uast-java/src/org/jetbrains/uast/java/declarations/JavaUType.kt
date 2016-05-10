@@ -20,7 +20,6 @@ import org.jetbrains.uast.*
 import org.jetbrains.uast.kinds.UastVariance
 import org.jetbrains.uast.UTypeProjection
 
-
 class JavaUType(val psi: PsiType?) : JavaAbstractUElement(), UType {
     override val name: String
         get() = when (psi) {
@@ -81,7 +80,9 @@ class JavaUType(val psi: PsiType?) : JavaAbstractUElement(), UType {
             val type = JavaConverter.convertType(it)
             val variance = when (it) {
                 is PsiWildcardType -> {
-                    if (it.isSuper)
+                    if (!it.isBounded)
+                        UastVariance.STAR
+                    else if (it.isSuper)
                         UastVariance.CONTRAVARIANT
                     else if (it.isExtends)
                         UastVariance.CONTRAVARIANT
@@ -103,9 +104,44 @@ class JavaUType(val psi: PsiType?) : JavaAbstractUElement(), UType {
 
     override val annotations by lz { psi.getAnnotations(this) }
 
-    override fun resolve(context: UastContext) = when (psi) {
+    override fun resolveToClass(context: UastContext) = when (psi) {
         is PsiClassType -> psi.resolve()?.let { context.convert(it) as? UClass }
         else -> null
+    }
+
+    override fun resolve(): UResolvedType = when (psi) {
+        is PsiArrayType -> object : UResolvedArrayType {
+            override val type: UType
+                get() = this@JavaUType
+            override val elementType: UType
+                get() = JavaConverter.convertType(psi.componentType)
+        }
+        is PsiPrimitiveType -> object : UResolvedPrimitiveType {
+            override val type: UType
+                get() = this@JavaUType
+            override val name: String
+                get() = psi.canonicalText
+        }
+        is PsiClassType -> {
+            val clazz = psi.resolve()
+            when (clazz) {
+                is PsiTypeParameter -> object : UResolvedTypeParameter {
+                    override val type: UType
+                        get() = this@JavaUType
+                    override val name: String
+                        get() = clazz.name.orAnonymous()
+                }
+                is PsiClass -> object : UResolvedClassType {
+                    override val fqName: String?
+                        get() = clazz.qualifiedName
+                    override val type: UType
+                        get() = this@JavaUType
+                    override fun resolve(context: UastContext) = JavaConverter.convertClass(clazz, null)
+                }
+                else -> UResolvedErrorType
+            }
+        }
+        else -> UResolvedErrorType
     }
 
     override fun equals(other: Any?): Boolean{
@@ -118,55 +154,4 @@ class JavaUType(val psi: PsiType?) : JavaAbstractUElement(), UType {
         if (psi != other.psi) return false
         return true
     }
-}
-
-class JavaUArrayType(val type: PsiArrayType) : UArrayType {
-    override val name: String
-        get() = "Array"
-    override val fqName: String
-        get() = "Array"
-
-    override val isInt: Boolean
-        get() = false
-    override val isShort: Boolean
-        get() = false
-    override val isLong: Boolean
-        get() = false
-    override val isFloat: Boolean
-        get() = false
-    override val isDouble: Boolean
-        get() = false
-    override val isChar: Boolean
-        get() = false
-    override val isBoolean: Boolean
-        get() = false
-    override val isByte: Boolean
-        get() = false
-    override val isString: Boolean
-        get() = false
-    override val isCharSequence: Boolean
-        get() = false
-    override val isObject: Boolean
-        get() = false
-    override val isVoid: Boolean
-        get() = false
-    override val isPrimitive: Boolean
-        get() = false
-
-    override val arrayElementType by lz { JavaConverter.convertType(type.componentType) }
-
-    override val arguments: List<UTypeProjection> by lz {
-        val type = JavaConverter.convertType(type.componentType)
-        val typeProjection = object : UTypeProjection {
-            override val type = type
-            override val variance: UastVariance
-                get() = UastVariance.INVARIANT
-        }
-        listOf(typeProjection)
-    }
-
-    override fun resolve(context: UastContext) = null
-
-    override val annotations: List<UAnnotation>
-        get() = emptyList()
 }

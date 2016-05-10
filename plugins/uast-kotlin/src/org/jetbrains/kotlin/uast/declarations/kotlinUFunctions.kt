@@ -47,7 +47,7 @@ abstract class KotlinAbstractUFunction : KotlinAbstractUElement(), UFunction, Ps
 
     override abstract val psi: KtFunction
 
-    override val name by lz { psi.name.orAnonymous() }
+    override val name by lz { declarationDescriptor?.name?.asString().orAnonymous() }
 
     override val valueParameterCount: Int
         get() = psi.valueParameters.size

@@ -53,5 +53,6 @@ object UastErrorType : UType, NoAnnotations {
     override val name = ERROR_NAME
     override val fqName = null
     override val isBoolean = false
-    override fun resolve(context: UastContext) = null
+    override fun resolveToClass(context: UastContext) = null
+    override fun resolve() = UResolvedErrorType
 }

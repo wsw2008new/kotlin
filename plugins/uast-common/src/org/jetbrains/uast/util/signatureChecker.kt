@@ -17,8 +17,9 @@
 @file:JvmName("UastSignatureChecker")
 package org.jetbrains.uast.util
 
-import org.jetbrains.uast.UArrayType
 import org.jetbrains.uast.UFunction
+import org.jetbrains.uast.UResolvedArrayType
+import org.jetbrains.uast.UResolvedType
 import org.jetbrains.uast.UType
 
 class UTypeConstraint private constructor(
@@ -29,6 +30,10 @@ class UTypeConstraint private constructor(
 ) {
     interface Check {
         operator fun invoke(type: UType): Boolean
+    }
+
+    interface ResolvedCheck {
+        operator fun invoke(type: UResolvedType): Boolean
     }
 
     companion object {
@@ -97,7 +102,7 @@ class UTypeConstraint private constructor(
         @JvmField
         val CHAR_SEQUENCE = UTypeConstraint(null, true, true, { it.isCharSequence })
         @JvmField
-        val ARRAY = UTypeConstraint(null, true, true, { it is UArrayType })
+        val ARRAY = UTypeConstraint(null, true, true, { it.resolve() is UResolvedArrayType })
         @JvmField
         val OBJECT = UTypeConstraint(null, true, true, { it.isObject })
         
@@ -108,8 +113,13 @@ class UTypeConstraint private constructor(
         fun make(check: Check) = UTypeConstraint(null, true, true, { check(it) })
 
         @JvmStatic
-        fun makeArrayOf(check: Check) = UTypeConstraint(null, true, true,
-                { it is UArrayType && check(it.arrayElementType) })
+        fun make(check: ResolvedCheck) = UTypeConstraint(null, true, true, { check(it.resolve()) })
+
+        @JvmStatic
+        fun makeArrayOf(check: Check) = UTypeConstraint(null, true, true, {
+            val resolvedType = it.resolve()
+            resolvedType is UResolvedArrayType && check(resolvedType.elementType)
+        })
     }
 }
 
