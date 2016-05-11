@@ -45,16 +45,6 @@ interface UQualifiedExpression : UReferenceExpression {
     override val identifier: String?
         get() = (selector as? USimpleReferenceExpression)?.identifier
 
-    /**
-     * Checks if the selector is a simple reference expression, and if its identifier is [identifier].
-     *
-     * @param identifier the identifier to check agains
-     * @return true if the selector is a simple reference expression, and if its identifier is [identifier],
-     *         false otherwise
-     */
-    fun selectorMatches(identifier: String) = (selector as? USimpleReferenceExpression)?.identifier == identifier
-
-
     override fun renderString() = receiver.renderString() + accessType.name + selector.renderString()
 
     override fun accept(visitor: UastVisitor) {

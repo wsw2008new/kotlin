@@ -114,7 +114,7 @@ object UastChecker {
 
                     val receiverIsResourceClass = when (receiver) {
                         is USimpleReferenceExpression -> receiver.identifier == "R"
-                        is UQualifiedExpression -> receiver.selectorMatches("R")
+                        is UQualifiedExpression -> receiver.matchesSelector("R")
                         else -> false
                     }
 

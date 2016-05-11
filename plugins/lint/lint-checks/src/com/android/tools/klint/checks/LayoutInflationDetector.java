@@ -172,7 +172,7 @@ public class LayoutInflationDetector extends LayoutDetector implements UastScann
         UExpression selector = select.getSelector();
         if (receiver instanceof UQualifiedExpression && selector instanceof USimpleReferenceExpression) {
             UQualifiedExpression rLayout = (UQualifiedExpression) receiver;
-            if (rLayout.selectorMatches(ResourceType.LAYOUT.getName()) &&
+            if (rLayout.matchesSelector(ResourceType.LAYOUT.getName()) &&
                 rLayout.getReceiver().renderString().endsWith(SdkConstants.R_CLASS)) {
                 String layoutName = ((USimpleReferenceExpression)selector).getIdentifier();
 

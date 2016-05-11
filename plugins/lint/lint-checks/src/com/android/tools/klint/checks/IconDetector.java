@@ -2090,7 +2090,7 @@ public class IconDetector extends ResourceXmlDetector implements UastScanner {
                 if (select.getReceiver() instanceof USimpleReferenceExpression) {
                     USimpleReferenceExpression reference = (USimpleReferenceExpression) select.getReceiver();
                     if (R_CLASS.equals(reference.getIdentifier())) {
-                        if (select.selectorMatches(MENU_TYPE)) {
+                        if (select.matchesSelector(MENU_TYPE)) {
                             String name = node.getSelector().renderString();
                             // Reclassify icons in the given menu as action bar icons
                             if (mMenuToIcons != null) {

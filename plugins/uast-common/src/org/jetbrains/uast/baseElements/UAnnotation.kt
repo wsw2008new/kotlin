@@ -27,6 +27,11 @@ interface UAnnotation : UElement, UNamed, UFqNamed {
     val valueArguments: List<UNamedExpression>
 
     /**
+     * Returns the value arguments count.
+     */
+    val valueArgumentsCount: Int
+
+    /**
      * Returns an element for the annotation name node, or null if the node does not exist in the underlying AST (Psi).
      */
     val nameElement: UElement?

@@ -1488,7 +1488,7 @@ public class StringFormatDetector extends ResourceXmlDetector implements UastSca
 
         @Override
         public boolean visitQualifiedExpression(@NotNull UQualifiedExpression node) {
-            if (node.selectorMatches(R_CLASS) &&   //$NON-NLS-1$
+            if (node.matchesSelector(R_CLASS) &&   //$NON-NLS-1$
                 node.getParent() instanceof UQualifiedExpression &&
                 node.getParent().getParent() instanceof UQualifiedExpression) {
 

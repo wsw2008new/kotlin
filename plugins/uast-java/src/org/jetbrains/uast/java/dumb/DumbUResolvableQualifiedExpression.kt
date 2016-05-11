@@ -14,13 +14,5 @@
  * limitations under the License.
  */
 
-package org.jetbrains.uast.dumb
+package org.jetbrains.uast.java.dumb
 
-import org.jetbrains.uast.*
-
-class DumbUSimpleReferenceExpression(
-        override val identifier: String,
-        override val parent: UElement?
-) : USimpleReferenceExpression {
-    override fun resolve(context: UastContext) = null
-}

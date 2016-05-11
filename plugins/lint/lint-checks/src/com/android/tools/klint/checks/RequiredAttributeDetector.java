@@ -558,15 +558,15 @@ public class RequiredAttributeDetector extends LayoutDetector implements UastSca
                         USimpleReferenceExpression reference = (USimpleReferenceExpression) inner.getReceiver();
                         if (FN_RESOURCE_BASE.equals(reference.getIdentifier())
                             // TODO: constant
-                            && inner.selectorMatches("layout")) {
+                            && inner.matchesSelector("layout")) {
                             layout = LAYOUT_RESOURCE_PREFIX + outer.getSelector().renderString();
                             break;
                         }
                     } else if (inner.getReceiver() instanceof UQualifiedExpression) {
                         UQualifiedExpression reference = (UQualifiedExpression) inner.getReceiver();
-                        if (reference.selectorMatches(FN_RESOURCE_BASE)
+                        if (reference.matchesSelector(FN_RESOURCE_BASE)
                             // TODO: constant
-                            && inner.selectorMatches("layout")) {
+                            && inner.matchesSelector("layout")) {
                             layout = LAYOUT_RESOURCE_PREFIX + outer.getSelector().renderString();
                             break;
                         }

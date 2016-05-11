@@ -36,6 +36,9 @@ class JavaUAnnotation(
         }
     }
 
+    override val valueArgumentsCount: Int
+        get() = psi.parameterList.attributes.size
+
     override val nameElement by lz { JavaDumbUElement(psi.nameReferenceElement, this) }
 
     override fun getValue(name: String?): UConstantValue<*>? {
