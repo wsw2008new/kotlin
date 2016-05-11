@@ -6697,6 +6697,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("array.kt")
+        public void testArray() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/array.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("assignFilter.kt")
         public void testAssignFilter() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/assignFilter.kt");
@@ -6826,6 +6832,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("count_variableUsedBefore.kt")
         public void testCount_variableUsedBefore() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/count_variableUsedBefore.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("customTypeWithIterator.kt")
+        public void testCustomTypeWithIterator() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/customTypeWithIterator.kt");
             doTest(fileName);
         }
 
@@ -7249,6 +7261,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("intArray.kt")
+        public void testIntArray() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/intArray.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("itAlreadyUsed.kt")
         public void testItAlreadyUsed() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/itAlreadyUsed.kt");
@@ -7426,6 +7444,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("none_ifReturn.kt")
         public void testNone_ifReturn() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/none_ifReturn.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("range.kt")
+        public void testRange() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/range.kt");
             doTest(fileName);
         }
 
