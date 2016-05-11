@@ -7231,9 +7231,27 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("forEachIndexed.kt")
+        public void testForEachIndexed() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/forEachIndexed.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("forEachIndexed_nothingElse.kt")
+        public void testForEachIndexed_nothingElse() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/forEachIndexed_nothingElse.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("forEach_notAvailable.kt")
         public void testForEach_notAvailable() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/forEach_notAvailable.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("forEach_notIndexed.kt")
+        public void testForEach_notIndexed() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/forEach_notIndexed.kt");
             doTest(fileName);
         }
 
