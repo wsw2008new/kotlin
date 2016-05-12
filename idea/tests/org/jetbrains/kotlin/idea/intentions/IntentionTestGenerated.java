@@ -7285,6 +7285,42 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("indexPlusPlusInsideExpression.kt")
+        public void testIndexPlusPlusInsideExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/indexPlusPlusInsideExpression.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("indexPlusPlusInsideExpression_indexUsedAfterIncrement.kt")
+        public void testIndexPlusPlusInsideExpression_indexUsedAfterIncrement() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/indexPlusPlusInsideExpression_indexUsedAfterIncrement.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("indexPlusPlusInsideExpression_indexUsedBeforeIncrement.kt")
+        public void testIndexPlusPlusInsideExpression_indexUsedBeforeIncrement() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/indexPlusPlusInsideExpression_indexUsedBeforeIncrement.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("indexPlusPlusInsideExpression_indexUsedBeforeIncrement2.kt")
+        public void testIndexPlusPlusInsideExpression_indexUsedBeforeIncrement2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/indexPlusPlusInsideExpression_indexUsedBeforeIncrement2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("indexPlusPlusIsNotLastStatement.kt")
+        public void testIndexPlusPlusIsNotLastStatement() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/indexPlusPlusIsNotLastStatement.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("indexPlusPlusIsNotLastStatement_indexUsedAfterIncrement.kt")
+        public void testIndexPlusPlusIsNotLastStatement_indexUsedAfterIncrement() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/indexPlusPlusIsNotLastStatement_indexUsedAfterIncrement.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("indexWithNestedLoop.kt")
         public void testIndexWithNestedLoop() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/indexWithNestedLoop.kt");
@@ -7474,6 +7510,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("none_ifReturn.kt")
         public void testNone_ifReturn() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/none_ifReturn.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("prefixIndexPlusPlusInsideExpression.kt")
+        public void testPrefixIndexPlusPlusInsideExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/loopToCallChain/prefixIndexPlusPlusInsideExpression.kt");
             doTest(fileName);
         }
 
