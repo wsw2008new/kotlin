@@ -238,6 +238,43 @@ public final class JsAstUtils {
     }
 
     @NotNull
+    public static JsExpression invert(@NotNull JsExpression expression) {
+        if (expression instanceof JsUnaryOperation) {
+            JsUnaryOperation unary = (JsUnaryOperation) expression;
+            if (unary.getOperator() == JsUnaryOperator.NOT) return unary.getArg();
+        }
+        else if (expression instanceof JsBinaryOperation) {
+            JsBinaryOperation binary = (JsBinaryOperation) expression;
+            switch (binary.getOperator()) {
+                case AND:
+                    return or(invert(binary.getArg1()), invert(binary.getArg2()));
+                case OR:
+                    return and(invert(binary.getArg1()), invert(binary.getArg2()));
+                case EQ:
+                    return new JsBinaryOperation(JsBinaryOperator.NEQ, binary.getArg1(), binary.getArg2());
+                case NEQ:
+                    return new JsBinaryOperation(JsBinaryOperator.EQ, binary.getArg1(), binary.getArg2());
+                case REF_EQ:
+                    return inequality(binary.getArg1(), binary.getArg2());
+                case REF_NEQ:
+                    return equality(binary.getArg1(), binary.getArg2());
+                case LT:
+                    return greaterThanEq(binary.getArg1(), binary.getArg2());
+                case LTE:
+                    return greaterThan(binary.getArg1(), binary.getArg2());
+                case GT:
+                    return lessThanEq(binary.getArg1(), binary.getArg2());
+                case GTE:
+                    return lessThan(binary.getArg1(), binary.getArg2());
+                default:
+                    break;
+            }
+        }
+
+        return negated(expression);
+    }
+
+    @NotNull
     public static JsBinaryOperation and(@NotNull JsExpression op1, @NotNull JsExpression op2) {
         return new JsBinaryOperation(JsBinaryOperator.AND, op1, op2);
     }

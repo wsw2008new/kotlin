@@ -22,6 +22,7 @@ class FunctionPostProcessor(private val root: JsBlock) {
     val optimizations = listOf(
         { TemporaryAssignmentElimination(root).apply() },
         { RedundantLabelRemoval(root).apply() },
+        { WhileConditionFolding(root).apply() },
         { DoWhileGuardElimination(root).apply() },
         { TemporaryVariableElimination(root).apply() },
         { IfStatementReduction(root).apply() },

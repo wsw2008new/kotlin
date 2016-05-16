@@ -323,7 +323,8 @@ internal class TemporaryVariableElimination(private val root: JsStatement) {
 
             override fun visitDoWhile(x: JsDoWhile) {
                 flush()
-                super.visitDoWhile(x)
+                accept(x.body)
+                handleTopLevel(x.condition)
                 flush()
             }
 

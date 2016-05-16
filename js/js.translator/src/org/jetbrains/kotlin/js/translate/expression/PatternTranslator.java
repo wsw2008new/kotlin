@@ -50,7 +50,7 @@ import static org.jetbrains.kotlin.js.descriptorUtils.DescriptorUtilsKt.getNameI
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getTypeByReference;
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getTypeForExpression;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.equality;
-import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.negated;
+import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.invert;
 import static org.jetbrains.kotlin.psi.KtPsiUtil.findChildByType;
 import static org.jetbrains.kotlin.types.TypeUtils.*;
 
@@ -107,7 +107,7 @@ public final class PatternTranslator extends AbstractTranslator {
         if (result == null) return JsLiteral.getBoolean(!expression.isNegated());
 
         if (expression.isNegated()) {
-            return negated(result);
+            return invert(result);
         }
         return result;
     }
