@@ -52,7 +52,7 @@ object UastChecker {
             if (psiFile != null) {
                 when (psiFile) {
                     is PsiJavaFile -> {
-                        val ufile = JavaUastLanguagePlugin.converter.convertWithParent(psiFile)
+                        val ufile = JavaUastLanguagePlugin.INSTANCE.converter.convertWithParent(psiFile)
                         ufile?.accept(extendableVisitor)
                     }
                     else -> for (plugin in plugins) {

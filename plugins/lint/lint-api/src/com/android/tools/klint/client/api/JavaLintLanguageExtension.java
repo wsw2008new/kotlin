@@ -27,12 +27,12 @@ public class JavaLintLanguageExtension extends LintLanguageExtension {
     @NotNull
     @Override
     public UastConverter getConverter() {
-        return JavaUastLanguagePlugin.INSTANCE.getConverter();
+        return JavaUastLanguagePlugin.getINSTANCE().getConverter();
     }
 
     @NotNull
     @Override
     public List<UastVisitorExtension> getVisitorExtensions() {
-        return JavaUastLanguagePlugin.INSTANCE.getVisitorExtensions();
+        return JavaUastLanguagePlugin.getINSTANCE().getVisitorExtensions();
     }
 }

@@ -21,9 +21,13 @@ import org.jetbrains.uast.*
 import org.jetbrains.uast.java.expressions.JavaUSynchronizedExpression
 
 
-object JavaUastLanguagePlugin : UastLanguagePlugin {
+class JavaUastLanguagePlugin : UastLanguagePlugin {
     override val converter: UastConverter = JavaConverter
     override val visitorExtensions = emptyList<UastVisitorExtension>()
+
+    companion object {
+        @JvmStatic val INSTANCE = JavaUastLanguagePlugin()
+    }
 }
 
 internal object JavaConverter : UastConverter {
