@@ -24,5 +24,5 @@ class JavaUCodeBlockExpression(
         override val psi: PsiCodeBlock,
         override val parent: UElement?
 ) : JavaAbstractUExpression(), UBlockExpression, PsiElementBacked {
-    override val expressions by lz { psi.statements.map { JavaConverter.convert(it, this) } }
+    override val expressions by lz { psi.statements.map { JavaConverter.convertStatement(it, this) } }
 }

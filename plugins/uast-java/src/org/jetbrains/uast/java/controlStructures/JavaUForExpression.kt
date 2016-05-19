@@ -24,9 +24,9 @@ class JavaUForExpression(
         override val psi: PsiForStatement,
         override val parent: UElement?
 ) : JavaAbstractUExpression(), UForExpression, PsiElementBacked {
-    override val declaration by lz { psi.initialization?.let { JavaConverter.convert(it, this) } }
-    override val condition by lz { psi.condition?.let { JavaConverter.convert(it, this) } }
-    override val update by lz { psi.update?.let { JavaConverter.convert(it, this) } }
+    override val declaration by lz { psi.initialization?.let { JavaConverter.convertStatement(it, this) } }
+    override val condition by lz { psi.condition?.let { JavaConverter.convertExpression(it, this) } }
+    override val update by lz { psi.update?.let { JavaConverter.convertStatement(it, this) } }
     override val body by lz { JavaConverter.convertOrEmpty(psi.body, this) }
 
     override val isStatement: Boolean

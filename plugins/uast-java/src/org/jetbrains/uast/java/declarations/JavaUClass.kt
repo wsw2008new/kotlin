@@ -199,7 +199,7 @@ private class JavaUAnonymousClassConstructorParameter(
         val index: Int,
         override val parent: UElement?
 ) : JavaAbstractUElement(), UVariable, NoAnnotations, NoModifiers {
-    override val initializer by lz { JavaConverter.convert(psi.expressions[index], this) }
+    override val initializer by lz { JavaConverter.convertExpression(psi.expressions[index], this) }
 
     override val initializerKind: UastVariableInitialierKind
         get() = UastVariableInitialierKind.EXPRESSION

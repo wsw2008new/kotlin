@@ -66,7 +66,7 @@ class KotlinUSwitchEntry(
                 type = KotlinConverter.convertType(it.typeReference, this)
             }
             is KtWhenConditionWithExpression -> KotlinConverter.convertOrEmpty(it.expression, this)
-            else -> EmptyUExpression(this)
+            else -> UastEmptyExpression(this)
         }}
     }
 

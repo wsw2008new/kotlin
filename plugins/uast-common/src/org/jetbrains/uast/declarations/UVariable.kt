@@ -67,7 +67,7 @@ interface UVariable : UDeclaration, UModifierOwner, UVisibilityOwner, UAnnotated
         append(name)
         append(": ")
         append(type.name)
-        if (initializer != null && initializer !is EmptyUExpression) {
+        if (initializer != null && initializer !is UastEmptyExpression) {
             append(" = ")
             append(initializer!!.renderString())
         }

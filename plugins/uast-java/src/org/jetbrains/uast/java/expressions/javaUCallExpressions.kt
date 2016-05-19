@@ -31,13 +31,13 @@ class JavaUCallExpression(
     override val kind: UastCallKind
         get() = UastCallKind.FUNCTION_CALL
 
-    override val functionReference by lz { JavaConverter.convert(psi.methodExpression, this) as? USimpleReferenceExpression }
+    override val functionReference by lz { JavaConverter.convertExpression(psi.methodExpression, this) as? USimpleReferenceExpression }
 
     override val classReference: USimpleReferenceExpression?
         get() = null
 
     override val valueArgumentCount by lz { psi.argumentList.expressions.size }
-    override val valueArguments by lz { psi.argumentList.expressions.map { JavaConverter.convert(it, this) } }
+    override val valueArguments by lz { psi.argumentList.expressions.map { JavaConverter.convertExpression(it, this) } }
 
     override val typeArgumentCount by lz { psi.typeArguments.size }
     override val typeArguments by lz { psi.typeArguments.map { JavaConverter.convertType(it) } }
@@ -88,13 +88,13 @@ class JavaConstructorUCallExpression(
     override val valueArguments by lz {
         val initializer = psi.arrayInitializer
         if (initializer != null) {
-            initializer.initializers.map { JavaConverter.convert(it, this) }
+            initializer.initializers.map { JavaConverter.convertExpression(it, this) }
         }
         else if (psi.arrayDimensions.isNotEmpty()) {
-            psi.arrayDimensions.map { JavaConverter.convert(it, this) }
+            psi.arrayDimensions.map { JavaConverter.convertExpression(it, this) }
         }
         else {
-            psi.argumentList?.expressions?.map { JavaConverter.convert(it, this) } ?: emptyList()
+            psi.argumentList?.expressions?.map { JavaConverter.convertExpression(it, this) } ?: emptyList()
         }
     }
 
@@ -144,7 +144,7 @@ class JavaArrayInitializerUCallExpression(
         get() = null
 
     override val valueArgumentCount by lz { psi.initializers.size }
-    override val valueArguments by lz { psi.initializers.map { JavaConverter.convert(it, this) } }
+    override val valueArguments by lz { psi.initializers.map { JavaConverter.convertExpression(it, this) } }
 
     override val typeArgumentCount: Int
         get() = 0

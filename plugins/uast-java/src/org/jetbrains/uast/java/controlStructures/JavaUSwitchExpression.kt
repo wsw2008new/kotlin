@@ -37,7 +37,7 @@ class JavaUCaseSwitchClauseExpression(
 ) : JavaAbstractUExpression(), USwitchClauseExpression, PsiElementBacked {
     override val caseValues by lz {
         val value = psi.caseValue ?: return@lz null
-        listOf(JavaConverter.convert(value, this))
+        listOf(JavaConverter.convertExpression(value, this))
     }
 
     override val isStatement: Boolean

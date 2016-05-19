@@ -74,7 +74,7 @@ interface UIfExpression : UExpression {
             append("if (${condition.renderString()}) ")
             thenBranch?.let { append(it.renderString()) }
             val elseBranch = elseBranch
-            if (elseBranch != null && elseBranch !is EmptyUExpression) {
+            if (elseBranch != null && elseBranch !is UastEmptyExpression) {
                 if (thenBranch !is UBlockExpression) append(" ")
                 append("else ")
                 append(elseBranch.renderString())

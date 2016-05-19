@@ -67,8 +67,11 @@ interface NoModifiers : UModifierOwner {
  * [UIfExpression.condition] is required to return not-null values,
  *  and Uast implementation should return something instead of `null` in this case.
  *
- * Use [EmptyUExpression] in this case.
+ * Use [UastEmptyExpression] in this case.
  */
-class EmptyUExpression(override val parent: UElement?) : UExpression {
+object UastEmptyExpression : UExpression {
+    override val parent: UElement?
+        get() = null
+
     override fun logString() = "EmptyExpression"
 }

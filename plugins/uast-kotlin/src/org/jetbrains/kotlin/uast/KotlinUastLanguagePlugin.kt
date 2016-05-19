@@ -200,7 +200,7 @@ internal object KotlinConverter : UastConverter {
     }
 
     internal fun convertOrEmpty(expression: KtExpression?, parent: UElement): UExpression {
-        return if (expression != null) convert(expression, parent) else EmptyUExpression(parent)
+        return if (expression != null) convert(expression, parent) else UastEmptyExpression(parent)
     }
 
     internal fun convertOrNull(expression: KtExpression?, parent: UElement): UExpression? {

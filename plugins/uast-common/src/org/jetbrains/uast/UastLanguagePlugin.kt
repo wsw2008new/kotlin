@@ -34,27 +34,18 @@ interface UastConverter {
      */
     val priority: Int
 
-    /**
-     * Convert a language-specific AST element to the [UElement] implementation with the given parent.
-     *
-     * @param element the element of the supported language-specific AST.
-     * @param parent the parent of the newly created [UElement].
-     * @return a [UElement], or null if the given [element] is not supported by this converter.
-     *
-     * No exceptions should be thrown during conversion, return `null` instead.
-     */
-    fun convert(element: Any?, parent: UElement?): UElement?
+    fun convert(element: Any?, parent: UElement?, expectedClass: Class<out UElement>? = null): UElement?
 
     /**
      * Convert [element] to the [UElement] with the given parent.
      */
-    fun convertWithParent(element: Any?): UElement?
+    fun convertWithParent(element: Any?, expectedClass: Class<out UElement>? = null): UElement?
 
     /**
      * Convert[element] to the [UElement] without the parent.
      * The [UElement.parent] value will be `null`.
      */
-    fun convertWithoutParent(element: Any?): UElement?
+    fun convertWithoutParent(element: Any?, expectedClass: Class<out UElement>? = null): UElement?
 
     /**
      * Checks if the file with the given [name] is supported.

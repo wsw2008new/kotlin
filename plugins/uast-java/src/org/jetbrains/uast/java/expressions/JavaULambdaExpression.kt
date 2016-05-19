@@ -18,7 +18,7 @@ package org.jetbrains.uast.java
 import com.intellij.psi.PsiCodeBlock
 import com.intellij.psi.PsiExpression
 import com.intellij.psi.PsiLambdaExpression
-import org.jetbrains.uast.EmptyUExpression
+import org.jetbrains.uast.UastEmptyExpression
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.ULambdaExpression
 import org.jetbrains.uast.psi.PsiElementBacked
@@ -33,8 +33,8 @@ class JavaULambdaExpression(
         val b = psi.body
         when (b) {
             is PsiCodeBlock -> JavaConverter.convertBlock(b, this)
-            is PsiExpression -> JavaConverter.convert(b, this)
-            else -> EmptyUExpression(this)
+            is PsiExpression -> JavaConverter.convertExpression(b, this)
+            else -> UastEmptyExpression
         }
     }
 }
