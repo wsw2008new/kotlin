@@ -47,6 +47,7 @@ internal object JavaConverter : UastConverter {
         if (element is PsiType && expectedClass == UType::class.java) return convertType(element)
 
         if (element !is PsiElement) return null
+        getCached<UElement>(element)?.let { return it }
 
         val parent = unwrapParents(element.parent) ?: return null
         val parentUElement = convertWithParent(parent) ?: return null
@@ -58,6 +59,11 @@ internal object JavaConverter : UastConverter {
         return convertPsiElement(element, null, expectedClass)
     }
 
+    private inline fun <reified T : UElement> getCached(element: PsiElement): T? {
+        if (!element.isValid) return null
+        return element.getUserData(CACHED_UELEMENT_KEY)?.get() as? T
+    }
+
     private tailrec fun unwrapParents(parent: PsiElement?): PsiElement? = when (parent) {
         is PsiExpressionStatement -> unwrapParents(parent.parent)
         is PsiParameterList -> unwrapParents(parent.parent)
@@ -65,7 +71,9 @@ internal object JavaConverter : UastConverter {
         else -> parent
     }
 
-    private fun convertPsiElement(el: PsiElement?, parent: UElement?, expectedClass: Class<out UElement>?): UElement? {
+    private fun convertPsiElement(el: PsiElement, parent: UElement?, expectedClass: Class<out UElement>?): UElement? {
+        getCached<UElement>(el)?.let { return it }
+
         with (expectedClass) {
             return when {
                 el is PsiJavaFile && expecting<UFile>() -> JavaUFile(el)
@@ -101,6 +109,8 @@ internal object JavaConverter : UastConverter {
     }
 
     internal fun convertImportStatement(importStatement: PsiImportStatementBase, parent: UElement?): UImportStatement? {
+        getCached<UImportStatement>(importStatement)?.let { return it }
+
         return when (importStatement) {
             is PsiImportStatement -> JavaUImportStatement(importStatement, parent)
             is PsiImportStaticStatement -> JavaUStaticImportStatement(importStatement, parent)
@@ -110,23 +120,32 @@ internal object JavaConverter : UastConverter {
 
     internal fun convertType(type: PsiType?): UType = JavaUType(type)
 
-    internal fun convertParameter(parameter: PsiParameter, parent: UElement?) = JavaValueParameterUVariable(parameter, parent)
+    internal fun convertParameter(parameter: PsiParameter, parent: UElement?) =
+            getCached(parameter) ?: JavaValueParameterUVariable(parameter, parent)
 
-    internal fun convertBlock(block: PsiCodeBlock, parent: UElement?) = JavaUCodeBlockExpression(block, parent)
+    internal fun convertBlock(block: PsiCodeBlock, parent: UElement?): UBlockExpression =
+            getCached(block) ?: JavaUCodeBlockExpression(block, parent)
 
-    internal fun convertMethod(method: PsiMethod, parent: UElement?) = JavaUFunction(method, parent)
+    internal fun convertMethod(method: PsiMethod, parent: UElement?): UFunction
+            = getCached(method) ?: JavaUFunction(method, parent)
 
-    internal fun convertField(field: PsiField, parent: UElement?) = JavaUVariable(field, parent)
+    internal fun convertField(field: PsiField, parent: UElement?): UVariable
+            = getCached(field) ?: JavaUVariable(field, parent)
 
-    internal fun convertVariable(variable: PsiVariable, parent: UElement?) = JavaUVariable(variable, parent)
+    internal fun convertVariable(variable: PsiVariable, parent: UElement?): UVariable
+            = getCached(variable) ?: JavaUVariable(variable, parent)
 
-    internal fun convertAnnotation(annotation: PsiAnnotation, parent: UElement?) = JavaUAnnotation(annotation, parent)
+    internal fun convertAnnotation(annotation: PsiAnnotation, parent: UElement?): UAnnotation =
+            getCached(annotation) ?: JavaUAnnotation(annotation, parent)
 
-    internal fun convertClass(clazz: PsiClass, parent: UElement?) = JavaUClass(clazz, parent)
+    internal fun convertClass(clazz: PsiClass, parent: UElement?): UClass
+            = getCached(clazz) ?: JavaUClass(clazz, parent)
 
-    internal fun convertInitializer(initializer: PsiClassInitializer, parent: UElement?) = JavaClassInitializerUFunction(initializer, parent)
+    internal fun convertInitializer(initializer: PsiClassInitializer, parent: UElement?): UFunction =
+            getCached(initializer) ?: JavaClassInitializerUFunction(initializer, parent)
 
-    internal fun convertTypeParameter(parameter: PsiTypeParameter, parent: UElement?) = JavaParameterUTypeReference(parameter, parent)
+    internal fun convertTypeParameter(parameter: PsiTypeParameter, parent: UElement?): UTypeReference =
+            getCached(parameter) ?: JavaParameterUTypeReference(parameter, parent)
 
     internal fun convertNameValue(pair: PsiNameValuePair, parent: UElement?) = UNamedExpression(pair.name.orAnonymous(), parent).apply {
         val value = pair.value
@@ -159,6 +178,8 @@ internal object JavaConverter : UastConverter {
     internal fun convertExpression(el: PsiExpression, parent: UElement?) = convertExpression(el, parent, null) ?: UastEmptyExpression
 
     internal fun convertExpression(el: PsiExpression, parent: UElement?, expectedClass: Class<out UElement>?): UExpression? {
+        getCached<UExpression>(el)?.let { return it }
+
         with (expectedClass) {
             return when {
                 el is PsiPolyadicExpression && expecting<UBinaryExpression>() -> convertPolyadicExpression(el, parent, el.operands.size - 1)
@@ -201,6 +222,8 @@ internal object JavaConverter : UastConverter {
     internal fun convertStatement(el: PsiStatement, parent: UElement?) = convertStatement(el, parent, null) ?: UastEmptyExpression
 
     internal fun convertStatement(el: PsiStatement, parent: UElement?, expectedClass: Class<out UElement>?): UExpression? {
+        getCached<UExpression>(el)?.let { return it }
+
         with (expectedClass) {
             return when {
                 el is PsiDeclarationStatement && expecting<UDeclarationsExpression>() -> convertDeclarations(el.declaredElements, parent)

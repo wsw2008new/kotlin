@@ -15,9 +15,13 @@
  */
 package org.jetbrains.uast.java
 
+import com.intellij.openapi.util.Key
 import com.intellij.psi.*
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.uast.*
+import java.lang.ref.WeakReference
+
+internal val CACHED_UELEMENT_KEY = Key.create<WeakReference<UElement>>("cached-java-uelement")
 
 private val MODIFIER_MAP = mapOf(
         UastModifier.ABSTRACT to PsiModifier.ABSTRACT,
