@@ -43,8 +43,8 @@ internal object JavaConverter : UastConverter {
     }
 
     override fun convertWithParent(element: Any?, expectedClass: Class<out UElement>?): UElement? {
-        if (element is PsiJavaFile && expectedClass == UFile::class.java) return JavaUFile(element)
-        if (element is PsiType && expectedClass == UType::class.java) return convertType(element)
+        if (element is PsiJavaFile && expectedClass.expecting<UFile>()) return JavaUFile(element)
+        if (element is PsiType && expectedClass.expecting<UType>()) return convertType(element)
 
         if (element !is PsiElement) return null
         getCached<UElement>(element)?.let { return it }
