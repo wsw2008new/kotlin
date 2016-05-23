@@ -190,11 +190,12 @@ internal object JavaConverter : UastConverter {
                     JavaUObjectLiteralExpression(el, parent)
                 el is PsiNewExpression && expecting<UCallExpression>() -> JavaConstructorUCallExpression(el, parent)
 
-                el is PsiMethodCallExpression && el.methodExpression.qualifierExpression != null && expecting<UQualifiedExpression>() ->
-                    JavaUCompositeQualifiedExpression(parent).apply {
+                el is PsiMethodCallExpression && el.methodExpression.qualifierExpression != null && expecting<UQualifiedExpression>() -> {
+                    JavaUCompositeQualifiedExpression(el, parent).apply {
                         receiver = convertExpression(el.methodExpression.qualifierExpression!!, this)
                         selector = JavaUCallExpression(el, this)
                     }
+                }
                 el is PsiMethodCallExpression && expecting<UCallExpression>() -> JavaUCallExpression(el, parent)
 
                 el is PsiArrayInitializerExpression && expecting<UCallExpression>() -> JavaArrayInitializerUCallExpression(el, parent)

@@ -20,6 +20,7 @@ import org.jetbrains.uast.*
 import org.jetbrains.uast.psi.PsiElementBacked
 
 class JavaUCompositeQualifiedExpression(
+        override val psi: PsiElement,
         override val parent: UElement?
 ) : JavaAbstractUExpression(), UQualifiedExpression, PsiElementBacked {
     override lateinit var receiver: UExpression
@@ -39,7 +40,4 @@ class JavaUCompositeQualifiedExpression(
             else -> null
         }
     }
-
-    override val psi: PsiElement
-        get() = (selector as? PsiElementBacked)?.psi ?: (receiver as? PsiElementBacked)?.psi ?: error("No PSI element found")
 }
