@@ -92,8 +92,8 @@ class ScriptTest {
             val environment = KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 
             try {
-                return if (runIsolated) KotlinToJVMBytecodeCompiler.compileScript(configuration, paths, environment)
-                else KotlinToJVMBytecodeCompiler.compileScript(this.javaClass.classLoader, environment)
+                return if (runIsolated) KotlinToJVMBytecodeCompiler.compileScript(environment, paths)
+                else KotlinToJVMBytecodeCompiler.compileScript(environment, this.javaClass.classLoader)
             }
             catch (e: CompilationException) {
                 messageCollector.report(CompilerMessageSeverity.EXCEPTION, OutputMessageUtil.renderException(e),

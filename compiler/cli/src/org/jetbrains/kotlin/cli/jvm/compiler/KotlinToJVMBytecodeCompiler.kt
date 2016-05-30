@@ -208,12 +208,11 @@ object KotlinToJVMBytecodeCompiler {
     }
 
     fun compileAndExecuteScript(
-            configuration: CompilerConfiguration,
             environment: KotlinCoreEnvironment,
             paths: KotlinPaths,
             scriptArgs: List<String>): ExitCode
     {
-        val scriptClass = compileScript(configuration, paths, environment) ?: return ExitCode.COMPILATION_ERROR
+        val scriptClass = compileScript(environment, paths) ?: return ExitCode.COMPILATION_ERROR
         val scriptConstructor = getScriptConstructor(scriptClass)
 
         try {
@@ -253,19 +252,19 @@ object KotlinToJVMBytecodeCompiler {
     private fun getScriptConstructor(scriptClass: Class<*>): Constructor<*> =
             scriptClass.getConstructor(Array<String>::class.java)
 
-    fun compileScript(configuration: CompilerConfiguration, paths: KotlinPaths, environment: KotlinCoreEnvironment): Class<*>? =
-            compileScript( {
-                               val classPaths = arrayListOf(paths.runtimePath.toURI().toURL())
-                               configuration.jvmClasspathRoots.mapTo(classPaths) { it.toURI().toURL() }
-                               URLClassLoader(classPaths.toTypedArray())
-                           },
-                           environment)
+    fun compileScript(environment: KotlinCoreEnvironment, paths: KotlinPaths): Class<*>? =
+            compileScript(environment,
+                          {
+                              val classPaths = arrayListOf(paths.runtimePath.toURI().toURL())
+                              environment.configuration.jvmClasspathRoots.mapTo(classPaths) { it.toURI().toURL() }
+                              URLClassLoader(classPaths.toTypedArray())
+                          })
 
-    fun compileScript( parentClassLoader: ClassLoader, environment: KotlinCoreEnvironment): Class<*>? = compileScript({ parentClassLoader }, environment)
+    fun compileScript(environment: KotlinCoreEnvironment, parentClassLoader: ClassLoader): Class<*>? = compileScript(environment, { parentClassLoader })
 
     private inline fun compileScript(
-            makeParentClassLoader: () -> ClassLoader,
-            environment: KotlinCoreEnvironment): Class<*>? {
+            environment: KotlinCoreEnvironment,
+            makeParentClassLoader: () -> ClassLoader): Class<*>? {
         val state = analyzeAndGenerate(environment) ?: return null
 
         val classLoader: GeneratedClassLoader

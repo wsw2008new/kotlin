@@ -163,7 +163,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                 val environment = createCoreEnvironment(rootDisposable, configuration)
                 if (messageCollector.hasErrors()) return COMPILATION_ERROR
 
-                return KotlinToJVMBytecodeCompiler.compileAndExecuteScript(configuration, environment, paths, scriptArgs)
+                return KotlinToJVMBytecodeCompiler.compileAndExecuteScript(environment, paths, scriptArgs)
             }
             else {
                 if (destination != null) {
