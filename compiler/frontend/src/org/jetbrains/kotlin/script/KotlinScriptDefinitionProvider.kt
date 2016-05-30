@@ -23,11 +23,15 @@ import com.intellij.psi.PsiFile
 import java.util.*
 
 class KotlinScriptDefinitionProvider {
-    private val definitions = ArrayList<KotlinScriptDefinition>()
 
-    init {
-        definitions.add(StandardScriptDefinition)
-    }
+    private val definitions: MutableList<KotlinScriptDefinition> = arrayListOf(StandardScriptDefinition)
+
+    var scriptDefinitions: List<KotlinScriptDefinition>
+        get() = definitions
+        set(definitions: List<KotlinScriptDefinition>) {
+            this.definitions.clear()
+            this.definitions.addAll(definitions)
+        }
 
     fun findScriptDefinition(file: VirtualFile): KotlinScriptDefinition? = definitions.firstOrNull { it.isScript(file) }
 
@@ -39,11 +43,6 @@ class KotlinScriptDefinitionProvider {
 
     fun addScriptDefinition(scriptDefinition: KotlinScriptDefinition) {
         definitions.add(0, scriptDefinition)
-    }
-
-    fun setScriptDefinitions(definitions: List<KotlinScriptDefinition>) {
-        this.definitions.clear()
-        this.definitions.addAll(definitions)
     }
 
     fun removeScriptDefinition(scriptDefinition: KotlinScriptDefinition) {
