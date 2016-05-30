@@ -70,6 +70,7 @@ import org.jetbrains.kotlin.resolve.repl.ReplState
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider
 import org.jetbrains.kotlin.script.ScriptParameter
+import org.jetbrains.kotlin.types.KotlinType
 import java.awt.Color
 import java.awt.Font
 import kotlin.properties.Delegates
@@ -125,6 +126,7 @@ class KotlinConsoleRunner(
         override fun isScript(file: PsiFile) = file.originalFile.virtualFile == consoleView.virtualFile
         override fun getScriptParameters(scriptDescriptor: ScriptDescriptor) = emptyList<ScriptParameter>()
         override fun getScriptName(script: KtScript) = Name.identifier("REPL")
+        override fun getScriptSuperclasses(scriptDescriptor: ScriptDescriptor): List<KotlinType> = emptyList()
     }
 
     override fun createProcess() = cmdLine.createProcess()
