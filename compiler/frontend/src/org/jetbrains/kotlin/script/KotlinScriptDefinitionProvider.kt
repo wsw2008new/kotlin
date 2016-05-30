@@ -18,9 +18,9 @@ package org.jetbrains.kotlin.script
 
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
-
-import java.util.ArrayList
+import java.util.*
 
 class KotlinScriptDefinitionProvider {
     private val definitions = ArrayList<KotlinScriptDefinition>()
@@ -29,7 +29,11 @@ class KotlinScriptDefinitionProvider {
         definitions.add(StandardScriptDefinition)
     }
 
+    fun findScriptDefinition(file: VirtualFile): KotlinScriptDefinition? = definitions.firstOrNull { it.isScript(file) }
+
     fun findScriptDefinition(psiFile: PsiFile): KotlinScriptDefinition? = definitions.firstOrNull { it.isScript(psiFile) }
+
+    fun isScript(file: VirtualFile): Boolean = findScriptDefinition(file) != null
 
     fun isScript(psiFile: PsiFile): Boolean = findScriptDefinition(psiFile) != null
 
