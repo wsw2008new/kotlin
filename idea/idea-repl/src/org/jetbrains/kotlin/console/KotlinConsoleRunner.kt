@@ -123,11 +123,13 @@ class KotlinConsoleRunner(
     var compilerHelper: ConsoleCompilerHelper by Delegates.notNull()
 
     private val consoleScriptDefinition = object : KotlinScriptDefinition {
+        override val name = "Kotlin REPL"
         override fun isScript(file: PsiFile) = file.originalFile.virtualFile == consoleView.virtualFile
         override fun getScriptParameters(scriptDescriptor: ScriptDescriptor) = emptyList<ScriptParameter>()
         override fun getScriptName(script: KtScript) = Name.identifier("REPL")
         override fun getScriptSupertypes(scriptDescriptor: ScriptDescriptor): List<KotlinType> = emptyList()
         override fun getSuperclassConstructorParametersToScriptParametersMap(scriptDescriptor: ScriptDescriptor): List<Pair<Name, KotlinType>> = emptyList()
+        override fun getScriptDependenciesClasspath(): List<String> = emptyList()
     }
 
     override fun createProcess() = cmdLine.createProcess()
