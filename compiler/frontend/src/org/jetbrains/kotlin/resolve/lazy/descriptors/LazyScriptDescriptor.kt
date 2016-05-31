@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptorVisitor
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.lazy.LazyClassContext
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.data.KtScriptInfo
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.script.ScriptPriorities
 import org.jetbrains.kotlin.script.getScriptDefinition
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSubstitutor
+import org.jetbrains.kotlin.utils.ifEmpty
 
 class LazyScriptDescriptor(
         resolveSession: ResolveSession,
@@ -77,8 +79,7 @@ class LazyScriptDescriptor(
 
     override fun getUnsubstitutedPrimaryConstructor() = super.getUnsubstitutedPrimaryConstructor()!!
 
-    override fun getInjectedSupertypes(): List<KotlinType>? =
-            scriptDefinition.getScriptSupertypes(this).let { if (it.isEmpty()) null else it }
+    override fun computeSupertypes() = scriptDefinition.getScriptSupertypes(this).ifEmpty { listOf(builtIns.anyType) }
 
     override fun getSuperclassConstructorParametersToScriptParametersMap(): List<Pair<Name, KotlinType>> =
             scriptDefinition.getSuperclassConstructorParametersToScriptParametersMap(this)
