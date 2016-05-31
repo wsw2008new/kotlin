@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.resolve.lazy.data.KtScriptInfo
 import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProvider
 import org.jetbrains.kotlin.resolve.source.toSourceElement
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
-import org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider
 import org.jetbrains.kotlin.script.ScriptPriorities
 import org.jetbrains.kotlin.script.getScriptDefinition
 import org.jetbrains.kotlin.types.KotlinType
@@ -56,11 +55,10 @@ class LazyScriptDescriptor(
 
     override fun getPriority() = priority
 
-    private val scriptDefinition: KotlinScriptDefinition
+    val scriptDefinition: KotlinScriptDefinition
             by lazy {
                 val file = scriptInfo.script.getContainingKtFile()
-                getScriptDefinition(file) ?:
-                    throw RuntimeException("file ${file.name} is not a script")
+                getScriptDefinition(file) ?: throw RuntimeException("file ${file.name} is not a script")
             }
 
     override fun substitute(substitutor: TypeSubstitutor) = this
