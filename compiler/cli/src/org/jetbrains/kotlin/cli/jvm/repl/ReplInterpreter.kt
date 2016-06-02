@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
+import org.jetbrains.kotlin.descriptors.ScriptExternalParameters
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
@@ -48,9 +49,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
-import org.jetbrains.kotlin.script.ScriptParameter
 import org.jetbrains.kotlin.script.StandardScriptDefinition
-import org.jetbrains.kotlin.types.KotlinType
 import java.io.PrintWriter
 import java.net.URLClassLoader
 
@@ -238,16 +237,12 @@ class ReplInterpreter(
         private val SCRIPT_RESULT_FIELD_NAME = "\$\$result"
         private val REPL_LINE_AS_SCRIPT_DEFINITION = object : KotlinScriptDefinition {
             override val name = "Kotlin REPL"
-            override fun getScriptParameters(scriptDescriptor: ScriptDescriptor): List<ScriptParameter> = emptyList()
-
             override fun isScript(file: VirtualFile): Boolean = StandardScriptDefinition.isScript(file)
             override fun isScript(file: PsiFile): Boolean = StandardScriptDefinition.isScript(file)
 
             override fun getScriptName(script: KtScript): Name = StandardScriptDefinition.getScriptName(script)
 
-            override fun getScriptSupertypes(scriptDescriptor: ScriptDescriptor): List<KotlinType> = emptyList()
-
-            override fun getSuperclassConstructorParametersToScriptParametersMap(scriptDescriptor: ScriptDescriptor): List<Pair<Name, KotlinType>> = emptyList()
+            override fun getScriptExternalParameters(scriptDescriptor: ScriptDescriptor) = ScriptExternalParameters.Empty
 
             override fun getScriptDependenciesClasspath(): List<String> = emptyList()
         }

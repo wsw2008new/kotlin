@@ -20,6 +20,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
+import org.jetbrains.kotlin.descriptors.ScriptExternalParameters
+import org.jetbrains.kotlin.descriptors.ScriptValueParameter
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.KtScript
@@ -32,14 +34,15 @@ import java.io.File
 
 data class KotlinConfigurableScriptDefinition(val config: KotlinScriptConfig, val environmentVars: Map<String, List<String>>?) : KotlinScriptDefinition {
     override val name = config.name
-    override fun getScriptParameters(scriptDescriptor: ScriptDescriptor): List<ScriptParameter> =
-        config.parameters.map { ScriptParameter(Name.identifier(it.name), getKotlinTypeByFqName(scriptDescriptor, it.type)) }
 
-    override fun getScriptSupertypes(scriptDescriptor: ScriptDescriptor): List<KotlinType> =
-        config.supertypes.map { getKotlinTypeByFqName(scriptDescriptor, it) }
-
-    override fun getSuperclassConstructorParametersToScriptParametersMap(scriptDescriptor: ScriptDescriptor): List<Pair<Name, KotlinType>> =
-        config.superclassParamsMapping.map { Pair(Name.identifier(it.scriptParamName), getKotlinTypeByFqName(scriptDescriptor, it.superclassParamType)) }
+    override fun getScriptExternalParameters(scriptDescriptor: ScriptDescriptor) = object: ScriptExternalParameters {
+        override val superclassConstructorParametersToScriptParametersMap: List<Pair<Name, KotlinType>>
+            get() = config.superclassParamsMapping.map { Pair(Name.identifier(it.scriptParamName), getKotlinTypeByFqName(scriptDescriptor, it.superclassParamType)) }
+        override val valueParameters: List<ScriptValueParameter>
+            get() = config.parameters.map { ScriptValueParameter(Name.identifier(it.name), getKotlinTypeByFqName(scriptDescriptor, it.type)) }
+        override val supertypes: List<KotlinType>
+            get() = config.supertypes.map { getKotlinTypeByFqName(scriptDescriptor, it) }
+    }
 
     override fun isScript(file: VirtualFile): Boolean =
             Regex(config.fileNameMatch).matches(file.name)

@@ -53,7 +53,7 @@ class LazyScriptClassMemberScope(
     }
 
     private fun createScriptParameters(constructor: ConstructorDescriptorImpl): List<ValueParameterDescriptor> {
-        return scriptDescriptor.scriptDefinition.getScriptParameters(scriptDescriptor).mapIndexed { index, scriptParameter ->
+        return scriptDescriptor.externalParameters.valueParameters.mapIndexed { index, scriptParameter ->
             ValueParameterDescriptorImpl(
                     constructor, null, index, Annotations.EMPTY, scriptParameter.name, scriptParameter.type,
                     /* declaresDefaultValue = */ false,

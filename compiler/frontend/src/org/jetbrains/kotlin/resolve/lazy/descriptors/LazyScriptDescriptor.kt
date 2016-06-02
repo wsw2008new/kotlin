@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.resolve.lazy.descriptors
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorVisitor
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
+import org.jetbrains.kotlin.descriptors.ScriptExternalParameters
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
@@ -27,10 +28,8 @@ import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.data.KtScriptInfo
 import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProvider
 import org.jetbrains.kotlin.resolve.source.toSourceElement
-import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import org.jetbrains.kotlin.script.ScriptPriorities
 import org.jetbrains.kotlin.script.getScriptDefinition
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.utils.ifEmpty
 
@@ -53,14 +52,12 @@ class LazyScriptDescriptor(
 
     override fun getSource() = sourceElement
 
-    private val priority: Int = ScriptPriorities.getScriptPriority(scriptInfo.script)
+    override val priority: Int = ScriptPriorities.getScriptPriority(scriptInfo.script)
 
-    override fun getPriority() = priority
-
-    val scriptDefinition: KotlinScriptDefinition
+    override val externalParameters: ScriptExternalParameters
             by lazy {
                 val file = scriptInfo.script.getContainingKtFile()
-                getScriptDefinition(file) ?: throw RuntimeException("file ${file.name} is not a script")
+                getScriptDefinition(file)?.getScriptExternalParameters(this) ?: throw RuntimeException("file ${file.name} is not a script")
             }
 
     override fun substitute(substitutor: TypeSubstitutor) = this
@@ -79,8 +76,5 @@ class LazyScriptDescriptor(
 
     override fun getUnsubstitutedPrimaryConstructor() = super.getUnsubstitutedPrimaryConstructor()!!
 
-    override fun computeSupertypes() = scriptDefinition.getScriptSupertypes(this).ifEmpty { listOf(builtIns.anyType) }
-
-    override fun getSuperclassConstructorParametersToScriptParametersMap(): List<Pair<Name, KotlinType>> =
-            scriptDefinition.getSuperclassConstructorParametersToScriptParametersMap(this)
+    override fun computeSupertypes() = externalParameters.supertypes.ifEmpty { listOf(builtIns.anyType) }
 }

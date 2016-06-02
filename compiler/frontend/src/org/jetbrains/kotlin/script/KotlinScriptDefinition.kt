@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,8 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
 import com.intellij.util.PathUtil
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
+import org.jetbrains.kotlin.descriptors.ScriptExternalParameters
+import org.jetbrains.kotlin.descriptors.ScriptValueParameter
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -36,16 +38,12 @@ import kotlin.reflect.KClass
 
 interface KotlinScriptDefinition {
     val name: String
-    fun getScriptParameters(scriptDescriptor: ScriptDescriptor): List<ScriptParameter>
-    fun getScriptSupertypes(scriptDescriptor: ScriptDescriptor): List<KotlinType>
-    fun getSuperclassConstructorParametersToScriptParametersMap(scriptDescriptor: ScriptDescriptor): List<Pair<Name, KotlinType>>
     fun isScript(file: PsiFile): Boolean
     fun isScript(file: VirtualFile): Boolean
     fun getScriptName(script: KtScript): Name
     fun getScriptDependenciesClasspath(): List<String>
+    fun getScriptExternalParameters(scriptDescriptor: ScriptDescriptor): ScriptExternalParameters
 }
-
-data class ScriptParameter(val name: Name, val type: KotlinType)
 
 object StandardScriptDefinition : KotlinScriptDefinition {
     private val ARGS_NAME = Name.identifier("args")
@@ -61,24 +59,25 @@ object StandardScriptDefinition : KotlinScriptDefinition {
     override fun isScript(file: PsiFile): Boolean =
             PathUtil.getFileExtension(file.name) == KotlinParserDefinition.STD_SCRIPT_SUFFIX
 
-    // NOTE: for now we treat .kts files as if they have 'args: Array<String>' parameter
-    // this is not supposed to be final design
-    override fun getScriptParameters(scriptDescriptor: ScriptDescriptor): List<ScriptParameter> =
-            makeStringListScriptParameters(scriptDescriptor, ARGS_NAME)
 
-    override fun getScriptSupertypes(scriptDescriptor: ScriptDescriptor): List<KotlinType> = emptyList()
-    override fun getSuperclassConstructorParametersToScriptParametersMap(scriptDescriptor: ScriptDescriptor): List<Pair<Name, KotlinType>> = emptyList()
+    override fun getScriptExternalParameters(scriptDescriptor: ScriptDescriptor): ScriptExternalParameters {
+        return object: ScriptExternalParameters {
+            override val valueParameters: List<ScriptValueParameter>
+                get() = makeStringListScriptParameters(scriptDescriptor, ARGS_NAME)
+        }
+    }
+
     override fun getScriptDependenciesClasspath(): List<String> = emptyList()
 }
 
-fun makeStringListScriptParameters(scriptDescriptor: ScriptDescriptor, propertyName: Name): List<ScriptParameter> {
+fun makeStringListScriptParameters(scriptDescriptor: ScriptDescriptor, propertyName: Name): List<ScriptValueParameter> {
     val builtIns = scriptDescriptor.builtIns
     val arrayOfStrings = builtIns.getArrayType(Variance.INVARIANT, builtIns.stringType)
-    return listOf(ScriptParameter(propertyName, arrayOfStrings))
+    return listOf(ScriptValueParameter(propertyName, arrayOfStrings))
 }
 
-fun makeReflectedClassScriptParameter(scriptDescriptor: ScriptDescriptor, propertyName: Name, kClass: KClass<out Any>): ScriptParameter =
-        ScriptParameter(propertyName, getKotlinType(scriptDescriptor, kClass))
+fun makeReflectedClassScriptParameter(scriptDescriptor: ScriptDescriptor, propertyName: Name, kClass: KClass<out Any>): ScriptValueParameter =
+        ScriptValueParameter(propertyName, getKotlinType(scriptDescriptor, kClass))
 
 fun getKotlinType(scriptDescriptor: ScriptDescriptor, kClass: KClass<out Any>): KotlinType =
         getKotlinTypeByFqName(scriptDescriptor,

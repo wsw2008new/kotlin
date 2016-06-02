@@ -57,6 +57,7 @@ import org.jetbrains.kotlin.console.gutter.ConsoleIndicatorRenderer
 import org.jetbrains.kotlin.console.gutter.IconWithTooltip
 import org.jetbrains.kotlin.console.gutter.ReplIcons
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
+import org.jetbrains.kotlin.descriptors.ScriptExternalParameters
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.caches.resolve.ModuleTestSourceInfo
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
@@ -70,8 +71,6 @@ import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyScriptDescriptor
 import org.jetbrains.kotlin.resolve.repl.ReplState
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider
-import org.jetbrains.kotlin.script.ScriptParameter
-import org.jetbrains.kotlin.types.KotlinType
 import java.awt.Color
 import java.awt.Font
 import kotlin.properties.Delegates
@@ -127,11 +126,9 @@ class KotlinConsoleRunner(
         override val name = "Kotlin REPL"
         override fun isScript(file: VirtualFile) = file == consoleView.virtualFile
         override fun isScript(file: PsiFile) = file.originalFile.virtualFile == consoleView.virtualFile
-        override fun getScriptParameters(scriptDescriptor: ScriptDescriptor) = emptyList<ScriptParameter>()
         override fun getScriptName(script: KtScript) = Name.identifier("REPL")
-        override fun getScriptSupertypes(scriptDescriptor: ScriptDescriptor): List<KotlinType> = emptyList()
-        override fun getSuperclassConstructorParametersToScriptParametersMap(scriptDescriptor: ScriptDescriptor): List<Pair<Name, KotlinType>> = emptyList()
         override fun getScriptDependenciesClasspath(): List<String> = emptyList()
+        override fun getScriptExternalParameters(scriptDescriptor: ScriptDescriptor) = ScriptExternalParameters.Empty
     }
 
     override fun createProcess() = cmdLine.createProcess()

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,10 +17,10 @@
 package org.jetbrains.kotlin.codegen;
 
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns;
+import org.jetbrains.kotlin.descriptors.ScriptValueParameter;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.script.KotlinScriptDefinition;
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider;
-import org.jetbrains.kotlin.script.ScriptParameter;
 import org.jetbrains.kotlin.scripts.SimpleParamsTestScriptDefinition;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.org.objectweb.asm.Opcodes;
@@ -37,12 +37,12 @@ public class ScriptGenTest extends CodegenTestCase {
     private static final KotlinScriptDefinition FIB_SCRIPT_DEFINITION =
             new SimpleParamsTestScriptDefinition(
                     ".lang.kt",
-                    singletonList(new ScriptParameter(Name.identifier("num"), DefaultBuiltIns.getInstance().getIntType()))
+                    singletonList(new ScriptValueParameter(Name.identifier("num"), DefaultBuiltIns.getInstance().getIntType()))
             );
     private static final KotlinScriptDefinition NO_PARAM_SCRIPT_DEFINITION =
             new SimpleParamsTestScriptDefinition(
                     ".kts",
-                    Collections.<ScriptParameter>emptyList()
+                    Collections.<ScriptValueParameter>emptyList()
             );
 
     @Override

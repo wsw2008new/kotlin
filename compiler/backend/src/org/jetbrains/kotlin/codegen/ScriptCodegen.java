@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -156,7 +156,8 @@ public class ScriptCodegen extends MemberCodegen<KtScript> {
                 iv.invokespecial("java/lang/Object", "<init>", "()V", false);
             }
             else {
-                List<Pair<Name, KotlinType>> superclassParamsMap = scriptDescriptor.getSuperclassConstructorParametersToScriptParametersMap();
+                List<Pair<Name, KotlinType>> superclassParamsMap =
+                        scriptDescriptor.getExternalParameters().getSuperclassConstructorParametersToScriptParametersMap();
                 ConstructorDescriptor ctorDesc = DescriptorUtilsKt.getConstructorByParamsMap(superclass, superclassParamsMap);
                 assert ctorDesc != null;
 

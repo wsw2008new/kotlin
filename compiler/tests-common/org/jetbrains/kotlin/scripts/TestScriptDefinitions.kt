@@ -19,64 +19,45 @@ package org.jetbrains.kotlin.scripts
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
+import org.jetbrains.kotlin.descriptors.ScriptExternalParameters
+import org.jetbrains.kotlin.descriptors.ScriptValueParameter
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.script.*
-import org.jetbrains.kotlin.types.KotlinType
 import java.io.File
 import java.net.URL
 import java.net.URLClassLoader
 import kotlin.reflect.KClass
 
-abstract class BaseScriptDefinition (val extension: String, val classpath: List<String>? = null) : KotlinScriptDefinition {
+abstract class TestScriptDefinition @JvmOverloads constructor(val extension: String, val classpath: List<String>? = null) : KotlinScriptDefinition {
     override val name = "Test Kotlin Script"
     override fun isScript(file: VirtualFile): Boolean = file.name.endsWith(extension)
     override fun isScript(file: PsiFile): Boolean = file.name.endsWith(extension)
     override fun getScriptName(script: KtScript): Name = ScriptNameUtil.fileNameWithExtensionStripped(script, extension)
-    override fun getScriptSupertypes(scriptDescriptor: ScriptDescriptor): List<KotlinType> = emptyList()
-    override fun getSuperclassConstructorParametersToScriptParametersMap(scriptDescriptor: ScriptDescriptor): List<Pair<Name, KotlinType>> = emptyList()
     override fun getScriptDependenciesClasspath(): List<String> =
-            classpath ?: (classpathFromProperty() + classpathFromClassloader(BaseScriptDefinition::class.java.classLoader)).distinct()
+            classpath ?: (classpathFromProperty() + classpathFromClassloader(TestScriptDefinition::class.java.classLoader)).distinct()
 }
 
-open class SimpleParamsWithClasspathTestScriptDefinition(extension: String, val parameters: List<ScriptParameter>, classpath: List<String>? = null)
-    : BaseScriptDefinition(extension, classpath)
-{
-    override fun getScriptParameters(scriptDescriptor: ScriptDescriptor) = parameters
+open class SimpleParams(val parameters: List<ScriptValueParameter>) : ScriptExternalParameters {
+    override val valueParameters: List<ScriptValueParameter> = parameters
 }
 
-open class SimpleParamsTestScriptDefinition(extension: String, parameters: List<ScriptParameter>) : SimpleParamsWithClasspathTestScriptDefinition(extension, parameters)
-
-class ReflectedParamClassTestScriptDefinition(extension: String, val paramName: String, val parameter: KClass<out Any>, classpath: List<String>? = null)
-    : BaseScriptDefinition(extension, classpath)
-{
-    override fun getScriptParameters(scriptDescriptor: ScriptDescriptor) =
-            listOf(makeReflectedClassScriptParameter(scriptDescriptor, Name.identifier(paramName), parameter))
+class ReflectedParamClass(scriptDescriptor: ScriptDescriptor, paramName: String, parameter: KClass<out Any>) : ScriptExternalParameters {
+    override val valueParameters = listOf(makeReflectedClassScriptParameter(scriptDescriptor, Name.identifier(paramName), parameter))
 }
 
-open class ReflectedSuperclassTestScriptDefinition(extension: String, parameters: List<ScriptParameter>, val superclass: KClass<out Any>, classpath: List<String>? = null)
-    : SimpleParamsWithClasspathTestScriptDefinition(extension, parameters, classpath)
-{
-    override fun getScriptSupertypes(scriptDescriptor: ScriptDescriptor): List<KotlinType> =
-            listOf(getKotlinType(scriptDescriptor, superclass))
+open class ReflectedSuperclass(scriptDescriptor: ScriptDescriptor, parameters: List<ScriptValueParameter>, superclass: KClass<out Any>) :
+        SimpleParams(parameters) {
+    override val supertypes = listOf(getKotlinType(scriptDescriptor, superclass))
 }
 
-class ReflectedSuperclassWithParamsTestScriptDefinition(extension: String,
-                                                        parameters: List<ScriptParameter>,
-                                                        superclass: KClass<out Any>,
-                                                        val superclassParameters: List<ScriptParameter>,
-                                                        classpath: List<String>? = null)
-    : ReflectedSuperclassTestScriptDefinition(extension, parameters, superclass, classpath)
-{
-    override fun getSuperclassConstructorParametersToScriptParametersMap(scriptDescriptor: ScriptDescriptor): List<Pair<Name, KotlinType>> =
-            superclassParameters.map { Pair(it.name, it.type) }
-}
-
-class StandardWithClasspathScriptDefinition(extension: String, classpath: List<String>? = null)
-    : BaseScriptDefinition(extension, classpath)
-{
-    override fun getScriptParameters(scriptDescriptor: ScriptDescriptor) =
-            StandardScriptDefinition.getScriptParameters(scriptDescriptor)
+class ReflectedSuperclassWithParams(
+        scriptDescriptor: ScriptDescriptor,
+        parameters: List<ScriptValueParameter>,
+        superclass: KClass<out Any>,
+        superclassParameters: List<ScriptValueParameter>
+) : ReflectedSuperclass(scriptDescriptor, parameters, superclass) {
+    override val superclassConstructorParametersToScriptParametersMap = superclassParameters.map { Pair(it.name, it.type) }
 }
 
 class SimpleScriptExtraImport(
@@ -104,3 +85,19 @@ fun classpathFromClassloader(classLoader: ClassLoader): List<String> =
             ?.mapNotNull { it.toFile()?.canonicalPath }
             ?: emptyList()
 
+fun testScriptDefinition(
+        extension: String, classpath: List<String>? = null,
+        params: (ScriptDescriptor) -> ScriptExternalParameters
+) = object: TestScriptDefinition(extension, classpath) {
+    override fun getScriptExternalParameters(scriptDescriptor: ScriptDescriptor) = params(scriptDescriptor)
+}
+
+
+class SimpleParamsTestScriptDefinition @JvmOverloads constructor(
+        extension: String, val scriptParams: List<ScriptValueParameter>,
+        classpath: List<String>? = null
+) : TestScriptDefinition(extension, classpath) {
+    override fun getScriptExternalParameters(scriptDescriptor: ScriptDescriptor) = object : ScriptExternalParameters {
+        override val valueParameters = scriptParams
+    }
+}

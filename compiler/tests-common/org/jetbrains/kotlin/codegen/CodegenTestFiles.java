@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,12 +24,15 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.checkers.CheckerTestUtil;
+import org.jetbrains.kotlin.descriptors.ScriptDescriptor;
+import org.jetbrains.kotlin.descriptors.ScriptExternalParameters;
+import org.jetbrains.kotlin.descriptors.ScriptValueParameter;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.AnalyzingUtils;
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider;
-import org.jetbrains.kotlin.script.ScriptParameter;
-import org.jetbrains.kotlin.scripts.SimpleParamsTestScriptDefinition;
+import org.jetbrains.kotlin.scripts.SimpleParams;
+import org.jetbrains.kotlin.scripts.TestScriptDefinition;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.Variance;
@@ -122,7 +125,7 @@ public class CodegenTestFiles {
             expectedValues.add(Pair.create(fieldName, expectedValue));
         }
 
-        List<ScriptParameter> scriptParameterTypes = Lists.newArrayList();
+        final List<ScriptValueParameter> scriptParameterTypes = Lists.newArrayList();
         List<Object> scriptParameterValues = Lists.newArrayList();
 
         if (file.isScript()) {
@@ -157,16 +160,19 @@ public class CodegenTestFiles {
                     throw new AssertionError("TODO: " + type);
                 }
 
-                scriptParameterTypes.add(new ScriptParameter(Name.identifier(name), jetType));
+                scriptParameterTypes.add(new ScriptValueParameter(Name.identifier(name), jetType));
                 scriptParameterValues.add(value);
             }
 
             KotlinScriptDefinitionProvider definitionProvider = KotlinScriptDefinitionProvider.getInstance(project);
             definitionProvider.addScriptDefinition(
-                    new SimpleParamsTestScriptDefinition(
-                            ".kts",
-                            scriptParameterTypes
-                    )
+                    new TestScriptDefinition(".kts") {
+                        @NotNull
+                        @Override
+                        public ScriptExternalParameters getScriptExternalParameters(@NotNull ScriptDescriptor scriptDescriptor) {
+                            return new SimpleParams(scriptParameterTypes);
+                        }
+                    }
             );
         }
 
