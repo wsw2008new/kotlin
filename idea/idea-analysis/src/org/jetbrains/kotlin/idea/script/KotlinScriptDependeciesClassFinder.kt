@@ -47,7 +47,7 @@ class KotlinScriptDependenciesClassFinder(project: Project,
 
     override fun getCache(scope: GlobalSearchScope?): PackageDirectoryCache =
             (scope as? CustomizedScriptModuleSearchScope ?:
-             (scope as? JavaClassFinderImpl.DelegatingGlobalSearchScopeWithBaseAccess)?.base as? CustomizedScriptModuleSearchScope
+             (scope as? JavaClassFinderImpl.FilterOutKotlinSourceFilesScope)?.base as? CustomizedScriptModuleSearchScope
             )?.let {
                 myCaches.get(it.scriptFile)
             } ?: super.getCache(scope)
@@ -61,7 +61,7 @@ class KotlinScriptDependenciesClassFinder(project: Project,
         super.findClass(qualifiedName, scope)?.let { aClass ->
             when {
                 scope is CustomizedScriptModuleSearchScope ||
-                (scope as? JavaClassFinderImpl.DelegatingGlobalSearchScopeWithBaseAccess)?.base is CustomizedScriptModuleSearchScope ||
+                (scope as? JavaClassFinderImpl.FilterOutKotlinSourceFilesScope)?.base is CustomizedScriptModuleSearchScope ||
                 scope is EverythingGlobalScope ||
                 aClass.containingFile?.virtualFile.let { file ->
                     file != null &&
