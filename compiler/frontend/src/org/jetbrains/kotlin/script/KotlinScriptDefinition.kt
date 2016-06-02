@@ -76,9 +76,6 @@ fun makeStringListScriptParameters(scriptDescriptor: ScriptDescriptor, propertyN
     return listOf(ScriptValueParameter(propertyName, arrayOfStrings))
 }
 
-fun makeReflectedClassScriptParameter(scriptDescriptor: ScriptDescriptor, propertyName: Name, kClass: KClass<out Any>): ScriptValueParameter =
-        ScriptValueParameter(propertyName, getKotlinType(scriptDescriptor, kClass))
-
 fun getKotlinType(scriptDescriptor: ScriptDescriptor, kClass: KClass<out Any>): KotlinType =
         getKotlinTypeByFqName(scriptDescriptor,
                               kClass.qualifiedName ?: throw RuntimeException("Cannot get FQN from $kClass"))

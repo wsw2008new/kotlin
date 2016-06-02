@@ -46,6 +46,9 @@ class ReflectedParamClass(scriptDescriptor: ScriptDescriptor, paramName: String,
     override val valueParameters = listOf(makeReflectedClassScriptParameter(scriptDescriptor, Name.identifier(paramName), parameter))
 }
 
+fun makeReflectedClassScriptParameter(scriptDescriptor: ScriptDescriptor, propertyName: Name, kClass: KClass<out Any>): ScriptValueParameter =
+        ScriptValueParameter(propertyName, getKotlinType(scriptDescriptor, kClass))
+
 open class ReflectedSuperclass(scriptDescriptor: ScriptDescriptor, parameters: List<ScriptValueParameter>, superclass: KClass<out Any>) :
         SimpleParams(parameters) {
     override val supertypes = listOf(getKotlinType(scriptDescriptor, superclass))
