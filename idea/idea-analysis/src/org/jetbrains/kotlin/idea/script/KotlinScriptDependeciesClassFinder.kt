@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.idea.caches.resolve.CustomizedScriptModuleSearchScop
 import org.jetbrains.kotlin.load.java.JavaClassFinderImpl
 import org.jetbrains.kotlin.resolve.jvm.KotlinSafeClassFinder
 
-@Suppress("unused") // project extension
 class KotlinScriptDependenciesClassFinder(project: Project,
                                          private val kotlinScriptConfigurationManager: KotlinScriptConfigurationManager
 ) : NonClasspathClassFinder(project), KotlinSafeClassFinder {
