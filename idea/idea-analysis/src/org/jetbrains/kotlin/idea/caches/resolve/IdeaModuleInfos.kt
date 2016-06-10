@@ -296,7 +296,7 @@ class ScriptModuleSearchScope(val scriptFile: VirtualFile, baseScope: GlobalSear
     override fun hashCode() = scriptFile.hashCode() * 73 * super.hashCode()
 }
 
-internal data class ScriptModuleInfo(val project: Project, val module: Module?, val scriptFile: VirtualFile,
+internal data class ScriptModuleInfo(val project: Project, val scriptFile: VirtualFile,
                                      val scriptDefinition: KotlinScriptDefinition,
                                      val scriptExtraImports: List<KotlinScriptExtraImport>) : IdeaModuleInfo {
     override val moduleOrigin: ModuleOrigin
@@ -327,13 +327,7 @@ internal data class ScriptModuleInfo(val project: Project, val module: Module?, 
                 }
     }
 
-    override fun dependencies() =
-            listOf(this) +
-            (module?.cached(CachedValueProvider {
-                CachedValueProvider.Result(
-                        ideaModelDependencies(module, productionOnly = false),
-                        ProjectRootModificationTracker.getInstance(module.project))
-            }) ?: emptyList())
+    override fun dependencies() = listOf(this)
 }
 
 class FileLibraryScope(project: Project, private val libraryRoot: VirtualFile) : GlobalSearchScope(project) {
