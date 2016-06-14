@@ -75,9 +75,9 @@ class KotlinScriptConfigurationManager(
             else
                 StandardFileSystems.jar()?.findFileByPath(this + URLUtil.JAR_SEPARATOR) ?: throw FileNotFoundException("Classpath entry points to a file that is not a JAR archive: ${this}")
 
-    fun getAllScriptsClasspathScope(): GlobalSearchScope? {
+    fun getAllScriptsClasspathScope(): GlobalSearchScope {
         return getAllScriptsClasspath().let { cp ->
-            if (cp.isEmpty()) null
+            if (cp.isEmpty()) GlobalSearchScope.EMPTY_SCOPE
             else GlobalSearchScope.union(cp.map { FileLibraryScope(project, it) }.toTypedArray())
         }
     }
