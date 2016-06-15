@@ -94,6 +94,10 @@ class KotlinScriptExternalImportsProvider(val project: Project, private val scri
         cache.values.flatMap { it.classpath }
     }.distinct()
 
+    fun getKnownSourceRoots(): List<String> = cacheLock.read {
+        cache.values.flatMap { it.sources }
+    }.distinct()
+
     fun <TF> getCombinedClasspathFor(files: Iterable<TF>): List<String> =
         getExternalImports(files)
                 .flatMap { it.classpath }

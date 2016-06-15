@@ -23,7 +23,7 @@ import java.io.File
 
 class GradleScriptTemplateProvider(project: Project, gim: GradleInstallationManager?): ScriptTemplateProvider {
 
-    private val gradleHome: File? = project.basePath?.let { gim?.getGradleHome(project, it) }
+    private val gradleHome: File? = File("C:/Dev/testProjects/gradle-example/dist")
     private val gradleLibsPath: File? = gradleHome?.let { File(it, "lib") }?.let { if (it.exists()) it else null }
 
     override val id: String = "Gradle"
