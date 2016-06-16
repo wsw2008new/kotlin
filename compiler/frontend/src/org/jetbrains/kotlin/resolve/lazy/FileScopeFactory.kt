@@ -73,7 +73,10 @@ class FileScopeFactory(
         val explicitImportResolver = createImportResolver(ExplicitImportsIndexed(imports), bindingTrace)
         val allUnderImportResolver = createImportResolver(AllUnderImportsIndexed(imports), bindingTrace)
 
-        val extraImports = ktImportsFactory.createImportDirectives(getScriptExternalDependencies(file).flatMap { it.imports.map { ImportPath(it) } })
+        val extraImports =
+                file.originalFile.virtualFile?.let { getScriptExternalDependencies(it, file.project) }
+                        ?.flatMap { ktImportsFactory.createImportDirectives(it.imports.map { ImportPath(it) }) }
+                ?: emptyList()
         val allImplicitImports = defaultImports + extraImports
 
         val defaultImportsFiltered = if (aliasImportNames.isEmpty()) { // optimization
