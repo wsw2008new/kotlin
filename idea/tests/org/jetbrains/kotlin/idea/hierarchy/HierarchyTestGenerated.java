@@ -193,6 +193,12 @@ public class HierarchyTestGenerated extends AbstractHierarchyTest {
             doTypeClassHierarchyTest(fileName);
         }
 
+        @TestMetadata("LightClassFailureWithRecursiveComputation")
+        public void testLightClassFailureWithRecursiveComputation() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/class/type/LightClassFailureWithRecursiveComputation/");
+            doTypeClassHierarchyTest(fileName);
+        }
+
         @TestMetadata("Object")
         public void testObject() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/class/type/Object/");
