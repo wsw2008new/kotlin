@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import javax.swing.Icon
 
-open class KtLightClassForExplicitDeclaration(
+open class KtLightClassForExplicitClassDeclaration(
         protected val classFqName: FqName,
         protected val classOrObject: KtClassOrObject)
 : KtWrappingLightClass(classOrObject.manager), KtJavaMirrorMarker, StubBasedPsiElement<KotlinClassOrObjectStub<out KtClassOrObject>> {
@@ -132,7 +132,7 @@ open class KtLightClassForExplicitDeclaration(
     override fun getFqName(): FqName = classFqName
 
     override fun copy(): PsiElement {
-        return KtLightClassForExplicitDeclaration(classFqName, classOrObject.copy() as KtClassOrObject)
+        return KtLightClassForExplicitClassDeclaration(classFqName, classOrObject.copy() as KtClassOrObject)
     }
 
     override val clsDelegate: PsiClass by lazy(LazyThreadSafetyMode.PUBLICATION) {
@@ -197,7 +197,7 @@ open class KtLightClassForExplicitDeclaration(
         if (this === other) return true
         if (other == null || javaClass != other.javaClass) return false
 
-        val aClass = other as KtLightClassForExplicitDeclaration
+        val aClass = other as KtLightClassForExplicitClassDeclaration
 
         if (classFqName != aClass.classFqName) return false
 
@@ -233,9 +233,9 @@ open class KtLightClassForExplicitDeclaration(
     override fun getQualifiedName(): String? = classFqName.asString()
 
     private val _modifierList : PsiModifierList by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        object : KtLightModifierListWithExplicitModifiers(this@KtLightClassForExplicitDeclaration, computeModifiers()) {
+        object : KtLightModifierListWithExplicitModifiers(this@KtLightClassForExplicitClassDeclaration, computeModifiers()) {
             override val delegate: PsiAnnotationOwner
-                get() = this@KtLightClassForExplicitDeclaration.delegate.modifierList!!
+                get() = this@KtLightClassForExplicitClassDeclaration.delegate.modifierList!!
         }
     }
 
@@ -333,7 +333,7 @@ open class KtLightClassForExplicitDeclaration(
 
     override fun isInheritor(baseClass: PsiClass, checkDeep: Boolean): Boolean {
         val qualifiedName: String?
-        if (baseClass is KtLightClassForExplicitDeclaration) {
+        if (baseClass is KtLightClassForExplicitClassDeclaration) {
             val baseDescriptor = baseClass.getDescriptor()
             qualifiedName = if (baseDescriptor != null) DescriptorUtils.getFqName(baseDescriptor).asString() else null
         }
@@ -365,6 +365,6 @@ open class KtLightClassForExplicitDeclaration(
     override fun getNameIdentifier(): KtLightIdentifier? = lightIdentifier
 
     companion object {
-        private val LOG = Logger.getInstance(KtLightClassForExplicitDeclaration::class.java)
+        private val LOG = Logger.getInstance(KtLightClassForExplicitClassDeclaration::class.java)
     }
 }
