@@ -17,14 +17,19 @@
 package org.jetbrains.kotlin.idea.core.script
 
 import com.intellij.openapi.project.Project
+import org.gradle.tooling.ProjectConnection
 import org.jetbrains.kotlin.script.ScriptTemplateProvider
 import org.jetbrains.plugins.gradle.service.GradleInstallationManager
+import org.jetbrains.plugins.gradle.service.execution.GradleExecutionHelper
 import java.io.File
 
 class GradleScriptTemplateProvider(project: Project, gim: GradleInstallationManager?): ScriptTemplateProvider {
 
     private val gradleHome: File? = project.basePath?.let { gim?.getGradleHome(project, it) }
     private val gradleLibsPath: File? = gradleHome?.let { File(it, "lib") }?.let { if (it.exists()) it else null }
+    private val projectActionExecutor: ((ProjectConnection) -> Unit) -> Unit = { action ->
+        GradleExecutionHelper().execute(project.basePath!!, null) { action(it) }
+    }
 
     override val id: String = "Gradle"
     override val version: Int = 1
@@ -35,9 +40,10 @@ class GradleScriptTemplateProvider(project: Project, gim: GradleInstallationMana
             gradleLibsPath?.listFiles { file -> file.extension == "jar" && depLibsPrefixes.any { file.name.startsWith(it) } }
                 ?.map { it.canonicalPath }
                 ?: emptyList()
-    override val environment: Map<String, Any?>? = kotlin.collections.mapOf("gradleHome" to gradleHome)
+    override val environment: Map<String, Any?>? = kotlin.collections.mapOf("gradleHome" to gradleHome, "projectActionExecutor" to projectActionExecutor)
 
     companion object {
         private val depLibsPrefixes = listOf("gradle-script-kotlin", "gradle-core")
     }
 }
+
