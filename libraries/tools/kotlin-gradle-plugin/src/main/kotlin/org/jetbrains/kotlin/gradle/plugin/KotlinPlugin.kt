@@ -143,6 +143,7 @@ class Kotlin2JvmSourceSetProcessor(
         }
 
         val aptConfiguration = project.createAptConfiguration(sourceSet.name, kotlinAnnotationProcessingDep)
+        val kapt2Configuration = project.createKapt2Configuration(sourceSet.name)
 
         project.afterEvaluate { project ->
             if (project != null) {
@@ -297,6 +298,7 @@ open class KotlinAndroidPlugin @Inject constructor(val scriptHandler: ScriptHand
         }
 
         val aptConfigurations = hashMapOf<String, Configuration>()
+        val kapt2Configurations = hashMapOf<String, Configuration>()
 
         val projectVersion = loadKotlinVersionFromResource(log)
         val kotlinAnnotationProcessingDep = "org.jetbrains.kotlin:kotlin-annotation-processing:$projectVersion"
@@ -311,6 +313,8 @@ open class KotlinAndroidPlugin @Inject constructor(val scriptHandler: ScriptHand
 
                 aptConfigurations.put(sourceSet.name,
                         project.createAptConfiguration(sourceSet.name, kotlinAnnotationProcessingDep))
+
+                kapt2Configurations.put(sourceSet.name, project.createKapt2Configuration(sourceSet.name))
 
                 /*TODO: before 0.11 gradle android plugin there was:
                   sourceSet.getAllJava().source(kotlinDirSet)
@@ -338,7 +342,7 @@ open class KotlinAndroidPlugin @Inject constructor(val scriptHandler: ScriptHand
 
                 val variantManager = AndroidGradleWrapper.getVariantDataManager(plugin)
                 processVariantData(variantManager.variantDataList, project,
-                        ext, plugin, aptConfigurations)
+                        ext, plugin, aptConfigurations, kapt2Configurations)
             }
         }
     }
@@ -348,7 +352,8 @@ open class KotlinAndroidPlugin @Inject constructor(val scriptHandler: ScriptHand
             project: Project,
             androidExt: BaseExtension,
             androidPlugin: BasePlugin,
-            aptConfigurations: Map<String, Configuration>
+            aptConfigurations: Map<String, Configuration>,
+            kapt2Configurations: Map<String, Configuration>
     ) {
         val logger = project.logger
         val kotlinOptions = getExtension<Any?>(androidExt, "kotlinOptions")
@@ -404,6 +409,12 @@ open class KotlinAndroidPlugin @Inject constructor(val scriptHandler: ScriptHand
                     javaTask.dependsOn(aptConfiguration.buildDependencies)
                     aptFiles.addAll(aptConfiguration.resolve())
                 }
+                
+                val kapt2Configuration = kapt2Configurations[(provider as AndroidSourceSet).name]
+                if (kapt2Configuration != null && kapt2Configuration.dependencies.size > 0) {
+                    javaTask.dependsOn(kapt2Configuration.buildDependencies)
+                    javaTask.source(File(project.buildDir, "generated/source/kapt2"))
+                }
             }
 
             // getJavaSources should return the Java sources used for compilation
@@ -433,6 +444,9 @@ open class KotlinAndroidPlugin @Inject constructor(val scriptHandler: ScriptHand
 
             val (aptOutputDir, aptWorkingDir) = project.getAptDirsForSourceSet(variantDataName)
             variantData.addJavaSourceFoldersToModel(aptOutputDir)
+            
+            variantData.addJavaSourceFoldersToModel(File(project.buildDir, "generated/source/kapt2"))
+            
             var kotlinAfterJavaTask: AbstractCompile? = null
 
             if (javaTask is JavaCompile && aptFiles.isNotEmpty()) {
@@ -539,8 +553,8 @@ private fun loadSubplugins(project: Project): SubpluginEnvironment {
                         val id = it.moduleVersion.id
                         subplugin.getGroupName() == id.group && subplugin.getArtifactName() == id.name
                     }?.file
-            if (file != null) {
-                subpluginClasspaths.put(subplugin, listOf(file))
+            if (file != null || subplugin.isBundled) {
+                subpluginClasspaths.put(subplugin, if (file != null) listOf(file) else emptyList())
             }
         }
 
@@ -619,6 +633,11 @@ private fun Project.getAptDirsForSourceSet(sourceSetName: String): Pair<File, Fi
     val aptWorkingDirForVariant = File(aptWorkingDir, sourceSetName)
 
     return aptOutputDirForVariant to aptWorkingDirForVariant
+}
+
+private fun Project.createKapt2Configuration(sourceSetName: String): Configuration {
+    val aptConfigurationName = if (sourceSetName != "main") "kapt2${sourceSetName.capitalize()}" else "kapt2"
+    return configurations.create(aptConfigurationName)
 }
 
 private fun Project.createAptConfiguration(sourceSetName: String, kotlinAnnotationProcessingDep: String): Configuration {
