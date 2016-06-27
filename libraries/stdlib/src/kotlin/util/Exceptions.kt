@@ -5,6 +5,8 @@
 package kotlin
 
 
+typealias NoSuchElementException = java.util.NoSuchElementException
+
 /**
  * Returns an array of stack trace elements representing the stack trace
  * pertaining to this throwable.
