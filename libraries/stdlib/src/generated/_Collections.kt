@@ -9,10 +9,6 @@ package kotlin.collections
 //
 
 import kotlin.comparisons.*
-import java.util.*
-
-import java.util.Collections // TODO: it's temporary while we have java.util.Collections in js
-
 /**
  * Returns 1st *element* from the collection.
  */
@@ -1071,7 +1067,7 @@ public fun <T> Iterable<T>.toMutableList(): MutableList<T> {
  * Returns a [MutableList] filled with all elements of this collection.
  */
 public fun <T> Collection<T>.toMutableList(): MutableList<T> {
-    return ArrayList(this)
+    return ArrayList<T>(this)
 }
 
 /**
@@ -1314,7 +1310,7 @@ public infix fun <T> Iterable<T>.subtract(other: Iterable<T>): Set<T> {
  */
 public fun <T> Iterable<T>.toMutableSet(): MutableSet<T> {
     return when (this) {
-        is Collection<T> -> LinkedHashSet(this)
+        is Collection<T> -> LinkedHashSet<T>(this)
         else -> toCollection(LinkedHashSet<T>())
     }
 }
