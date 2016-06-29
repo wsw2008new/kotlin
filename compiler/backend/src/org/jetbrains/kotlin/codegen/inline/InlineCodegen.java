@@ -711,6 +711,7 @@ public class InlineCodegen extends CallGenerator {
                 local.store(StackValue.onStack(type), codegen.v);
                 if (info instanceof CapturedParamInfo) {
                     info.setRemapValue(local);
+                    ((CapturedParamInfo) info).setSynthetic(true);
                 }
             }
         }
@@ -738,7 +739,7 @@ public class InlineCodegen extends CallGenerator {
         List<ParameterInfo> infos = invocationParamBuilder.listAllParams();
         for (ListIterator<? extends ParameterInfo> iterator = infos.listIterator(infos.size()); iterator.hasPrevious(); ) {
             ParameterInfo param = iterator.previous();
-            if (!param.isSkippedOrRemapped()) {
+            if (!param.isSkippedOrRemapped() || CapturedParamInfo.isSynthetic(param)) {
                 codegen.getFrameMap().leaveTemp(param.type);
             }
         }
