@@ -33,6 +33,8 @@ class ParameterInfo {
     //in case when parameter could be extracted from outer context (e.g. from local var)
     private StackValue remapValue;
 
+    private StackValue parameterStackValue;
+
     public ParameterInfo(@NotNull Type type, boolean skipped, int index, int remapValue, int declarationIndex) {
         this(type, skipped, index, remapValue == -1 ? null : StackValue.local(remapValue, type), declarationIndex);
     }
@@ -80,8 +82,18 @@ class ParameterInfo {
 
     @NotNull
     public ParameterInfo setRemapValue(@Nullable StackValue remapValue) {
+        assert parameterStackValue == null : "Parameter with stackValue couldn't have remapValue: " + this;
         this.remapValue = remapValue;
         return this;
+    }
+
+    public StackValue getParameterStackValue() {
+        return parameterStackValue;
+    }
+
+    public void setParameterStackValue(StackValue parameterStackValue) {
+        assert parameterStackValue == null || remapValue == null : "Remapped parameter couldn't have parameterStackValue: " + this;
+        this.parameterStackValue = parameterStackValue;
     }
 
     public boolean isCaptured() {

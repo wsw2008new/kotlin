@@ -22,7 +22,6 @@ import java.util.*
 internal class Parameters(val parameters: List<ParameterInfo>) : Iterable<ParameterInfo> {
 
     private val actualDeclShifts: Array<ParameterInfo?>
-    private val paramToDeclByteCodeIndex: HashMap<ParameterInfo, Int> = hashMapOf()
 
     val argsSizeOnStack = parameters.sumBy { it.type.size }
 
@@ -38,23 +37,12 @@ internal class Parameters(val parameters: List<ParameterInfo>) : Iterable<Parame
     }
 
     init {
-        val declIndexesToActual = arrayOfNulls<Int>(argsSizeOnStack)
-        withIndex().forEach { it ->
-            declIndexesToActual[it.value.declarationIndex] = it.index
-        }
-
         actualDeclShifts = arrayOfNulls<ParameterInfo>(argsSizeOnStack)
         var realSize = 0
-        for (i in declIndexesToActual.indices) {
-            val byDeclarationIndex = get(declIndexesToActual[i] ?: continue)
-            actualDeclShifts[realSize] = byDeclarationIndex
-            paramToDeclByteCodeIndex.put(byDeclarationIndex, realSize)
-            realSize += byDeclarationIndex.type.size
+        parameters.sortedBy { it.declarationIndex }.forEach {
+            actualDeclShifts[realSize] = it
+            realSize += it.type.size
         }
-    }
-
-    fun getDeclarationSlot(info: ParameterInfo): Int {
-        return paramToDeclByteCodeIndex[info]!!
     }
 
     fun getParameterByDeclarationSlot(index: Int): ParameterInfo {

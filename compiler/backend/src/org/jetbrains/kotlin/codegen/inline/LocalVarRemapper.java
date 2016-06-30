@@ -30,27 +30,16 @@ import static org.jetbrains.kotlin.codegen.inline.LocalVarRemapper.RemapStatus.*
 public class LocalVarRemapper {
     private final Parameters params;
     private final int actualParamsSize;
-    private final StackValue[] remapValues;
     private final int additionalShift;
 
     public LocalVarRemapper(@NotNull Parameters params, int additionalShift) {
         this.additionalShift = additionalShift;
         this.params = params;
 
-        remapValues = new StackValue[params.getArgsSizeOnStack()];
-
         int realSize = 0;
         for (ParameterInfo info : params) {
-            Integer shift = params.getDeclarationSlot(info);
             if (!info.isSkippedOrRemapped()) {
-                remapValues[shift] = StackValue.local(realSize, AsmTypes.OBJECT_TYPE);
                 realSize += info.getType().getSize();
-            }
-            else {
-                remapValues[shift] = info.isRemapped() ? info.getRemapValue() : null;
-                if (info instanceof CapturedParamInfo && ((CapturedParamInfo) info).isSyntheticallyRemmaped()) {
-                    realSize += info.getType().getSize();
-                }
             }
         }
 
@@ -59,27 +48,19 @@ public class LocalVarRemapper {
 
     @NotNull
     private RemapInfo doRemap(int index) {
-        int remappedIndex;
-
         if (index < params.getArgsSizeOnStack()) {
             ParameterInfo info = params.getParameterByDeclarationSlot(index);
-            StackValue remapped = remapValues[index];
-            if (info.isSkipped || remapped == null) {
+            if (info.isSkipped) {
                 return new RemapInfo(info);
             }
-            if (info.isRemapped()) {
-                return new RemapInfo(remapped, info, REMAPPED);
-            }
-            else {
-                remappedIndex = ((StackValue.Local) remapped).index;
-            }
+            StackValue value = info.isRemapped() ? info.getRemapValue() : info.getParameterStackValue();
+            assert value != null;
+            return new RemapInfo(value, info, info.isRemapped() ? REMAPPED : SHIFT);
         }
         else {
-            //captured params are not used directly in this inlined method, they are used in closure
-            remappedIndex = actualParamsSize - params.getArgsSizeOnStack() + index;
+            int remappedIndex = actualParamsSize - params.getArgsSizeOnStack() + index;
+            return new RemapInfo(StackValue.local(remappedIndex + additionalShift, AsmTypes.OBJECT_TYPE), null, SHIFT);
         }
-
-        return new RemapInfo(StackValue.local(remappedIndex + additionalShift, AsmTypes.OBJECT_TYPE), null, SHIFT);
     }
 
     @NotNull
