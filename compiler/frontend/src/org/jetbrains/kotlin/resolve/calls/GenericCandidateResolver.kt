@@ -46,9 +46,15 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.TypeUtils.DONT_CARE
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
+import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
+import javax.inject.Inject
 
 class GenericCandidateResolver(private val argumentTypeResolver: ArgumentTypeResolver) {
+    // component dependency cycle
+    @set:Inject
+    lateinit var expressionTypingServices: ExpressionTypingServices
+
     fun <D : CallableDescriptor> inferTypeArguments(context: CallCandidateResolutionContext<D>): ResolutionStatus {
         val candidateCall = context.candidateCall
         val candidate = candidateCall.candidateDescriptor
@@ -341,15 +347,13 @@ class GenericCandidateResolver(private val argumentTypeResolver: ArgumentTypeRes
             valueArgument: ValueArgument
     ): KotlinType? {
         val dataFlowInfoForArgument = context.candidateCall.dataFlowInfoForArguments.getInfo(valueArgument)
-        val expectedTypeWithoutReturnType = if (!hasUnknownReturnType(expectedType)) replaceReturnTypeByUnknown(expectedType) else expectedType
+        val expectedTypeWithoutReturnType =
+                if (!hasUnknownReturnType(expectedType)) replaceReturnTypeByUnknown(expectedType) else expectedType
         val newContext = context
                 .replaceExpectedType(expectedTypeWithoutReturnType)
                 .replaceDataFlowInfo(dataFlowInfoForArgument)
                 .replaceContextDependency(INDEPENDENT)
-        val argumentExpression = valueArgument.getArgumentExpression()!!
-        val type = argumentTypeResolver.getCallableReferenceTypeInfo(
-                argumentExpression, callableReference, newContext, RESOLVE_FUNCTION_ARGUMENTS).type
-        return type
+        return expressionTypingServices.getTypeInfo(callableReference, newContext).type
     }
 }
 
