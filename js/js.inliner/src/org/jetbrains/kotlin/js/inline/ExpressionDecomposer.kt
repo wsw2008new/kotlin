@@ -20,6 +20,7 @@ import com.google.dart.compiler.backend.js.ast.*
 import com.google.dart.compiler.backend.js.ast.metadata.*
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.js.inline.util.IdentitySet
+import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.*
 import org.jetbrains.kotlin.js.translate.utils.jsAstUtils.*
 
@@ -267,13 +268,17 @@ internal class ExpressionDecomposer private constructor(
             // Qualifier might be a reference to lambda property. See KT-7674
             // An exception here is `fn.call()`, which are marked as side effect free. Further recognition of such
             // case in inliner might be quite difficult, so never extract such call (and other calls marked this way).
-             if ((qualifier !in containsNodeWithSideEffect || (qualifier as? HasMetadata)?.sideEffects == SideEffectKind.PURE) &&
-                 (callee != null && receiver != null && receiver in containsNodeWithSideEffect)
-             ) {
+            if ((qualifier !in containsNodeWithSideEffect || (qualifier as? HasMetadata)?.sideEffects == SideEffectKind.PURE) &&
+                (callee != null && receiver != null && receiver in containsNodeWithSideEffect)
+            ) {
                 val receiverTmp = receiver.extractToTemporary()
                 callee.qualifier = receiverTmp
             }
             else {
+                if (receiver != null && callee != null) {
+                    val receiverTmp = receiver.extractToTemporary()
+                    qualifier = JsAstUtils.invokeBind(receiverTmp, pureFqn(callee.ident, receiverTmp))
+                }
                 qualifier = qualifier.extractToTemporary()
             }
         }
