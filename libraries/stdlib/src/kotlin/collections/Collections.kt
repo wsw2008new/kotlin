@@ -23,23 +23,6 @@ import java.io.Serializable
 import java.util.*
 import kotlin.comparisons.compareValues
 
-typealias RandomAccess = java.util.RandomAccess
-typealias Comparator<T> = java.util.Comparator<T> // kotlin.comparisons?
-
-// internal?
-internal typealias ArrayList<T> = java.util.ArrayList<T>
-internal typealias LinkedHashMap<K, V> = java.util.LinkedHashMap<K, V>
-internal typealias HashMap<K, V> = java.util.HashMap<K, V>
-internal typealias LinkedHashSet<T> = java.util.LinkedHashSet<T>
-internal typealias HashSet<T> = java.util.HashSet<T>
-internal typealias SortedSet<T> = java.util.SortedSet<T>
-internal typealias TreeSet<T> = java.util.TreeSet<T>
-internal typealias AbstractList<T> = java.util.AbstractList<T>
-internal typealias Collections = java.util.Collections
-internal typealias Arrays = java.util.Arrays
-
-
-
 internal object EmptyIterator : ListIterator<Nothing> {
     override fun hasNext(): Boolean = false
     override fun hasPrevious(): Boolean = false
