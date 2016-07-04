@@ -1129,6 +1129,14 @@ fun main(args: Array<String>) {
         testClass<AbstractPlainModuleTest>() {
             model("jsModule/plain/cases", extension = null, recursive = false, testClassName = "PlainModuleTestGenerated")
         }
+
+        testClass<AbstractUmdModuleTest>() {
+            model("jsModule/umd/cases", extension = null, recursive = false, testClassName = "UmdModuleTestGenerated")
+        }
+
+        testClass<AbstractUmdFallbackModuleTest>() {
+            model("jsModule/umd-fallback/cases", extension = null, recursive = false, testClassName = "UmdFallbackModuleTestGenerated")
+        }
     }
 
     testGroup("js/js.tests/test", "compiler/testData") {
