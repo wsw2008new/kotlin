@@ -339,23 +339,12 @@ class ClassTranslator private constructor(
             return listOf<JsExpression>(getClassReference(supertypeDescriptor))
         }
 
-        val supertypeConstructors = mutableSetOf<TypeConstructor>()
-        for (type in supertypes) {
-            supertypeConstructors += type.constructor
-        }
-        val sortedAllSuperTypes = topologicallySortSuperclassesAndRecordAllInstances(
-            descriptor.defaultType,
-            mutableMapOf<TypeConstructor, Set<SimpleType>>(),
-            mutableSetOf<TypeConstructor>()
-        )
-        val supertypesRefs = mutableListOf<JsExpression>()
-        for (typeConstructor in sortedAllSuperTypes) {
-            if (supertypeConstructors.contains(typeConstructor)) {
-                val supertypeDescriptor = getClassDescriptorForTypeConstructor(typeConstructor)
-                supertypesRefs += getClassReference(supertypeDescriptor)
-            }
-        }
-        return supertypesRefs
+        val supertypeConstructors = supertypes.map { it.constructor }
+        val supertypeDescriptors = supertypeConstructors.map { getClassDescriptorForTypeConstructor(it) }
+        val superClass = supertypeDescriptors.firstOrNull { descriptor.kind != ClassKind.INTERFACE }
+        val superInterfaces = supertypeDescriptors.filter { it != superClass }
+
+        return (superClass?.let { listOf(it) }.orEmpty() + superInterfaces).map { getClassReference(it) }
     }
 
     private fun getClassReference(superClassDescriptor: ClassDescriptor): JsNameRef {
