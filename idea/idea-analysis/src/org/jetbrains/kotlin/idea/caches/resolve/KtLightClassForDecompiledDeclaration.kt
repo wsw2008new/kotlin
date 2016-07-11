@@ -20,6 +20,7 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiField
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.impl.compiled.ClsClassImpl
+import org.jetbrains.kotlin.asJava.KtJavaMirrorMarker
 import org.jetbrains.kotlin.asJava.KtLightFieldImpl
 import org.jetbrains.kotlin.asJava.KtLightMethodImpl
 import org.jetbrains.kotlin.asJava.KtWrappingLightClass
@@ -31,7 +32,7 @@ class KtLightClassForDecompiledDeclaration(
         override val clsDelegate: ClsClassImpl,
         override val kotlinOrigin: KtClassOrObject?,
         private val file: KtClsFile
-) : KtWrappingLightClass(clsDelegate.manager) {
+) : KtWrappingLightClass(clsDelegate.manager), KtJavaMirrorMarker {
     private val fqName = kotlinOrigin?.fqName ?: FqName(clsDelegate.qualifiedName)
 
     override fun copy() = this

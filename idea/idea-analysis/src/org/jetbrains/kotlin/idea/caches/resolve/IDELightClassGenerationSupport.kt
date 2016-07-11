@@ -141,8 +141,11 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
                     return KtLightClassForExplicitDeclaration.create(classOrObject)
                 ProjectRootsUtil.isLibraryClassFile(project, virtualFile) ->
                     return getLightClassForDecompiledClassOrObject(classOrObject)
-                ProjectRootsUtil.isLibrarySourceFile(project, virtualFile) ->
-                    return SourceNavigationHelper.getOriginalClass(classOrObject) as? KtLightClass
+                ProjectRootsUtil.isLibrarySourceFile(project, virtualFile) -> {
+                    val lightClass = SourceNavigationHelper.getOriginalClass(classOrObject) as? KtLightClass
+                    assert(lightClass == null || lightClass is KtLightClassForDecompiledDeclaration)
+                    return lightClass
+                }
             }
         }
         if (classOrObject.getContainingKtFile().analysisContext != null) {
