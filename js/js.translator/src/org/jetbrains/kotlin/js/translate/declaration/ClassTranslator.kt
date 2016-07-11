@@ -45,11 +45,9 @@ import org.jetbrains.kotlin.psi.KtSecondaryConstructor
 import org.jetbrains.kotlin.resolve.BindingContextUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils.*
-import org.jetbrains.kotlin.types.CommonSupertypes.topologicallySortSuperclassesAndRecordAllInstances
-import org.jetbrains.kotlin.types.SimpleType
-import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.identity
+import org.jetbrains.kotlin.utils.singletonOrEmptyList
 
 /**
  * Generates a definition of a single class.
@@ -341,10 +339,10 @@ class ClassTranslator private constructor(
 
         val supertypeConstructors = supertypes.map { it.constructor }
         val supertypeDescriptors = supertypeConstructors.map { getClassDescriptorForTypeConstructor(it) }
-        val superClass = supertypeDescriptors.firstOrNull { descriptor.kind != ClassKind.INTERFACE }
+        val superClass = supertypeDescriptors.firstOrNull { it.kind != ClassKind.INTERFACE }
         val superInterfaces = supertypeDescriptors.filter { it != superClass }
 
-        return (superClass?.let { listOf(it) }.orEmpty() + superInterfaces).map { getClassReference(it) }
+        return (superClass.singletonOrEmptyList() + superInterfaces).map { getClassReference(it) }
     }
 
     private fun getClassReference(superClassDescriptor: ClassDescriptor): JsNameRef {
