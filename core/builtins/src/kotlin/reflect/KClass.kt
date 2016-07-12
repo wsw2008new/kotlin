@@ -61,6 +61,11 @@ public interface KClass<T : Any> : KDeclarationContainer, KAnnotatedElement, KCl
     /**
      * The list of type parameters of this class. This list does *not* include type parameters of outer classes.
      */
+    public fun isInstance(value: Any?): Boolean
+
+    /**
+     * TODO
+     */
     public val typeParameters: List<KTypeParameter>
 
     /**
