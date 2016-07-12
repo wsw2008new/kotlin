@@ -17,23 +17,21 @@
 package kotlin.reflect
 
 /**
- * Represents a declaration of a type parameter of a class or a callable.
- * See the [Kotlin language documentation](http://kotlinlang.org/docs/reference/generics.html#generics)
- * for more information.
+ * TODO
  */
-public interface KTypeParameter : KClassifier {
+enum class KVariance {
     /**
      * TODO
      */
-    public val name: String
+    INVARIANT,
 
     /**
      * TODO
      */
-    public val upperBounds: List<KType>
+    IN,
 
     /**
      * TODO
      */
-    public val variance: KVariance
+    OUT,
 }
