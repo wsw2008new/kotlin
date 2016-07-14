@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.annotation
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.AnalysisResult
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.asJava.findFacadeClass
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.java.model.elements.JeTypeElement
+import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -42,8 +44,9 @@ class AnnotationProcessingExtension(
 
     override fun analysisCompleted(
             project: Project,
-            module: ModuleDescriptor,
+            moduleDescriptor: ModuleDescriptor,
             bindingContext: BindingContext,
+            modules: List<Module>,
             files: Collection<KtFile>
     ): AnalysisResult? {
         if (annotationProcessingComplete) {
@@ -55,6 +58,21 @@ class AnnotationProcessingExtension(
         
         val analysisContext = AnalysisContext(hashMapOf())
         analysisContext.analyzeFiles(files)
+        
+        val psiManager = PsiManager.getInstance(project)
+        for (module in modules) {
+            for (javaSourceRoot in module.getJavaSourceRoots()) {
+                File(javaSourceRoot.path).walk().filter { it.isFile && it.extension == "java" }.forEach {
+                    val vFile = StandardFileSystems.local().findFileByPath(it.absolutePath)
+                    if (vFile != null) {
+                        val javaFile = psiManager.findFile(vFile) as? PsiJavaFile
+                        if (javaFile != null) {
+                            analysisContext.analyzeFile(javaFile)
+                        }
+                    }
+                }
+            }
+        }
         
         val options = emptyMap<String, String>()
         
@@ -68,7 +86,6 @@ class AnnotationProcessingExtension(
         
         val processingEnvironment = KotlinProcessingEnvironment(elements, types, messages, options, filer)
         processors.forEach { it.init(processingEnvironment) }
-        
         
         // Round 1
         val round1Environment = KotlinRoundEnvironment(analysisContext)
@@ -97,7 +114,7 @@ class AnnotationProcessingExtension(
         }
 
         annotationProcessingComplete = true
-        return AnalysisResult.RetryWithAdditionalJavaRoots(bindingContext, module, listOf(generatedOutputDir))
+        return AnalysisResult.RetryWithAdditionalJavaRoots(bindingContext, moduleDescriptor, listOf(generatedOutputDir))
     }
     
     private fun loadAnnotationProcessors(classpath: List<String>): List<Processor> {
@@ -126,6 +143,10 @@ private fun AnalysisContext.analyzeFile(file: KtFile) {
         val clazz = declaration.toLightClass() ?: continue
         analyzeDeclaration(clazz)
     }
+}
+
+private fun AnalysisContext.analyzeFile(file: PsiJavaFile) {
+    file.classes.forEach { analyzeDeclaration(it) }
 }
 
 private fun AnalysisContext.analyzeDeclaration(declaration: PsiElement) {
