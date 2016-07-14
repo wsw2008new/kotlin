@@ -3296,10 +3296,12 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             @Override
             public Unit invoke(InstructionAdapter v) {
                 KotlinType type = lhs.getType();
-                if (lhs instanceof DoubleColonLHS.Expression) {
+                ResolvedCall<?> resolvedCall = CallUtilKt.getResolvedCall(receiverExpression, bindingContext);
+                if (lhs instanceof DoubleColonLHS.Expression &&
+                    !(resolvedCall != null && resolvedCall.getResultingDescriptor() instanceof FakeCallableDescriptorForObject)) {
                     JavaClassProperty.INSTANCE.generateImpl(v, gen(receiverExpression));
                 }
-                else if (lhs instanceof DoubleColonLHS.Type) {
+                else {
                     if (TypeUtils.isTypeParameter(type)) {
                         assert TypeUtils.isReifiedTypeParameter(type) :
                                 "Non-reified type parameter under ::class should be rejected by type checker: " + type;
