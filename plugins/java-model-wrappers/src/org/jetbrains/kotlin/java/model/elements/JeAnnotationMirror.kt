@@ -29,12 +29,12 @@ import javax.lang.model.type.DeclaredType
 
 class JeAnnotationMirror(val psi: PsiAnnotation) : AnnotationMirror {
     override fun getAnnotationType(): DeclaredType? {
-        val psiClass = psi.nameReferenceElement?.resolve() as? PsiClass ?: return JeDeclaredErrorType
+        val psiClass = resolveAnnotationClass() ?: return JeDeclaredErrorType
         return JeDeclaredType(PsiTypesUtil.getClassType(psiClass), psiClass)
     }
 
     override fun getElementValues(): Map<out ExecutableElement, AnnotationValue> {
-        val annotationClass = psi.nameReferenceElement?.resolve() as? PsiClass ?: return emptyMap()
+        val annotationClass = resolveAnnotationClass() ?: return emptyMap()
         
         return mutableMapOf<ExecutableElement, AnnotationValue>().apply {
             for (attribute in psi.parameterList.attributes) {
@@ -48,7 +48,7 @@ class JeAnnotationMirror(val psi: PsiAnnotation) : AnnotationMirror {
     }
 
     fun getAllElementValues(): Map<out ExecutableElement, AnnotationValue> {
-        val annotationClass = psi.nameReferenceElement?.resolve() as? PsiClass ?: return emptyMap()
+        val annotationClass = resolveAnnotationClass() ?: return emptyMap()
 
         return mutableMapOf<ExecutableElement, AnnotationValue>().apply {
             for (method in annotationClass.methods) {
@@ -58,4 +58,6 @@ class JeAnnotationMirror(val psi: PsiAnnotation) : AnnotationMirror {
             }
         }
     }
+    
+    private fun resolveAnnotationClass() = psi.nameReferenceElement?.resolve() as? PsiClass
 }
