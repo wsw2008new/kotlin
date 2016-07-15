@@ -2,7 +2,7 @@ import java.util.ArrayList
 
 val paramTest = 12
 
-fun small(paramFirst: ArrayList<String>, paramSecond: Comparable<java.lang.RuntimeException>) {
+fun small(paramFirst: ArrayList<String>, paramSecond: Comparable<kotlin.RuntimeException>) {
 }
 
 fun test() = small(<caret>)
