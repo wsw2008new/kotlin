@@ -128,25 +128,23 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
 
         val lineNumber = try {
             location.lineNumber() - 1
-        }
-        catch (e: InternalError) {
+        } catch (e: InternalError) {
             -1
         }
 
-
-        if (lineNumber >= 0) {
-            val lambdaOrFunIfInside = getLambdaOrFunIfInside(location, psiFile as KtFile, lineNumber)
-            if (lambdaOrFunIfInside != null) {
-                return SourcePosition.createFromElement(lambdaOrFunIfInside.bodyExpression!!)
-            }
-            val property = getParameterIfInConstructor(location, psiFile, lineNumber)
-            if (property != null) {
-                return SourcePosition.createFromElement(property)
-            }
-            return SourcePosition.createFromLine(psiFile, lineNumber)
+        if (lineNumber < 0) {
+            throw NoDataException.INSTANCE
         }
 
-        throw NoDataException.INSTANCE
+        val lambdaOrFunIfInside = getLambdaOrFunIfInside(location, psiFile as KtFile, lineNumber)
+        if (lambdaOrFunIfInside != null) {
+            return SourcePosition.createFromElement(lambdaOrFunIfInside.bodyExpression!!)
+        }
+        val property = getParameterIfInConstructor(location, psiFile, lineNumber)
+        if (property != null) {
+            return SourcePosition.createFromElement(property)
+        }
+        return SourcePosition.createFromLine(psiFile, lineNumber)
     }
 
     private fun getParameterIfInConstructor(location: Location, file: KtFile, lineNumber: Int): KtParameter? {
