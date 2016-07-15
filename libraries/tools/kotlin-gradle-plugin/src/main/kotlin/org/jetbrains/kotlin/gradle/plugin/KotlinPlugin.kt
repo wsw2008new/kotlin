@@ -414,6 +414,11 @@ open class KotlinAndroidPlugin @Inject constructor(val scriptHandler: ScriptHand
                 if (kapt2Configuration != null && kapt2Configuration.dependencies.size > 0) {
                     javaTask.dependsOn(kapt2Configuration.buildDependencies)
                     javaTask.source(File(project.buildDir, "generated/source/kapt2"))
+                    
+                    (javaTask as? JavaCompile)?.let { javaTask ->
+                        val options = javaTask.options
+                        options.compilerArgs = options.compilerArgs.filter { !it.startsWith("-proc:") } + "-proc:none"
+                    }
                 }
             }
 
