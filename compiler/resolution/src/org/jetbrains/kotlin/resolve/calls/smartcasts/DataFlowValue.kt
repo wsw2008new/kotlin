@@ -19,12 +19,18 @@ package org.jetbrains.kotlin.resolve.calls.smartcasts
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeUtils
+
+private val KotlinType.immanentNullability: Nullability
+    get() = if (TypeUtils.isNullableType(this)) Nullability.UNKNOWN else Nullability.NOT_NULL
 
 /**
  * This class describes an arbitrary object which has some value in data flow analysis.
  * In general case it's some r-value.
  */
-class DataFlowValue(val identifierInfo: IdentifierInfo, val type: KotlinType, val immanentNullability: Nullability) {
+class DataFlowValue(val identifierInfo: IdentifierInfo,
+                    val type: KotlinType,
+                    val immanentNullability: Nullability = type.immanentNullability) {
 
     val id: Any? get() = identifierInfo.id
 

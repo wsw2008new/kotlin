@@ -40,7 +40,6 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 import org.jetbrains.kotlin.types.expressions.PreliminaryDeclarationVisitor
 
@@ -100,15 +99,11 @@ object DataFlowValueFactory {
         }
 
         val result = getIdForStableIdentifier(expression, bindingContext, containingDeclarationOrModule)
-        return DataFlowValue(if (result === IdentifierInfo.NO) ExpressionIdentifierInfo(expression, false) else result,
-                             type, type.immanentNullability)
+        return DataFlowValue(if (result === IdentifierInfo.NO) ExpressionIdentifierInfo(expression, false) else result, type)
     }
 
     @JvmStatic
-    fun createDataFlowValueForStableReceiver(receiver: ReceiverValue): DataFlowValue {
-        val type = receiver.type
-        return DataFlowValue(IdentifierInfo.Receiver(receiver), type, type.immanentNullability)
-    }
+    fun createDataFlowValueForStableReceiver(receiver: ReceiverValue) = DataFlowValue(IdentifierInfo.Receiver(receiver), receiver.type)
 
     @JvmStatic
     fun createDataFlowValue(
@@ -136,20 +131,14 @@ object DataFlowValueFactory {
             variableDescriptor: VariableDescriptor,
             bindingContext: BindingContext,
             usageContainingModule: ModuleDescriptor?
-    ): DataFlowValue {
-        val type = variableDescriptor.type
-        return DataFlowValue(IdentifierInfo.Variable(variableDescriptor, variableKind(variableDescriptor, usageContainingModule,
-                                                                                      bindingContext, property)),
-                             type, type.immanentNullability)
-    }
+    ) = DataFlowValue(IdentifierInfo.Variable(variableDescriptor,
+                                              variableKind(variableDescriptor, usageContainingModule, bindingContext, property)),
+                      variableDescriptor.type)
 
     private fun createDataFlowValueForComplexExpression(
             expression: KtExpression,
             type: KotlinType
-    ) = DataFlowValue(ExpressionIdentifierInfo(expression, true), type, type.immanentNullability)
-
-    private val KotlinType.immanentNullability: Nullability
-        get() = if (TypeUtils.isNullableType(this)) Nullability.UNKNOWN else Nullability.NOT_NULL
+    ) = DataFlowValue(ExpressionIdentifierInfo(expression, true), type)
 
     private data class PostfixId(val expression: KtPostfixExpression, val argumentInfo: IdentifierInfo)
 
