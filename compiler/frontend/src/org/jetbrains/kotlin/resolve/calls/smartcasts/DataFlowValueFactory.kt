@@ -151,25 +151,33 @@ object DataFlowValueFactory {
     private val KotlinType.immanentNullability: Nullability
         get() = if (TypeUtils.isNullableType(this)) Nullability.UNKNOWN else Nullability.NOT_NULL
 
-    private data class PostfixId(val expression: KtPostfixExpression, val argumentId: Any)
+    private data class PostfixId(val expression: KtPostfixExpression, val argumentInfo: IdentifierInfo)
 
-    private class PostfixIdentifierInfo(override val id: PostfixId, kind: DataFlowValue.Kind) : IdentifierInfo(id, kind)
+    private data class PostfixIdentifierInfo(override val id: PostfixId) : IdentifierInfo {
+        override val kind: DataFlowValue.Kind get() = id.argumentInfo.kind
+    }
 
     private data class ExpressionId(val expression: KtExpression)
 
-    private class ExpressionIdentifierInfo(expression: KtExpression, isComplex: Boolean) :
-            IdentifierInfo(ExpressionId(expression),
-                           if (isComplex) STABLE_COMPLEX_EXPRESSION else OTHER)
+    private class ExpressionIdentifierInfo(expression: KtExpression, isComplex: Boolean) : IdentifierInfo {
 
-    private fun postfix(expression: KtPostfixExpression, argumentInfo: IdentifierInfo): IdentifierInfo {
-        val argumentId = argumentInfo.id
-        return if (argumentId == null) {
-            IdentifierInfo.NO
-        }
-        else {
-            PostfixIdentifierInfo(PostfixId(expression, argumentId), argumentInfo.kind)
-        }
+        override val id = ExpressionId(expression)
+
+        override val kind = if (isComplex) STABLE_COMPLEX_EXPRESSION else OTHER
+
+        override fun equals(other: Any?) = other is ExpressionIdentifierInfo && id == other.id
+
+        override fun hashCode() = id.hashCode()
     }
+
+    private fun postfix(expression: KtPostfixExpression, argumentInfo: IdentifierInfo) =
+            if (argumentInfo == IdentifierInfo.NO) {
+                IdentifierInfo.NO
+            }
+            else {
+                PostfixIdentifierInfo(PostfixId(expression, argumentInfo))
+            }
+
     private fun getIdForStableIdentifier(
             expression: KtExpression?,
             bindingContext: BindingContext,

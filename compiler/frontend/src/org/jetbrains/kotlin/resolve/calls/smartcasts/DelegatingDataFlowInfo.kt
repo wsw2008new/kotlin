@@ -92,6 +92,12 @@ internal class DelegatingDataFlowInfo private constructor(
 
     private fun putNullability(map: MutableMap<DataFlowValue, Nullability>, value: DataFlowValue, nullability: Nullability): Boolean {
         map.put(value, nullability)
+
+        val identifierInfo = value.identifierInfo
+        if (nullability.canBeNull() && identifierInfo is IdentifierInfo.Qualified && identifierInfo.id.safe) {
+
+        }
+
         return nullability != getCollectedNullability(value)
     }
 

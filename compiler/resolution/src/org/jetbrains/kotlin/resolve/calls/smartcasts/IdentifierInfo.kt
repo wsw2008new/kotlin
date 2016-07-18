@@ -22,28 +22,45 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue.Kind.OTHER
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue.Kind.STABLE_VALUE
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 
-open class IdentifierInfo(open val id: Any?, val kind: DataFlowValue.Kind) {
-    object NO : IdentifierInfo(null, OTHER) {
+interface IdentifierInfo {
+
+    val id: Any? get() = null
+
+    val kind: DataFlowValue.Kind get() = OTHER
+
+    object NO : IdentifierInfo {
         override fun toString() = "NO_IDENTIFIER_INFO"
     }
 
     object NullId
 
-    object NULL : IdentifierInfo(NullId, OTHER)
+    object NULL : IdentifierInfo {
+        override val id = NullId
+    }
 
     object ErrorId
 
-    object ERROR : IdentifierInfo(ErrorId, OTHER)
+    object ERROR : IdentifierInfo {
+        override val id = ErrorId
+    }
 
-    class Variable(override val id: VariableDescriptor, kind: DataFlowValue.Kind) : IdentifierInfo(id, kind)
+    data class Variable(override val id: VariableDescriptor, override val kind: DataFlowValue.Kind) : IdentifierInfo
 
-    class Receiver(override val id: ReceiverValue) : IdentifierInfo(id, STABLE_VALUE)
+    data class Receiver(override val id: ReceiverValue) : IdentifierInfo {
+        override val kind = STABLE_VALUE
+    }
 
-    class PackageOrClass(override val id: DeclarationDescriptor) : IdentifierInfo(id, STABLE_VALUE)
+    data class PackageOrClass(override val id: DeclarationDescriptor) : IdentifierInfo {
+        override val kind = STABLE_VALUE
+    }
 
-    data class QualifiedId(val receiverId: Any, val selectorId: Any, val safe: Boolean)
+    data class QualifiedId(val receiverInfo: IdentifierInfo, val selectorInfo: IdentifierInfo, val safe: Boolean) {
+        val kind: DataFlowValue.Kind get() = if (receiverInfo.kind.isStable()) selectorInfo.kind else OTHER
+    }
 
-    class Qualified(override val id: QualifiedId, kind: DataFlowValue.Kind) : IdentifierInfo(id, kind)
+    data class Qualified(override val id: QualifiedId) : IdentifierInfo {
+        override val kind: DataFlowValue.Kind get() = id.kind
+    }
 
     companion object {
 
@@ -57,8 +74,7 @@ open class IdentifierInfo(open val id: Any?, val kind: DataFlowValue.Kind) {
                 selectorInfo
             }
             else {
-                Qualified(QualifiedId(receiverId, selectorId, safe),
-                          if (receiverInfo.kind.isStable()) selectorInfo.kind else OTHER)
+                Qualified(QualifiedId(receiverInfo, selectorInfo, safe))
             }
         }
     }
