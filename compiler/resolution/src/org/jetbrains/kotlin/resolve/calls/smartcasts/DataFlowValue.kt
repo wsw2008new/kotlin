@@ -73,8 +73,7 @@ class DataFlowValue(val identifierInfo: IdentifierInfo, val type: KotlinType, va
         if (this === other) return true
         if (other !is DataFlowValue) return false
 
-        if (kind.isStable() != other.kind.isStable()) return false
-        if (id != other.id) return false
+        if (identifierInfo != other.identifierInfo) return false
         if (type != other.type) return false
 
         return true
@@ -85,9 +84,8 @@ class DataFlowValue(val identifierInfo: IdentifierInfo, val type: KotlinType, va
     }
 
     override fun hashCode(): Int {
-        var result = if (kind.isStable()) 1 else 0
+        var result = identifierInfo.hashCode()
         result = 31 * result + type.hashCode()
-        result = 31 * result + (id?.hashCode() ?: 0)
         return result
     }
 

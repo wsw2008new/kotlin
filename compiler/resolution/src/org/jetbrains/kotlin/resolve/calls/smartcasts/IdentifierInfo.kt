@@ -44,7 +44,15 @@ interface IdentifierInfo {
         override val id = ErrorId
     }
 
-    data class Variable(override val id: VariableDescriptor, override val kind: DataFlowValue.Kind) : IdentifierInfo
+    class Variable(override val id: VariableDescriptor, override val kind: DataFlowValue.Kind) : IdentifierInfo {
+        override fun equals(other: Any?) = other is Variable && id == other.id && kind.isStable() == other.kind.isStable()
+
+        override fun hashCode(): Int {
+            var result = if (kind.isStable()) 1 else 0
+            result = 31 * result + id.hashCode()
+            return result
+        }
+    }
 
     data class Receiver(override val id: ReceiverValue) : IdentifierInfo {
         override val kind = STABLE_VALUE
