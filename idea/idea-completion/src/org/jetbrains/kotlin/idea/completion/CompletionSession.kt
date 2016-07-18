@@ -177,7 +177,7 @@ abstract class CompletionSession(
 
     private fun isVisibleDescriptor(descriptor: DeclarationDescriptor, completeNonAccessible: Boolean): Boolean {
         if (!configuration.completeJavaClassesNotToBeUsed && descriptor is ClassDescriptor) {
-            if (descriptor.importableFqName?.let { isJavaClassNotToBeUsedInKotlin(it) } == true) return false
+            if (descriptor.importableFqName?.let(::isJavaClassNotToBeUsedInKotlin) == true) return false
         }
 
         if (descriptor is TypeParameterDescriptor && !isTypeParameterVisible(descriptor)) return false

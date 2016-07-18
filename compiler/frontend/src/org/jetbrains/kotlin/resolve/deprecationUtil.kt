@@ -112,7 +112,7 @@ private fun deprecationByOverridden(root: CallableMemberDescriptor): Deprecation
                 return
             }
             else -> {
-                overriddenDescriptors.forEach { traverse(it) }
+                overriddenDescriptors.forEach(::traverse)
             }
         }
     }

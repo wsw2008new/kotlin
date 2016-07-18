@@ -103,7 +103,7 @@ fun renderResolvedCall(resolvedCall: ResolvedCall<*>, context: RenderingContext)
         append(typeRenderer.render(receiverParameter.type, context)).append(".")
     }
     append(HtmlEscapers.htmlEscaper().escape(resultingDescriptor.name.asString())).append("(")
-    append(resultingDescriptor.valueParameters.map { parameter -> renderParameter(parameter) }.joinToString())
+    append(resultingDescriptor.valueParameters.map(::renderParameter).joinToString())
     append(if (resolvedCall.hasUnmappedArguments()) renderError(")") else ")")
 
     if (!resolvedCall.candidateDescriptor.typeParameters.isEmpty()) {

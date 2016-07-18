@@ -84,7 +84,7 @@ private val SUPPORTED_ARGUMENT_TYPES = listOf(
         PsiElementArgumentType<KtExpression>(KtExpression::class.java),
         PsiElementArgumentType<KtTypeReference>(KtTypeReference::class.java),
         PlainTextArgumentType<String>(String::class.java, toPlainText = { it }),
-        PlainTextArgumentType<Name>(Name::class.java, toPlainText = { it.render() }),
+        PlainTextArgumentType<Name>(Name::class.java, toPlainText = Name::render),
         PsiChildRangeArgumentType
 )
 

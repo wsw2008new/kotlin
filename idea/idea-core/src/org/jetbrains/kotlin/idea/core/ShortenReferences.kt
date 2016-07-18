@@ -130,7 +130,7 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
     }
 
     @JvmOverloads fun process(elements: Iterable<KtElement>, elementFilter: (PsiElement) -> FilterResult = { FilterResult.PROCESS }): Collection<KtElement> {
-        return elements.groupBy { element -> element.getContainingKtFile() }
+        return elements.groupBy(KtElement::getContainingKtFile)
                 .flatMap { shortenReferencesInFile(it.key, it.value, elementFilter) }
     }
 

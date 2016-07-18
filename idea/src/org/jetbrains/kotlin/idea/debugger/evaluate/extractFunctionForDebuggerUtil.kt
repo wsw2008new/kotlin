@@ -247,7 +247,7 @@ private fun addDebugExpressionBeforeContextElement(codeFragment: KtCodeFragment,
 
     fun insertExpression(expr: KtElement?): List<KtExpression> {
         when (expr) {
-            is KtBlockExpression -> return expr.statements.flatMap { insertExpression(it) }
+            is KtBlockExpression -> return expr.statements.flatMap(::insertExpression)
             is KtExpression -> {
                 val newDebugExpression = parent.addBefore(expr, elementBefore)
                 if (newDebugExpression == null) {

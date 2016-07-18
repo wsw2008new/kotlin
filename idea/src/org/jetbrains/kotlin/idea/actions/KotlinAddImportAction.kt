@@ -91,9 +91,7 @@ internal fun createGroupedImportsAction(project: Project,
                 val priority = prioritizer.priority(samePackageDescriptors)
                 DescriptorGroupPrioritizer.VariantWithPriority(variant, priority)
             }
-            .sortedBy {
-                it.priority
-            }
+            .sortedBy(DescriptorGroupPrioritizer.VariantWithPriority::priority)
             .map { it.variant }
 
     return KotlinAddImportAction(project, editor, element, variants)

@@ -295,7 +295,7 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
     }
 
     private fun findLambdas(sourcePosition: SourcePosition): Collection<String> {
-        val lambdas = sourcePosition.readAction { getLambdasAtLineIfAny(it) }
+        val lambdas = sourcePosition.readAction(::getLambdasAtLineIfAny)
         return lambdas.flatMap { classNamesForPosition(it, true) }
     }
 
@@ -571,7 +571,7 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
         if (lastIndexOf("$") < 0) return this
 
         val suffix = substringAfterLast("$")
-        if (suffix.all { it.isDigit() }) {
+        if (suffix.all(Char::isDigit)) {
             return substringBeforeLast("$") + "$"
         }
         return this

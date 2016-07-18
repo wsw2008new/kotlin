@@ -197,7 +197,7 @@ internal abstract class WhenOnClassExhaustivenessChecker : WhenExhaustivenessChe
                 }
             }
         }
-        return (memberDescriptors - checkedDescriptors).toList().map { ClassMissingCase(it) }
+        return (memberDescriptors - checkedDescriptors).toList().map(::ClassMissingCase)
     }
 }
 
@@ -211,7 +211,7 @@ private object WhenOnEnumExhaustivenessChecker : WhenOnClassExhaustivenessChecke
         assert(isEnumClass(subjectDescriptor)) { "isWhenOnEnumExhaustive should be called with an enum class descriptor" }
         val entryDescriptors =
                 DescriptorUtils.getAllDescriptors(subjectDescriptor!!.unsubstitutedInnerClassesScope)
-                        .filter { isEnumEntry(it) }
+                        .filter(::isEnumEntry)
                         .filterIsInstance<ClassDescriptor>()
                         .toSet()
         return getMissingClassCases(expression, entryDescriptors, context) +

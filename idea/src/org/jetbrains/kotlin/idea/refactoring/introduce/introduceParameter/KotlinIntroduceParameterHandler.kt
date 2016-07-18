@@ -268,7 +268,7 @@ open class KotlinIntroduceParameterHandler(
 
         val forbiddenRanges =
                 if (targetParent is KtClass) {
-                    targetParent.declarations.filter { isObjectOrNonInnerClass(it) }.map { it.textRange }
+                    targetParent.declarations.filter(::isObjectOrNonInnerClass).map { it.textRange }
                 }
                 else {
                     Collections.emptyList()

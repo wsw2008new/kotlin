@@ -62,9 +62,7 @@ internal class Parameters(val real: List<ParameterInfo>, val captured: List<Capt
     }
 
     val capturedTypes: List<Type>
-        get() = captured.map {
-            it.getType()
-        }
+        get() = captured.map(CapturedParamInfo::getType)
 
     companion object {
         fun shift(capturedParams: List<CapturedParamInfo>, realSize: Int): List<CapturedParamInfo> {

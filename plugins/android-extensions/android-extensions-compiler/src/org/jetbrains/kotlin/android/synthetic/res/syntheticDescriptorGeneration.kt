@@ -57,7 +57,7 @@ internal fun genPropertyForWidget(
         resolvedWidget: ResolvedWidget,
         context: SyntheticElementResolveContext
 ): PropertyDescriptor {
-    val sourceEl = resolvedWidget.widget.sourceElement?.let { XmlSourceElement(it) } ?: SourceElement.NO_SOURCE
+    val sourceEl = resolvedWidget.widget.sourceElement?.let(::XmlSourceElement) ?: SourceElement.NO_SOURCE
 
     val classDescriptor = resolvedWidget.viewClassDescriptor
     val type = classDescriptor?.let {
@@ -66,7 +66,7 @@ internal fun genPropertyForWidget(
             defaultType
         else
             KotlinTypeImpl.create(Annotations.EMPTY, classDescriptor, false,
-                                  defaultType.constructor.parameters.map { StarProjectionImpl(it) })
+                                  defaultType.constructor.parameters.map(::StarProjectionImpl))
     } ?: context.viewType
 
     return genProperty(resolvedWidget.widget.id, receiverType, type, packageFragmentDescriptor, sourceEl, resolvedWidget.errorType)
@@ -78,7 +78,7 @@ internal fun genPropertyForFragment(
         type: KotlinType,
         fragment: AndroidResource.Fragment
 ): PropertyDescriptor {
-    val sourceElement = fragment.sourceElement?.let { XmlSourceElement(it) } ?: SourceElement.NO_SOURCE
+    val sourceElement = fragment.sourceElement?.let(::XmlSourceElement) ?: SourceElement.NO_SOURCE
     return genProperty(fragment.id, receiverType, type, packageFragmentDescriptor, sourceElement, null)
 }
 

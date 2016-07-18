@@ -46,7 +46,7 @@ class OverrideMembersHandler(private val preferConstructorParameters: Boolean = 
                     }
                 }
 
-                val realSupers = byOriginalRealSupers.values.map { it.realSuper }
+                val realSupers = byOriginalRealSupers.values.map(Data::realSuper)
                 val nonAbstractRealSupers = realSupers.filter { it.modality != Modality.ABSTRACT }
                 val realSupersToUse = if (nonAbstractRealSupers.isNotEmpty()) {
                     nonAbstractRealSupers

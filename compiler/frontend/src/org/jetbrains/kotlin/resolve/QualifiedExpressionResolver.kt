@@ -212,11 +212,9 @@ class QualifiedExpressionResolver(val classifierUsageCheckers: Iterable<Classifi
                 descriptors.addAll(staticClassScope.getContributedVariables(lastName, location))
 
                 if (packageOrClassDescriptor.kind == ClassKind.OBJECT) {
-                    descriptors.addAll(packageOrClassDescriptor.unsubstitutedMemberScope.getContributedFunctions(lastName, location).map {
-                        FunctionImportedFromObject(it)
-                    })
+                    descriptors.addAll(packageOrClassDescriptor.unsubstitutedMemberScope.getContributedFunctions(lastName, location).map(::FunctionImportedFromObject))
                     val properties = packageOrClassDescriptor.unsubstitutedMemberScope.getContributedVariables(lastName, location)
-                            .filterIsInstance<PropertyDescriptor>().map { PropertyImportedFromObject(it) }
+                            .filterIsInstance<PropertyDescriptor>().map(::PropertyImportedFromObject)
                     descriptors.addAll(properties)
                 }
             }
@@ -470,7 +468,7 @@ class QualifiedExpressionResolver(val classifierUsageCheckers: Iterable<Classifi
 
         return qualifiedExpressions
                 .subList(nextExpressionIndexAfterQualifier, qualifiedExpressions.size)
-                .map { CallExpressionElement(it) }
+                .map(::CallExpressionElement)
     }
 
     private fun mapToQualifierParts(qualifiedExpressions: List<KtQualifiedExpression>,

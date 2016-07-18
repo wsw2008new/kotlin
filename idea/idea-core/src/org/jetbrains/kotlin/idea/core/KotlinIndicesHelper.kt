@@ -208,7 +208,7 @@ class KotlinIndicesHelper(
 
     fun getKotlinClasses(nameFilter: (String) -> Boolean, kindFilter: (ClassKind) -> Boolean): Collection<ClassDescriptor> {
         return KotlinFullClassNameIndex.getInstance().getAllKeys(project).asSequence()
-                .map { FqName(it) }
+                .map(::FqName)
                 .filter {
                     ProgressManager.checkCanceled()
                     nameFilter(it.shortName().asString())
