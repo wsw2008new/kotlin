@@ -90,9 +90,8 @@ object DataFlowValueFactory {
             //
             // But there are some problem with types built on type parameters, e.g.
             // fun <T : Any?> foo(x: T) = x!!.hashCode() // there no way in type system to denote that `x!!` is not nullable
-            return DataFlowValue(expression,
+            return DataFlowValue(ExpressionIdentifierInfo(expression, false),
                                  type,
-                                 OTHER,
                                  Nullability.NOT_NULL)
         }
 
@@ -101,16 +100,14 @@ object DataFlowValueFactory {
         }
 
         val result = getIdForStableIdentifier(expression, bindingContext, containingDeclarationOrModule)
-        return DataFlowValue(if (result === IdentifierInfo.NO) expression else result.id,
-                             type,
-                             result.kind,
-                             type.immanentNullability)
+        return DataFlowValue(if (result === IdentifierInfo.NO) ExpressionIdentifierInfo(expression, false) else result,
+                             type, type.immanentNullability)
     }
 
     @JvmStatic
     fun createDataFlowValueForStableReceiver(receiver: ReceiverValue): DataFlowValue {
         val type = receiver.type
-        return DataFlowValue(receiver, type, STABLE_VALUE, type.immanentNullability)
+        return DataFlowValue(IdentifierInfo.Receiver(receiver), type, type.immanentNullability)
     }
 
     @JvmStatic
@@ -141,69 +138,38 @@ object DataFlowValueFactory {
             usageContainingModule: ModuleDescriptor?
     ): DataFlowValue {
         val type = variableDescriptor.type
-        return DataFlowValue(variableDescriptor, type,
-                             variableKind(variableDescriptor, usageContainingModule,
-                                          bindingContext, property),
-                             type.immanentNullability)
+        return DataFlowValue(IdentifierInfo.Variable(variableDescriptor, variableKind(variableDescriptor, usageContainingModule,
+                                                                                      bindingContext, property)),
+                             type, type.immanentNullability)
     }
 
     private fun createDataFlowValueForComplexExpression(
             expression: KtExpression,
             type: KotlinType
-    ) = DataFlowValue(expression, type, Kind.STABLE_COMPLEX_EXPRESSION, type.immanentNullability)
+    ) = DataFlowValue(ExpressionIdentifierInfo(expression, true), type, type.immanentNullability)
 
     private val KotlinType.immanentNullability: Nullability
         get() = if (TypeUtils.isNullableType(this)) Nullability.UNKNOWN else Nullability.NOT_NULL
 
-    sealed class IdentifierInfo(open val id: Any?, val kind: DataFlowValue.Kind, val isPackage: Boolean) {
-        object NO : IdentifierInfo(null, DataFlowValue.Kind.OTHER, false) {
-            override fun toString() = "NO_IDENTIFIER_INFO"
+    private data class PostfixId(val expression: KtPostfixExpression, val argumentId: Any)
+
+    private class PostfixIdentifierInfo(override val id: PostfixId, kind: DataFlowValue.Kind) : IdentifierInfo(id, kind)
+
+    private data class ExpressionId(val expression: KtExpression)
+
+    private class ExpressionIdentifierInfo(expression: KtExpression, isComplex: Boolean) :
+            IdentifierInfo(ExpressionId(expression),
+                           if (isComplex) STABLE_COMPLEX_EXPRESSION else OTHER)
+
+    private fun postfix(expression: KtPostfixExpression, argumentInfo: IdentifierInfo): IdentifierInfo {
+        val argumentId = argumentInfo.id
+        return if (argumentId == null) {
+            IdentifierInfo.NO
         }
-
-        class Variable(override val id: VariableDescriptor, kind: DataFlowValue.Kind) : IdentifierInfo(id, kind, false)
-
-        class Receiver(override val id: ReceiverValue) : IdentifierInfo(id, DataFlowValue.Kind.STABLE_VALUE, false)
-
-        class PackageOrClass(override val id: Any) : IdentifierInfo(id, DataFlowValue.Kind.STABLE_VALUE, true)
-
-        data class QualifiedId(val receiverId: Any, val selectorId: Any, val safe: Boolean)
-
-        class Qualified(override val id: QualifiedId, kind: DataFlowValue.Kind, isPackage: Boolean) : IdentifierInfo(id, kind, isPackage)
-
-        data class PostfixId(val expression: KtPostfixExpression, val argumentId: Any)
-
-        class Postfix(override val id: PostfixId, kind: DataFlowValue.Kind) : IdentifierInfo(id, kind, false)
-
-        companion object {
-
-            fun qualified(receiverInfo: IdentifierInfo?, selectorInfo: IdentifierInfo, safe: Boolean): IdentifierInfo {
-                val receiverId = receiverInfo?.id
-                val selectorId = selectorInfo.id
-                return if (selectorId == null || receiverInfo === NO) {
-                    NO
-                }
-                else if (receiverId == null || receiverInfo == null || receiverInfo.isPackage) {
-                    selectorInfo
-                }
-                else {
-                    Qualified(QualifiedId(receiverId, selectorId, safe),
-                              if (receiverInfo.kind.isStable()) selectorInfo.kind else DataFlowValue.Kind.OTHER,
-                              false)
-                }
-            }
-
-            fun postfix(expression: KtPostfixExpression, argumentInfo: IdentifierInfo): IdentifierInfo {
-                val argumentId = argumentInfo.id
-                return if (argumentId == null) {
-                    NO
-                }
-                else {
-                    Postfix(PostfixId(expression, argumentId), argumentInfo.kind)
-                }
-            }
+        else {
+            PostfixIdentifierInfo(PostfixId(expression, argumentId), argumentInfo.kind)
         }
     }
-
     private fun getIdForStableIdentifier(
             expression: KtExpression?,
             bindingContext: BindingContext,
@@ -233,8 +199,7 @@ object DataFlowValueFactory {
             is KtPostfixExpression -> {
                 val operationType = expression.operationReference.getReferencedNameElementType()
                 if (operationType === KtTokens.PLUSPLUS || operationType === KtTokens.MINUSMINUS) {
-                    IdentifierInfo.postfix(expression, getIdForStableIdentifier(
-                            expression.baseExpression, bindingContext, containingDeclarationOrModule))
+                    postfix(expression, getIdForStableIdentifier(expression.baseExpression, bindingContext, containingDeclarationOrModule))
                 }
                 else {
                     IdentifierInfo.NO

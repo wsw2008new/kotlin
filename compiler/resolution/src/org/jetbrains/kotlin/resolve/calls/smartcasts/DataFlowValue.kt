@@ -24,7 +24,11 @@ import org.jetbrains.kotlin.types.KotlinType
  * This class describes an arbitrary object which has some value in data flow analysis.
  * In general case it's some r-value.
  */
-class DataFlowValue(val id: Any?, val type: KotlinType, val kind: DataFlowValue.Kind, val immanentNullability: Nullability) {
+class DataFlowValue(val identifierInfo: IdentifierInfo, val type: KotlinType, val immanentNullability: Nullability) {
+
+    val id: Any? get() = identifierInfo.id
+
+    val kind: Kind get() = identifierInfo.kind
 
     enum class Kind(private val str: String, val description: String = str) {
         // Local value, or parameter, or private / internal member value without open / custom getter,
@@ -90,11 +94,9 @@ class DataFlowValue(val id: Any?, val type: KotlinType, val kind: DataFlowValue.
     companion object {
 
         @JvmStatic
-        fun nullValue(builtIns: KotlinBuiltIns) = DataFlowValue(
-                Object(), builtIns.nullableNothingType, Kind.OTHER, Nullability.NULL
-        )
+        fun nullValue(builtIns: KotlinBuiltIns) = DataFlowValue(IdentifierInfo.NULL, builtIns.nullableNothingType, Nullability.NULL)
 
         @JvmField
-        val ERROR = DataFlowValue(Object(), ErrorUtils.createErrorType("Error type for data flow"), Kind.OTHER, Nullability.IMPOSSIBLE)
+        val ERROR = DataFlowValue(IdentifierInfo.ERROR, ErrorUtils.createErrorType("Error type for data flow"), Nullability.IMPOSSIBLE)
     }
 }
