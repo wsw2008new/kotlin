@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue.Kind.OTHER
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue.Kind.STABLE_VALUE
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
+import org.jetbrains.kotlin.types.KotlinType
 
 interface IdentifierInfo {
 
@@ -66,23 +67,29 @@ interface IdentifierInfo {
         val kind: DataFlowValue.Kind get() = if (receiverInfo.kind.isStable()) selectorInfo.kind else OTHER
     }
 
-    data class Qualified(override val id: QualifiedId) : IdentifierInfo {
+    class Qualified(override val id: QualifiedId, val receiverType: KotlinType?) : IdentifierInfo {
         override val kind: DataFlowValue.Kind get() = id.kind
+
+        val receiverDataFlowValue = receiverType?.let { DataFlowValue(id.receiverInfo, it) }
+
+        override fun equals(other: Any?) = other is Qualified && id == other.id
+
+        override fun hashCode() = id.hashCode()
     }
 
     companion object {
 
-        fun qualified(receiverInfo: IdentifierInfo?, selectorInfo: IdentifierInfo, safe: Boolean): IdentifierInfo {
-            val receiverId = receiverInfo?.id
-            val selectorId = selectorInfo.id
-            return if (selectorId == null || receiverInfo === NO) {
+        fun qualified(receiverInfo: IdentifierInfo, receiverType: KotlinType?,
+                      selectorInfo: IdentifierInfo, safe: Boolean): IdentifierInfo {
+            val receiverId = receiverInfo.id
+            return if (selectorInfo == NO || receiverId === null) {
                 NO
             }
-            else if (receiverId == null || receiverInfo == null || receiverInfo is PackageOrClass) {
+            else if (receiverInfo is PackageOrClass) {
                 selectorInfo
             }
             else {
-                Qualified(QualifiedId(receiverInfo, selectorInfo, safe))
+                Qualified(QualifiedId(receiverInfo, selectorInfo, safe), receiverType)
             }
         }
     }

@@ -90,12 +90,13 @@ internal class DelegatingDataFlowInfo private constructor(
                 }
             }
 
-    private fun putNullability(map: MutableMap<DataFlowValue, Nullability>, value: DataFlowValue, nullability: Nullability): Boolean {
+    private fun putNullability(map: MutableMap<DataFlowValue, Nullability>, value: DataFlowValue,
+                               nullability: Nullability, affectReceiver: Boolean = true): Boolean {
         map.put(value, nullability)
 
         val identifierInfo = value.identifierInfo
-        if (nullability.canBeNull() && identifierInfo is IdentifierInfo.Qualified && identifierInfo.id.safe) {
-
+        if (affectReceiver && !nullability.canBeNull() && identifierInfo is IdentifierInfo.Qualified && identifierInfo.id.safe) {
+            identifierInfo.receiverDataFlowValue?.let { putNullability(map, it, nullability) }
         }
 
         return nullability != getCollectedNullability(value)
@@ -141,7 +142,7 @@ internal class DelegatingDataFlowInfo private constructor(
     override fun assign(a: DataFlowValue, b: DataFlowValue): DataFlowInfo {
         val nullability = Maps.newHashMap<DataFlowValue, Nullability>()
         val nullabilityOfB = getPredictableNullability(b)
-        putNullability(nullability, a, nullabilityOfB)
+        putNullability(nullability, a, nullabilityOfB, affectReceiver = false)
 
         val newTypeInfo = newTypeInfo()
         var typesForB = getPredictableTypes(b)
@@ -218,7 +219,7 @@ internal class DelegatingDataFlowInfo private constructor(
         val nullabilityOfA = getPredictableNullability(a)
         val nullabilityOfB = getPredictableNullability(b)
 
-        var changed = putNullability(builder, a, nullabilityOfA.refine(nullabilityOfB.invert())) or
+        val changed = putNullability(builder, a, nullabilityOfA.refine(nullabilityOfB.invert())) or
                       putNullability(builder, b, nullabilityOfB.refine(nullabilityOfA.invert()))
         return if (changed) create(this, ImmutableMap.copyOf(builder), EMPTY_TYPE_INFO) else this
     }
