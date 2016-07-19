@@ -63,8 +63,17 @@ interface IdentifierInfo {
         override val kind = STABLE_VALUE
     }
 
-    data class QualifiedId(val receiverInfo: IdentifierInfo, val selectorInfo: IdentifierInfo, val safe: Boolean) {
+    class QualifiedId(val receiverInfo: IdentifierInfo, val selectorInfo: IdentifierInfo, val safe: Boolean) {
         val kind: DataFlowValue.Kind get() = if (receiverInfo.kind.isStable()) selectorInfo.kind else OTHER
+
+        override fun equals(other: Any?) =
+                other is QualifiedId && receiverInfo == other.receiverInfo && selectorInfo == other.selectorInfo
+
+        override fun hashCode(): Int {
+            var result = receiverInfo.hashCode()
+            result = 31 * result + selectorInfo.hashCode()
+            return result
+        }
     }
 
     class Qualified(override val id: QualifiedId, val receiverType: KotlinType?) : IdentifierInfo {
