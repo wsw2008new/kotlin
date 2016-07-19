@@ -17,25 +17,44 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.util.TextRange
+import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
-class RemoveExplicitTypeIntention : SelfTargetingIntention<KtCallableDeclaration>(KtCallableDeclaration::class.java, "Remove explicit type specification") {
-    override fun isApplicableTo(element: KtCallableDeclaration, caretOffset: Int): Boolean {
-        if (element.containingFile is KtCodeFragment) return false
-        if (element.typeReference == null) return false
+class RemoveSetterParameterTypeInspection(
+        val intention: RemoveExplicitTypeIntention = RemoveExplicitTypeIntention()
+) : IntentionBasedInspection<KtCallableDeclaration>(
+        intention,
+        { intention.isSetterParameter(it) }
+)
 
-        val initializer = (element as? KtWithExpressionInitializer)?.initializer
-        if (initializer != null && initializer.textRange.containsOffset(caretOffset)) return false
+class RemoveExplicitTypeIntention : SelfTargetingRangeIntention<KtCallableDeclaration>(
+        KtCallableDeclaration::class.java,
+        "Remove explicit type specification"
+) {
 
-        return when (element) {
-            is KtProperty -> initializer != null
-            is KtNamedFunction -> !element.hasBlockBody() && initializer != null
-            is KtParameter -> element.isLoopParameter
-            else -> false
+    private val KtParameter.isSetterParameter: Boolean get() = (parent?.parent as? KtPropertyAccessor)?.isSetter ?: false
+
+    fun isSetterParameter(element: KtCallableDeclaration) =
+            element is KtParameter && element.isSetterParameter
+
+    override fun applicabilityRange(element: KtCallableDeclaration): TextRange? {
+        if (element.containingFile is KtCodeFragment) return null
+        if (element.typeReference == null) return null
+
+        if (element is KtParameter && (element.isLoopParameter || element.isSetterParameter)) {
+            return TextRange(element.startOffset, element.endOffset)
         }
+
+        val initializer = (element as? KtWithExpressionInitializer)?.initializer ?: return null
+        if (element !is KtProperty && (element !is KtNamedFunction || element.hasBlockBody())) return null
+
+        return TextRange(element.startOffset, initializer.startOffset - 1)
     }
 
     override fun applyTo(element: KtCallableDeclaration, editor: Editor?) {
-        element.setTypeReference(null)
+        element.typeReference = null
     }
 }
