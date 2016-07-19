@@ -12176,6 +12176,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("createdType.kt")
+                public void testCreatedType() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/mapping/types/createdType.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("genericArrayElementType.kt")
                 public void testGenericArrayElementType() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/mapping/types/genericArrayElementType.kt");
