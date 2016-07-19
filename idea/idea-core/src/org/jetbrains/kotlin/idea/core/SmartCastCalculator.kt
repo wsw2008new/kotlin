@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.core
 
-import com.intellij.openapi.util.Pair
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -28,10 +27,7 @@ import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
-import org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability
+import org.jetbrains.kotlin.resolve.calls.smartcasts.*
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.types.KotlinType
@@ -88,7 +84,8 @@ class SmartCastCalculator(
             val receiverId = DataFlowValueFactory.createDataFlowValue(receiver, receiverType, bindingContext, containingDeclarationOrModule).id
             dataFlowValueToEntity = { value ->
                 val id = value.id
-                if (id is Pair<*, *> && id.first == receiverId) id.second as? VariableDescriptor else null
+                if (id is IdentifierInfo.QualifiedId && id.receiverInfo.id == receiverId) id.selectorInfo.id as? VariableDescriptor
+                else null
             }
         }
         else {
@@ -97,9 +94,9 @@ class SmartCastCalculator(
                 when(id) {
                     is VariableDescriptor, is ImplicitReceiver -> return id
 
-                    is Pair<*, *> -> {
-                        val first = id.first
-                        val second = id.second
+                    is IdentifierInfo.QualifiedId -> {
+                        val first = id.receiverInfo.id
+                        val second = id.selectorInfo.id
                         if (first !is ImplicitReceiver || second !is VariableDescriptor) return null
                         if (resolutionScope?.findNearestReceiverForVariable(second)?.value != first) return null
                         return second

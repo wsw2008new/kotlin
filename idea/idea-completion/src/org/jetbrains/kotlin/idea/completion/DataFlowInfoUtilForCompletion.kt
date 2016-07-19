@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
+import org.jetbrains.kotlin.resolve.calls.smartcasts.IdentifierInfo
 
 fun renderDataFlowValue(value: DataFlowValue): String? {
     // If it is not a stable identifier, there's no point in rendering it
@@ -32,7 +33,7 @@ fun renderDataFlowValue(value: DataFlowValue): String? {
             is ImplicitReceiver -> "this@${id.declarationDescriptor.name}"
             is VariableDescriptor -> id.name.asString()
             is PackageViewDescriptor -> id.fqName.asString()
-            is com.intellij.openapi.util.Pair<*, *> -> renderId(id.first) + "." + renderId(id.second)
+            is IdentifierInfo.QualifiedId -> renderId(id.receiverInfo.id) + "." + renderId(id.selectorInfo.id)
             else -> null
         }
     }

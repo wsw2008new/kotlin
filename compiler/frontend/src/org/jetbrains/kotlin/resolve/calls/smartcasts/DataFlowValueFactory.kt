@@ -146,11 +146,9 @@ object DataFlowValueFactory {
         override val kind: DataFlowValue.Kind get() = id.argumentInfo.kind
     }
 
-    private data class ExpressionId(val expression: KtExpression)
-
     private class ExpressionIdentifierInfo(expression: KtExpression, isComplex: Boolean) : IdentifierInfo {
 
-        override val id = ExpressionId(expression)
+        override val id = expression
 
         override val kind = if (isComplex) STABLE_COMPLEX_EXPRESSION else OTHER
 
