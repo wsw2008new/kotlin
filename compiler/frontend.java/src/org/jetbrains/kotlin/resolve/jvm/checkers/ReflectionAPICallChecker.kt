@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
 import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
@@ -48,6 +49,9 @@ class ReflectionAPICallChecker(private val module: ModuleDescriptor, storageMana
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
         if (isReflectionAvailable) return
 
+        // Do not report the diagnostic on built-in sources
+        if (isReflectionSource(reportOn)) return
+
         val descriptor = resolvedCall.resultingDescriptor
         val containingClass = descriptor.containingDeclaration as? ClassDescriptor ?: return
         if (!ReflectionTypes.isReflectionClass(containingClass)) return
@@ -65,5 +69,11 @@ class ReflectionAPICallChecker(private val module: ModuleDescriptor, storageMana
         }
 
         context.trace.report(NO_REFLECTION_IN_CLASS_PATH.on(reportOn))
+    }
+
+    private fun isReflectionSource(reportOn: PsiElement): Boolean {
+        val file = reportOn.containingFile as? KtFile ?: return false
+        val fqName = file.packageFqName.asString()
+        return fqName == "kotlin.reflect" || fqName.startsWith("kotlin.reflect.")
     }
 }
