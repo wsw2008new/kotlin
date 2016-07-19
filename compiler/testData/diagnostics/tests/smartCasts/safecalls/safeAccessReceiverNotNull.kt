@@ -5,19 +5,19 @@
 fun kt6840_1(s: String?) {
     val hash = s?.hashCode()
     if (hash != null) {
-        s.length
+        s<!UNSAFE_CALL!>.<!>length
     }
 }
 
 fun kt6840_2(s: String?) {
     if (s?.hashCode() != null) {
-        s.length
+        <!DEBUG_INFO_SMARTCAST!>s<!>.length
     }
 }
 
 fun kt1635(s: String?) {
     s?.hashCode()!!
-    s.hashCode()
+    <!DEBUG_INFO_SMARTCAST!>s<!>.hashCode()
 }
 
 fun kt2127() {
@@ -49,18 +49,18 @@ fun kt4565_1(a: SomeClass?) {
         <!DEBUG_INFO_SMARTCAST!>a<!>.data.hashCode()
     }
     if (a?.data is String) {
-        a.data.length
-        data.length
+        a<!UNSAFE_CALL!>.<!>data.<!UNRESOLVED_REFERENCE!>length<!>
+        data.<!UNRESOLVED_REFERENCE!>length<!>
     }
 }
 
 fun kt4565_2(a: SomeClass?) {
     if (a as? SubClass != null) {
-        a.extra.hashCode()
+        a.<!UNRESOLVED_REFERENCE!>extra<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>hashCode<!>()
     }
     val extra = (a as? SubClass)?.extra
     if (extra != null) {
-        a.extra.hashCode()
+        a.<!UNRESOLVED_REFERENCE!>extra<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>hashCode<!>()
     }
 }
 
@@ -85,13 +85,13 @@ fun String.correct() = true
 
 fun kt8492(s: String?) {
     if (s?.correct() ?: false) {
-        s.length
+        s<!UNSAFE_CALL!>.<!>length
     }
 }
 
 fun kt11085(prop: String?) {
     when (prop?.hashCode()) {
-        1 -> prop.length
+        1 -> <!DEBUG_INFO_SMARTCAST!>prop<!>.length
     }
 }
 
@@ -107,3 +107,14 @@ fun kt11313(arg: HttpExchange?) {
 fun handleGet(arg: HttpExchange) = arg
 
 fun handlePost(arg: HttpExchange) = arg
+
+class Wrapper {
+    fun unwrap(): String? = "Something not consistent"
+}
+
+fun falsePositive(w: Wrapper) {
+    if (w.unwrap() != null) {
+        // Here we should NOT have smart cast
+        <!SMARTCAST_IMPOSSIBLE!>w.unwrap()<!>.length
+    }
+}

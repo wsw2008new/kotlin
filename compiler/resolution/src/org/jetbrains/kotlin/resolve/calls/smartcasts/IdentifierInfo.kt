@@ -91,7 +91,7 @@ interface IdentifierInfo {
         fun qualified(receiverInfo: IdentifierInfo, receiverType: KotlinType?,
                       selectorInfo: IdentifierInfo, safe: Boolean): IdentifierInfo {
             val receiverId = receiverInfo.id
-            return if (selectorInfo == NO || receiverId === null) {
+            return if (receiverId === null) {
                 NO
             }
             else if (receiverInfo is PackageOrClass) {

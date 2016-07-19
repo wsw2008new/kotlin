@@ -1,5 +1,6 @@
 package
 
+public fun falsePositive(/*0*/ w: Wrapper): kotlin.Unit
 public fun getA(): A?
 public fun handleGet(/*0*/ arg: HttpExchange): HttpExchange
 public fun handlePost(/*0*/ arg: HttpExchange): HttpExchange
@@ -49,4 +50,12 @@ public final class SubClass : SomeClass {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Wrapper {
+    public constructor Wrapper()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public final fun unwrap(): kotlin.String?
 }
