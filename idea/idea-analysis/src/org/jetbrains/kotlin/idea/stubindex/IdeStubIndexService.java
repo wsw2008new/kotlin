@@ -24,14 +24,18 @@ import com.intellij.util.io.StringRef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassInfo;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
+import org.jetbrains.kotlin.lexer.KtModifierKeywordToken;
+import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtClassOrObject;
+import org.jetbrains.kotlin.psi.KtDeclarationModifierList;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtScript;
 import org.jetbrains.kotlin.psi.stubs.*;
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 import org.jetbrains.kotlin.psi.stubs.elements.StubIndexService;
 import org.jetbrains.kotlin.util.TypeIndexUtilKt;
 
@@ -117,6 +121,18 @@ public class IdeStubIndexService extends StubIndexService {
     private static void indexSuperNames(KotlinClassOrObjectStub<? extends KtClassOrObject> stub, IndexSink sink) {
         for (String superName : stub.getSuperNames()) {
             sink.occurrence(KotlinSuperClassIndex.getInstance().getKey(), superName);
+        }
+
+        if (!(stub instanceof KotlinClassStub)) {
+            return;
+        }
+        StubElement<?> childStub = stub.findChildStubByType(KtStubElementTypes.MODIFIER_LIST);
+        if (!(childStub instanceof KotlinModifierListStub)) {
+            return;
+        }
+        KotlinModifierListStub modifierListStub = (KotlinModifierListStub) childStub;
+        if (modifierListStub.hasModifier(KtTokens.ENUM_KEYWORD)) {
+            sink.occurrence(KotlinSuperClassIndex.getInstance().getKey(), Enum.class.getSimpleName());
         }
     }
 
