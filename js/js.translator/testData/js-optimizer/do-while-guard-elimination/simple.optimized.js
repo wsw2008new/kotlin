@@ -11,5 +11,5 @@ function box() {
 
     if (sum != 50) return "fail: " + sum;
 
-    return "OK"
+    return "OK";
 }

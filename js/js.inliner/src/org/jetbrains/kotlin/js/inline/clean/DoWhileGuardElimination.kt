@@ -19,11 +19,10 @@ package org.jetbrains.kotlin.js.inline.clean
 import com.google.dart.compiler.backend.js.ast.*
 
 internal class DoWhileGuardElimination(private val root: JsStatement) {
-    private val doWhileGuards = mutableSetOf<JsName>()
+    private val guardLabels = mutableSetOf<JsName>()
     private var hasChanges = false
-    private var currentLoopLabel: JsName? = null
-    private val loopGuardMap = mutableMapOf<JsDoWhile, Pair<JsName, JsStatement>>()
-    private val labelGuardMap = mutableMapOf<JsName, JsName?>()
+    private val loopGuardMap = mutableMapOf<JsDoWhile, JsLabel>()
+    private val guardToLoopLabel = mutableMapOf<JsName, JsName?>()
     private var currentGuard: JsName? = null
 
     fun apply(): Boolean {
@@ -37,44 +36,46 @@ internal class DoWhileGuardElimination(private val root: JsStatement) {
             override fun visitLabel(x: JsLabel) {
                 val statement = x.statement
                 if (statement is JsDoWhile) {
-                    currentLoopLabel = x.name
+                    processDoWhile(statement, x.name)
                 }
-
-                super.visitLabel(x)
+                else {
+                    super.visitLabel(x)
+                }
             }
 
-            override fun visitDoWhile(x: JsDoWhile) {
+            override fun visitDoWhile(x: JsDoWhile) = processDoWhile(x, null)
+
+            private fun processDoWhile(x: JsDoWhile, label: JsName?) {
                 val body = x.body
-                val (candidate, guardedBody) = when (body) {
+                val guard = when (body) {
                     is JsBlock -> {
                         val firstStatement = body.statements.first()
                         if (firstStatement is JsLabel && body.statements.size == 1) {
-                            Pair(firstStatement.name, firstStatement.statement)
+                            firstStatement
                         }
                         else {
-                            Pair(null, null)
+                            null
                         }
                     }
-                    is JsLabel -> Pair(body.name, body.statement)
-                    else -> Pair(null, null)
+                    is JsLabel -> body
+                    else -> null
                 }
 
-                if (candidate != null) {
-                    doWhileGuards += candidate
-                    loopGuardMap[x] = Pair(candidate, guardedBody!!)
-                    labelGuardMap[candidate] = currentLoopLabel
+                if (guard != null) {
+                    guardLabels += guard.name
+                    loopGuardMap[x] = guard
+                    guardToLoopLabel[guard.name] = label
                 }
 
-                withCurrentGuard(candidate) { super.visitDoWhile(x) }
+                withCurrentGuard(guard?.name) { super.visitDoWhile(x) }
             }
 
             override fun visitBreak(x: JsBreak) {
-                val guardName = x.label?.name ?: currentGuard
-                if (guardName != null) {
-                    val loopLabel = labelGuardMap[guardName]
-                    if (loopLabel == null && currentGuard != guardName) {
-                        doWhileGuards -= guardName
-                    }
+                val guardLabel = x.label?.name ?: return
+
+                val loopLabel = guardToLoopLabel[guardLabel]
+                if (loopLabel == null && currentGuard != guardLabel) {
+                    guardLabels -= guardLabel
                 }
             }
 
@@ -104,10 +105,9 @@ internal class DoWhileGuardElimination(private val root: JsStatement) {
     private fun perform() {
         object : JsVisitorWithContextImpl() {
             override fun visit(x: JsDoWhile, ctx: JsContext<JsNode>): Boolean {
-                loopGuardMap[x]?.let {
-                    val (guardName, guardedBody) = it
-                    if (guardName in doWhileGuards) {
-                        x.body = accept(guardedBody)
+                loopGuardMap[x]?.let { guard ->
+                    if (guard.name in guardLabels) {
+                        x.body = accept(guard.statement)
                         hasChanges = true
                         return false
                     }
@@ -117,8 +117,8 @@ internal class DoWhileGuardElimination(private val root: JsStatement) {
 
             override fun visit(x: JsBreak, ctx: JsContext<JsNode>): Boolean {
                 val name = x.label?.name
-                if (name in doWhileGuards) {
-                    val target = labelGuardMap[name]
+                if (name in guardLabels) {
+                    val target = guardToLoopLabel[name]
                     ctx.replaceMe(JsContinue(target?.makeRef()))
                     hasChanges = true
                 }
