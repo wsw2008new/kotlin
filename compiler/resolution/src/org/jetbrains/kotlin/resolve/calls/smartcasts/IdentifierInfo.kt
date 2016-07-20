@@ -17,9 +17,14 @@
 package org.jetbrains.kotlin.resolve.calls.smartcasts
 
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue.Kind.OTHER
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue.Kind.STABLE_VALUE
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -37,15 +42,22 @@ interface IdentifierInfo {
 
     object NULL : IdentifierInfo {
         override val id = NullId
+
+        override fun toString() = "NULL"
     }
 
     object ErrorId
 
     object ERROR : IdentifierInfo {
         override val id = ErrorId
+
+        override fun toString() = "ERROR"
     }
 
     class Variable(override val id: VariableDescriptor, override val kind: DataFlowValue.Kind) : IdentifierInfo {
+
+        val name: Name get() = id.name
+
         override fun equals(other: Any?) = other is Variable && id == other.id && kind.isStable() == other.kind.isStable()
 
         override fun hashCode(): Int {
@@ -53,14 +65,26 @@ interface IdentifierInfo {
             result = 31 * result + id.hashCode()
             return result
         }
+
+        override fun toString() = id.toString()
     }
 
     data class Receiver(override val id: ReceiverValue) : IdentifierInfo {
+
+        val name: Name? get() = (id as? ImplicitReceiver)?.declarationDescriptor?.name
+
         override val kind = STABLE_VALUE
+
+        override fun toString() = id.toString()
     }
 
     data class PackageOrClass(override val id: DeclarationDescriptor) : IdentifierInfo {
+
+        val fqName: FqName get() = if (id is PackageViewDescriptor) id.fqName else id.fqNameSafe
+
         override val kind = STABLE_VALUE
+
+        override fun toString() = id.toString()
     }
 
     class QualifiedId(val receiverInfo: IdentifierInfo, val selectorInfo: IdentifierInfo, val safe: Boolean) {
@@ -74,6 +98,8 @@ interface IdentifierInfo {
             result = 31 * result + selectorInfo.hashCode()
             return result
         }
+
+        override fun toString() = "$receiverInfo(?).$selectorInfo"
     }
 
     class Qualified(override val id: QualifiedId, val receiverType: KotlinType?) : IdentifierInfo {
@@ -81,9 +107,15 @@ interface IdentifierInfo {
 
         val receiverDataFlowValue = receiverType?.let { DataFlowValue(id.receiverInfo, it) }
 
+        val receiverInfo: IdentifierInfo get() = id.receiverInfo
+
+        val selectorInfo: IdentifierInfo get() = id.selectorInfo
+
         override fun equals(other: Any?) = other is Qualified && id == other.id
 
         override fun hashCode() = id.hashCode()
+
+        override fun toString() = id.toString()
     }
 
     companion object {

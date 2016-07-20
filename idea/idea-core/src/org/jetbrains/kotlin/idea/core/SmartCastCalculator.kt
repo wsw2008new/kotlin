@@ -81,25 +81,31 @@ class SmartCastCalculator(
         val dataFlowValueToEntity: (DataFlowValue) -> Any?
         if (receiver != null) {
             val receiverType = bindingContext.getType(receiver) ?: return emptyMap()
-            val receiverId = DataFlowValueFactory.createDataFlowValue(receiver, receiverType, bindingContext, containingDeclarationOrModule).id
+            val receiverIdentifierInfo = DataFlowValueFactory.createDataFlowValue(
+                    receiver, receiverType, bindingContext, containingDeclarationOrModule
+            ).identifierInfo
             dataFlowValueToEntity = { value ->
-                val id = value.id
-                if (id is IdentifierInfo.QualifiedId && id.receiverInfo.id == receiverId) id.selectorInfo.id as? VariableDescriptor
+                val identifierInfo = value.identifierInfo
+                if (identifierInfo is IdentifierInfo.Qualified && identifierInfo.receiverInfo == receiverIdentifierInfo) {
+                    (identifierInfo.selectorInfo as? IdentifierInfo.Variable)?.id
+                }
                 else null
             }
         }
         else {
             dataFlowValueToEntity = fun (value: DataFlowValue): Any? {
-                val id = value.id
-                when(id) {
-                    is VariableDescriptor, is ImplicitReceiver -> return id
+                val identifierInfo = value.identifierInfo
+                when(identifierInfo) {
+                    is IdentifierInfo.Variable -> return identifierInfo.id
+                    is IdentifierInfo.Receiver -> return identifierInfo.id as? ImplicitReceiver
 
-                    is IdentifierInfo.QualifiedId -> {
-                        val first = id.receiverInfo.id
-                        val second = id.selectorInfo.id
-                        if (first !is ImplicitReceiver || second !is VariableDescriptor) return null
-                        if (resolutionScope?.findNearestReceiverForVariable(second)?.value != first) return null
-                        return second
+                    is IdentifierInfo.Qualified -> {
+                        val receiverInfo = identifierInfo.receiverInfo
+                        val selectorInfo = identifierInfo.selectorInfo
+                        if (receiverInfo !is IdentifierInfo.Receiver || selectorInfo !is IdentifierInfo.Variable) return null
+                        if (receiverInfo.id !is ImplicitReceiver) return null
+                        if (resolutionScope?.findNearestReceiverForVariable(selectorInfo.id)?.value != receiverInfo.id) return null
+                        return selectorInfo.id
                     }
 
                     else -> return null

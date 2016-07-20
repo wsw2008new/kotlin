@@ -21,21 +21,22 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.smartcasts.IdentifierInfo
 
 fun renderDataFlowValue(value: DataFlowValue): String? {
     // If it is not a stable identifier, there's no point in rendering it
     if (!value.isPredictable) return null
 
-    fun renderId(id: Any?): String? {
-        return when (id) {
-            is KtExpression -> id.text
-            is ImplicitReceiver -> "this@${id.declarationDescriptor.name}"
-            is VariableDescriptor -> id.name.asString()
-            is PackageViewDescriptor -> id.fqName.asString()
-            is IdentifierInfo.QualifiedId -> renderId(id.receiverInfo.id) + "." + renderId(id.selectorInfo.id)
+    fun renderId(identifierInfo: IdentifierInfo): String? {
+        return when (identifierInfo) {
+            is DataFlowValueFactory.ExpressionIdentifierInfo -> identifierInfo.text
+            is IdentifierInfo.Receiver -> identifierInfo.name?.let { "this@$it" }
+            is IdentifierInfo.Variable -> identifierInfo.name.asString()
+            is IdentifierInfo.PackageOrClass -> identifierInfo.fqName.asString()
+            is IdentifierInfo.Qualified -> renderId(identifierInfo.receiverInfo) + "." + renderId(identifierInfo.selectorInfo)
             else -> null
         }
     }
-    return renderId(value.id)
+    return renderId(value.identifierInfo)
 }

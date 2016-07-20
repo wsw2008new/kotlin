@@ -140,21 +140,29 @@ object DataFlowValueFactory {
             type: KotlinType
     ) = DataFlowValue(ExpressionIdentifierInfo(expression, true), type)
 
-    private data class PostfixId(val expression: KtPostfixExpression, val argumentInfo: IdentifierInfo)
+    private data class PostfixId(val expression: KtPostfixExpression, val argumentInfo: IdentifierInfo) {
+        override fun toString() = "$argumentInfo (postfix)"
+    }
 
     private data class PostfixIdentifierInfo(override val id: PostfixId) : IdentifierInfo {
         override val kind: DataFlowValue.Kind get() = id.argumentInfo.kind
+
+        override fun toString() = id.toString()
     }
 
-    private class ExpressionIdentifierInfo(expression: KtExpression, isComplex: Boolean) : IdentifierInfo {
+    class ExpressionIdentifierInfo(expression: KtExpression, isComplex: Boolean) : IdentifierInfo {
 
         override val id = expression
 
         override val kind = if (isComplex) STABLE_COMPLEX_EXPRESSION else OTHER
+        
+        val text: String? get() = id.text
 
         override fun equals(other: Any?) = other is ExpressionIdentifierInfo && id == other.id
 
         override fun hashCode() = id.hashCode()
+
+        override fun toString() = id.text ?: "(empty expression)"
     }
 
     private fun postfix(expression: KtPostfixExpression, argumentInfo: IdentifierInfo) =

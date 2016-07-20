@@ -32,8 +32,6 @@ class DataFlowValue(val identifierInfo: IdentifierInfo,
                     val type: KotlinType,
                     val immanentNullability: Nullability = type.immanentNullability) {
 
-    val id: Any? get() = identifierInfo.id
-
     val kind: Kind get() = identifierInfo.kind
 
     enum class Kind(private val str: String, val description: String = str) {
@@ -86,7 +84,7 @@ class DataFlowValue(val identifierInfo: IdentifierInfo,
     }
 
     override fun toString(): String {
-        return kind.toString() + " " + id?.toString() + " " + immanentNullability
+        return kind.toString() + identifierInfo.toString() + " " + immanentNullability
     }
 
     override fun hashCode(): Int {
