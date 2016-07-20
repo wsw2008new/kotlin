@@ -28,15 +28,16 @@ fun renderDataFlowValue(value: DataFlowValue): String? {
     // If it is not a stable identifier, there's no point in rendering it
     if (!value.isPredictable) return null
 
-    fun renderId(identifierInfo: IdentifierInfo): String? {
-        return when (identifierInfo) {
-            is DataFlowValueFactory.ExpressionIdentifierInfo -> identifierInfo.text
-            is IdentifierInfo.Receiver -> identifierInfo.name?.let { "this@$it" }
-            is IdentifierInfo.Variable -> identifierInfo.name.asString()
-            is IdentifierInfo.PackageOrClass -> identifierInfo.fqName.asString()
-            is IdentifierInfo.Qualified -> renderId(identifierInfo.receiverInfo) + "." + renderId(identifierInfo.selectorInfo)
+    fun renderId(identifierInfo: IdentifierInfo): String? = with (identifierInfo) {
+        when (this) {
+            is DataFlowValueFactory.ExpressionIdentifierInfo -> expression.text
+            is IdentifierInfo.Receiver -> (this.value as? ImplicitReceiver)?.declarationDescriptor?.name?.let { "this@$it" }
+            is IdentifierInfo.Variable -> variable.name.asString()
+            is IdentifierInfo.PackageOrClass -> (descriptor as? PackageViewDescriptor)?.let { it.fqName.asString() }
+            is IdentifierInfo.Qualified -> renderId(receiverInfo) + "." + renderId(selectorInfo)
             else -> null
         }
     }
+
     return renderId(value.identifierInfo)
 }

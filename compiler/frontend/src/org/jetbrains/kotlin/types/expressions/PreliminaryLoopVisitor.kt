@@ -37,7 +37,7 @@ class PreliminaryLoopVisitor private constructor() : AssignedVariablesSearcher()
             // Only predictable variables are under interest here
             val identifierInfo = value.identifierInfo
             if (value.kind == DataFlowValue.Kind.PREDICTABLE_VARIABLE && identifierInfo is IdentifierInfo.Variable) {
-                if (hasWriters(identifierInfo.id)) {
+                if (hasWriters(identifierInfo.variable)) {
                     valueSetToClear.add(value)
                 }
             }

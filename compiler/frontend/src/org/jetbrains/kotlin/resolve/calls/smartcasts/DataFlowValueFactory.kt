@@ -140,37 +140,29 @@ object DataFlowValueFactory {
             type: KotlinType
     ) = DataFlowValue(ExpressionIdentifierInfo(expression, true), type)
 
-    private data class PostfixId(val expression: KtPostfixExpression, val argumentInfo: IdentifierInfo) {
+    private data class PostfixIdentifierInfo(val argumentInfo: IdentifierInfo) : IdentifierInfo {
+        override val kind: DataFlowValue.Kind get() = argumentInfo.kind
+
         override fun toString() = "$argumentInfo (postfix)"
     }
 
-    private data class PostfixIdentifierInfo(override val id: PostfixId) : IdentifierInfo {
-        override val kind: DataFlowValue.Kind get() = id.argumentInfo.kind
-
-        override fun toString() = id.toString()
-    }
-
-    class ExpressionIdentifierInfo(expression: KtExpression, isComplex: Boolean) : IdentifierInfo {
-
-        override val id = expression
+    class ExpressionIdentifierInfo(val expression: KtExpression, isComplex: Boolean) : IdentifierInfo {
 
         override val kind = if (isComplex) STABLE_COMPLEX_EXPRESSION else OTHER
         
-        val text: String? get() = id.text
+        override fun equals(other: Any?) = other is ExpressionIdentifierInfo && expression == other.expression
 
-        override fun equals(other: Any?) = other is ExpressionIdentifierInfo && id == other.id
+        override fun hashCode() = expression.hashCode()
 
-        override fun hashCode() = id.hashCode()
-
-        override fun toString() = id.text ?: "(empty expression)"
+        override fun toString() = expression.text ?: "(empty expression)"
     }
 
-    private fun postfix(expression: KtPostfixExpression, argumentInfo: IdentifierInfo) =
+    private fun postfix(argumentInfo: IdentifierInfo) =
             if (argumentInfo == IdentifierInfo.NO) {
                 IdentifierInfo.NO
             }
             else {
-                PostfixIdentifierInfo(PostfixId(expression, argumentInfo))
+                PostfixIdentifierInfo(argumentInfo)
             }
 
     private fun getIdForStableIdentifier(
@@ -203,7 +195,7 @@ object DataFlowValueFactory {
             is KtPostfixExpression -> {
                 val operationType = expression.operationReference.getReferencedNameElementType()
                 if (operationType === KtTokens.PLUSPLUS || operationType === KtTokens.MINUSMINUS) {
-                    postfix(expression, getIdForStableIdentifier(expression.baseExpression, bindingContext, containingDeclarationOrModule))
+                    postfix(getIdForStableIdentifier(expression.baseExpression, bindingContext, containingDeclarationOrModule))
                 }
                 else {
                     IdentifierInfo.NO

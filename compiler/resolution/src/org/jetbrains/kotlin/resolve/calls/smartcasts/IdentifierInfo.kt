@@ -30,68 +30,56 @@ import org.jetbrains.kotlin.types.KotlinType
 
 interface IdentifierInfo {
 
-    val id: Any? get() = null
-
     val kind: DataFlowValue.Kind get() = OTHER
 
     object NO : IdentifierInfo {
         override fun toString() = "NO_IDENTIFIER_INFO"
     }
 
-    object NullId
-
     object NULL : IdentifierInfo {
-        override val id = NullId
-
         override fun toString() = "NULL"
     }
 
-    object ErrorId
-
     object ERROR : IdentifierInfo {
-        override val id = ErrorId
-
         override fun toString() = "ERROR"
     }
 
-    class Variable(override val id: VariableDescriptor, override val kind: DataFlowValue.Kind) : IdentifierInfo {
+    class Variable(val variable: VariableDescriptor, override val kind: DataFlowValue.Kind) : IdentifierInfo {
 
-        val name: Name get() = id.name
-
-        override fun equals(other: Any?) = other is Variable && id == other.id && kind.isStable() == other.kind.isStable()
+        override fun equals(other: Any?) =
+                other is Variable && variable == other.variable && kind.isStable() == other.kind.isStable()
 
         override fun hashCode(): Int {
             var result = if (kind.isStable()) 1 else 0
-            result = 31 * result + id.hashCode()
+            result = 31 * result + variable.hashCode()
             return result
         }
 
-        override fun toString() = id.toString()
+        override fun toString() = variable.toString()
     }
 
-    data class Receiver(override val id: ReceiverValue) : IdentifierInfo {
-
-        val name: Name? get() = (id as? ImplicitReceiver)?.declarationDescriptor?.name
+    data class Receiver(val value: ReceiverValue) : IdentifierInfo {
 
         override val kind = STABLE_VALUE
 
-        override fun toString() = id.toString()
+        override fun toString() = value.toString()
     }
 
-    data class PackageOrClass(override val id: DeclarationDescriptor) : IdentifierInfo {
-
-        val fqName: FqName get() = if (id is PackageViewDescriptor) id.fqName else id.fqNameSafe
+    data class PackageOrClass(val descriptor: DeclarationDescriptor) : IdentifierInfo {
 
         override val kind = STABLE_VALUE
 
-        override fun toString() = id.toString()
+        override fun toString() = descriptor.toString()
     }
 
-    class QualifiedId(val receiverInfo: IdentifierInfo, val selectorInfo: IdentifierInfo, val safe: Boolean) {
-        val kind: DataFlowValue.Kind get() = if (receiverInfo.kind.isStable()) selectorInfo.kind else OTHER
+    class Qualified(
+            val receiverInfo: IdentifierInfo, val selectorInfo: IdentifierInfo, val safe: Boolean, val receiverType: KotlinType?
+    ) : IdentifierInfo {
+        override val kind: DataFlowValue.Kind get() = if (receiverInfo.kind.isStable()) selectorInfo.kind else OTHER
 
-        override fun equals(other: Any?) =
-                other is QualifiedId && receiverInfo == other.receiverInfo && selectorInfo == other.selectorInfo
+        val receiverDataFlowValue = receiverType?.let { DataFlowValue(receiverInfo, it) }
+
+        override fun equals(other: Any?) = other is Qualified && receiverInfo == other.receiverInfo && selectorInfo == other.selectorInfo
 
         override fun hashCode(): Int {
             var result = receiverInfo.hashCode()
@@ -102,36 +90,15 @@ interface IdentifierInfo {
         override fun toString() = "$receiverInfo(?).$selectorInfo"
     }
 
-    class Qualified(override val id: QualifiedId, val receiverType: KotlinType?) : IdentifierInfo {
-        override val kind: DataFlowValue.Kind get() = id.kind
-
-        val receiverDataFlowValue = receiverType?.let { DataFlowValue(id.receiverInfo, it) }
-
-        val receiverInfo: IdentifierInfo get() = id.receiverInfo
-
-        val selectorInfo: IdentifierInfo get() = id.selectorInfo
-
-        override fun equals(other: Any?) = other is Qualified && id == other.id
-
-        override fun hashCode() = id.hashCode()
-
-        override fun toString() = id.toString()
-    }
-
     companion object {
 
-        fun qualified(receiverInfo: IdentifierInfo, receiverType: KotlinType?,
-                      selectorInfo: IdentifierInfo, safe: Boolean): IdentifierInfo {
-            val receiverId = receiverInfo.id
-            return if (receiverId === null) {
-                NO
-            }
-            else if (receiverInfo is PackageOrClass) {
-                selectorInfo
-            }
-            else {
-                Qualified(QualifiedId(receiverInfo, selectorInfo, safe), receiverType)
-            }
+        fun qualified(
+                receiverInfo: IdentifierInfo, receiverType: KotlinType?,
+                selectorInfo: IdentifierInfo, safe: Boolean
+        ) = when (receiverInfo) {
+            NO -> NO
+            is PackageOrClass -> selectorInfo
+            else -> Qualified(receiverInfo, selectorInfo, safe, receiverType)
         }
     }
 }

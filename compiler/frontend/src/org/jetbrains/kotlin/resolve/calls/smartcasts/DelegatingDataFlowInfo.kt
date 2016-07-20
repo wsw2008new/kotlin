@@ -95,7 +95,7 @@ internal class DelegatingDataFlowInfo private constructor(
         map.put(value, nullability)
 
         val identifierInfo = value.identifierInfo
-        if (affectReceiver && !nullability.canBeNull() && identifierInfo is IdentifierInfo.Qualified && identifierInfo.id.safe) {
+        if (affectReceiver && !nullability.canBeNull() && identifierInfo is IdentifierInfo.Qualified && identifierInfo.safe) {
             identifierInfo.receiverDataFlowValue?.let { putNullability(map, it, nullability) }
         }
 

@@ -87,7 +87,7 @@ class SmartCastCalculator(
             dataFlowValueToEntity = { value ->
                 val identifierInfo = value.identifierInfo
                 if (identifierInfo is IdentifierInfo.Qualified && identifierInfo.receiverInfo == receiverIdentifierInfo) {
-                    (identifierInfo.selectorInfo as? IdentifierInfo.Variable)?.id
+                    (identifierInfo.selectorInfo as? IdentifierInfo.Variable)?.variable
                 }
                 else null
             }
@@ -96,16 +96,16 @@ class SmartCastCalculator(
             dataFlowValueToEntity = fun (value: DataFlowValue): Any? {
                 val identifierInfo = value.identifierInfo
                 when(identifierInfo) {
-                    is IdentifierInfo.Variable -> return identifierInfo.id
-                    is IdentifierInfo.Receiver -> return identifierInfo.id as? ImplicitReceiver
+                    is IdentifierInfo.Variable -> return identifierInfo.variable
+                    is IdentifierInfo.Receiver -> return identifierInfo.value as? ImplicitReceiver
 
                     is IdentifierInfo.Qualified -> {
                         val receiverInfo = identifierInfo.receiverInfo
                         val selectorInfo = identifierInfo.selectorInfo
                         if (receiverInfo !is IdentifierInfo.Receiver || selectorInfo !is IdentifierInfo.Variable) return null
-                        if (receiverInfo.id !is ImplicitReceiver) return null
-                        if (resolutionScope?.findNearestReceiverForVariable(selectorInfo.id)?.value != receiverInfo.id) return null
-                        return selectorInfo.id
+                        val receiverValue = receiverInfo.value as? ImplicitReceiver ?: return null
+                        if (resolutionScope?.findNearestReceiverForVariable(selectorInfo.variable)?.value != receiverValue) return null
+                        return selectorInfo.variable
                     }
 
                     else -> return null
