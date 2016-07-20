@@ -30,7 +30,7 @@ class ContinueReplacingVisitor(val loopLabelName: JsName?, val guardLabelName: J
             ctx.replaceMe(JsBreak(guardLabelName.makeRef()))
         }
 
-        return super.visit(x, ctx)
+        return false
     }
 
     override fun visit(x: JsWhile, ctx: JsContext<JsNode>): Boolean {
