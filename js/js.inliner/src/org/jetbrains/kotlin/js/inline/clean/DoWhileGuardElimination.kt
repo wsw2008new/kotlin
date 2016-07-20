@@ -18,12 +18,25 @@ package org.jetbrains.kotlin.js.inline.clean
 
 import com.google.dart.compiler.backend.js.ast.*
 
+/**
+ * During inlining we can sometimes get the following representation for do..while statement:
+ *
+ *     do {
+ *         guard: {
+ *             // some logic
+ *             break guard;
+ *             // some logic
+ *         }
+ *     }
+ *     while (condition)
+ *
+ * A block labeled `guard` can be eliminated with `break guard` converted to `continue`.
+ */
 internal class DoWhileGuardElimination(private val root: JsStatement) {
     private val guardLabels = mutableSetOf<JsName>()
     private var hasChanges = false
     private val loopGuardMap = mutableMapOf<JsDoWhile, JsLabel>()
     private val guardToLoopLabel = mutableMapOf<JsName, JsName?>()
-    private var currentGuard: JsName? = null
 
     fun apply(): Boolean {
         analyze()
@@ -62,44 +75,77 @@ internal class DoWhileGuardElimination(private val root: JsStatement) {
                 }
 
                 if (guard != null) {
-                    guardLabels += guard.name
-                    loopGuardMap[x] = guard
-                    guardToLoopLabel[guard.name] = label
+
+                    // When do..while loop has no label and we encounter break guard from nested loop, we can't
+                    // replace this break with continue. Example:
+                    //
+                    // do {
+                    //    guard: {
+                    //        for (;;) {
+                    //            break guard;
+                    //        }
+                    //    }
+                    // }
+                    // while (condition)
+                    //
+                    // In this case we get simple `continue` that goes to beginning of `for`, not `do`.
+                    // We can't specify label explicitly, since there's no label on `do`.
+                    // See `js-optimizer/do-while-guard-elimination/innerBreakInLoopWithoutLabel.original.js`
+                    //
+                    // So we don't apply optimization if `do` statement does not have label on it and there's
+                    // a nested loop which has `break guard` statement.
+
+                    if (label != null || !findBreakInNestedLoop(guard.name)) {
+                        guardLabels += guard.name
+                        loopGuardMap[x] = guard
+                        guardToLoopLabel[guard.name] = label
+                    }
                 }
 
-                withCurrentGuard(guard?.name) { super.visitDoWhile(x) }
-            }
-
-            override fun visitBreak(x: JsBreak) {
-                val guardLabel = x.label?.name ?: return
-
-                val loopLabel = guardToLoopLabel[guardLabel]
-                if (loopLabel == null && currentGuard != guardLabel) {
-                    guardLabels -= guardLabel
-                }
-            }
-
-            override fun visitWhile(x: JsWhile) {
-                withCurrentGuard(null) { super.visitWhile(x) }
-            }
-
-            override fun visitFor(x: JsFor) {
-                withCurrentGuard(null) { super.visitFor(x) }
-            }
-
-            override fun visitForIn(x: JsForIn) {
-                withCurrentGuard(null) { super.visitForIn(x) }
-            }
-
-            private inline fun withCurrentGuard(guard: JsName?, action: () -> Unit) {
-                val oldGuard = currentGuard
-                currentGuard = guard
-                action()
-                currentGuard = oldGuard
+                body.accept(this)
             }
 
             override fun visitFunction(x: JsFunction) { }
         }.accept(root)
+    }
+
+    private fun findBreakInNestedLoop(name: JsName): Boolean {
+        var result = false
+        root.accept(object : RecursiveJsVisitor() {
+            private var loopLevel = 0
+
+            override fun visitBreak(x: JsBreak) {
+                val guardLabel = x.label?.name ?: return
+                if (guardLabel == name && isInLoop()) {
+                    result = true
+                }
+            }
+
+            private fun isInLoop() = loopLevel > 0
+
+            override fun visitDoWhile(x: JsDoWhile) = enterLoop { super.visitDoWhile(x) }
+
+            override fun visitWhile(x: JsWhile) = enterLoop { super.visitWhile(x) }
+
+            override fun visitFor(x: JsFor) = enterLoop { super.visitFor(x) }
+
+            override fun visitForIn(x: JsForIn) = enterLoop { super.visitForIn(x) }
+
+            private inline fun enterLoop(action: () -> Unit) {
+                loopLevel++
+                action()
+                loopLevel--
+            }
+
+            override fun visitFunction(x: JsFunction) { }
+
+            override fun visitElement(node: JsNode) {
+                if (!result) {
+                    super.visitElement(node)
+                }
+            }
+        })
+        return result
     }
 
     private fun perform() {
