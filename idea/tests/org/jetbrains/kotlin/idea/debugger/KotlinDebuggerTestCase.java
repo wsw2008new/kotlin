@@ -58,14 +58,14 @@ import java.util.Collection;
 import java.util.List;
 
 public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
-    protected static final String TINY_APP = PluginTestCaseBase.getTestDataPathBase() + "/debugger/tinyApp";
+    private static final String TINY_APP = PluginTestCaseBase.getTestDataPathBase() + "/debugger/tinyApp";
     private static boolean IS_TINY_APP_COMPILED = false;
 
     private static File CUSTOM_LIBRARY_JAR;
     private static final File CUSTOM_LIBRARY_SOURCES = new File(PluginTestCaseBase.getTestDataPathBase() + "/debugger/customLibraryForTinyApp");
 
     protected static final String KOTLIN_LIBRARY_NAME = "KotlinLibrary";
-    protected static final String CUSTOM_LIBRARY_NAME = "CustomLibrary";
+    private static final String CUSTOM_LIBRARY_NAME = "CustomLibrary";
 
     @Override
     protected OutputChecker initOutputChecker() {
@@ -121,18 +121,21 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
             CUSTOM_LIBRARY_JAR = MockLibraryUtil.compileLibraryToJar(CUSTOM_LIBRARY_SOURCES.getPath(), "debuggerCustomLibrary", false,
                                                                      false);
 
-            String outputDir = getAppOutputPath();
+            String outputDirPath = getAppOutputPath();
             String sourcesDir = modulePath + File.separator + "src";
 
-            MockLibraryUtil.compileKotlin(sourcesDir, new File(outputDir), CUSTOM_LIBRARY_JAR.getPath());
+            File outDir = new File(outputDirPath);
+            MockLibraryUtil.compileKotlin(sourcesDir, outDir, CUSTOM_LIBRARY_JAR.getPath());
 
-            List<String> options = Arrays.asList("-d", outputDir, "-classpath", ForTestCompileRuntime.runtimeJarForTests().getPath());
+            List<String> options = Arrays.asList("-d", outputDirPath, "-classpath", ForTestCompileRuntime.runtimeJarForTests().getPath());
             try {
                 KotlinTestUtils.compileJavaFiles(findJavaFiles(new File(sourcesDir)), options);
             }
             catch (IOException e) {
                 throw new RuntimeException(e);
             }
+
+            DexLikeBytecodePatchKt.patchDexTests(outDir);
 
             IS_TINY_APP_COMPILED = true;
         }
